@@ -32,11 +32,11 @@ export const Dashboard: Story = {
             </Grid>
             <Grid minChildWidth="320px" gap={4}>
               <Card variant="outline">
-                <Card.Header><Card.Title>Onboarding</Card.Title></Card.Header>
+                <Card.Header><Card.Title level={2}>Onboarding</Card.Title></Card.Header>
                 <Stepper aria-label="Onboarding progress" orientation="vertical" current={2} steps={[{ title: 'Create workspace' }, { title: 'Invite team' }, { title: 'Connect billing' }, { title: 'Launch' }]} />
               </Card>
               <Card variant="outline">
-                <Card.Header><Card.Title>Activity</Card.Title></Card.Header>
+                <Card.Header><Card.Title level={2}>Activity</Card.Title></Card.Header>
                 <Timeline>
                   <Timeline.Item title="Invoice INV-2041 paid" time="10:24" tone="success" icon={<CheckIcon size="sm" />} />
                   <Timeline.Item title="Wei Ling joined the workspace" time="09:12" tone="accent" />
