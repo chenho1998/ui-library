@@ -1,0 +1,19 @@
+{
+  "name": "ui-library",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.28.0",
+  "scripts": {
+    "build": "pnpm --filter @yourorg/tokens build && pnpm --filter @yourorg/ui build",
+    "test": "pnpm --filter @yourorg/ui test",
+    "typecheck": "pnpm --filter @yourorg/ui typecheck",
+    "storybook": "pnpm --filter storybook dev",
+    "build-storybook": "pnpm --filter storybook build",
+    "changeset": "changeset",
+    "size": "pnpm --filter @yourorg/ui size"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^3.0.3",
+    "typescript": "^5.6.0"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "@yourorg/tokens",
+  "version": "0.1.0",
+  "description": "Design tokens for @yourorg/ui: CSS variables, TS constants and the palette generator",
+  "type": "module",
+  "sideEffects": ["*.css"],
+  "exports": {
+    ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+    "./tokens.css": "./dist/tokens.css",
+    "./tokens.json": "./src/tokens.json"
+  },
+  "files": ["dist", "src"],
+  "scripts": { "build": "node scripts/build.mjs" }
+}

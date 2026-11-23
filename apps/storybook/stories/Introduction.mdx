@@ -1,0 +1,56 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Introduction" />
+
+# @yourorg/ui
+
+A themeable, accessible React component library. Every colour, space, radius and duration comes from
+`@yourorg/tokens`; behaviour (focus, keyboard, ARIA) comes from Radix UI primitives.
+
+## Install
+
+```bash
+pnpm add @yourorg/ui
+```
+
+```tsx
+import '@yourorg/ui/styles.css';
+import { ThemeProvider, Toaster, Button } from '@yourorg/ui';
+
+export function App() {
+  return (
+    <ThemeProvider defaultColorScheme="system" storageKey="color-scheme">
+      <Button>Hello</Button>
+      <Toaster />
+    </ThemeProvider>
+  );
+}
+```
+
+## Theming
+
+```tsx
+const acme = createTheme({
+  brand: '#7c3aed',                         // generates the full brand palette
+  tokens: { radius: { md: '6px' } },        // global token overrides
+  colors: { dark: { bg: '#0b0b10' } },      // per-scheme semantic overrides
+  components: { 'button-radius': '999px' }, // component tokens
+});
+
+<ThemeProvider theme={acme}>…</ThemeProvider>
+```
+
+Use the **Scheme** and **Brand** toolbar buttons above to try light, dark and two example brands on any story.
+
+## Status
+
+| Group | Components |
+| --- | --- |
+| Layout and type | Box, Stack, Grid, Container, Divider, Text, Heading, VisuallyHidden |
+| Theme and icons | ThemeProvider, createTheme, icon set |
+| Actions | Button, IconButton, ButtonGroup, Link |
+| Forms | Field, TextField, Textarea, Checkbox, RadioGroup, Switch, Select, Slider, NumberField, Combobox, DatePicker |
+| Overlays | Dialog, AlertDialog, Drawer, Popover, Tooltip, DropdownMenu |
+| Feedback | Alert, Toast, Spinner, Progress, Skeleton |
+| Navigation | Tabs, Breadcrumbs, Pagination |
+| Data display | Card, Avatar, Badge, Tag, Accordion, Table, EmptyState |

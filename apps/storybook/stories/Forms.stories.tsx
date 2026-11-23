@@ -1,0 +1,126 @@
+import * as React from 'react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import {
+  Button, Checkbox, Combobox, DatePicker, Grid, NumberField, Radio, RadioGroup, SearchIcon, Select, Slider, Stack,
+  Switch, TextField, Textarea,
+} from '@yourorg/ui';
+
+const meta = { title: 'Forms/Overview', parameters: { layout: 'padded' } } satisfies Meta;
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+const cities = [
+  'Kuala Lumpur', 'George Town', 'Johor Bahru', 'Ipoh', 'Shah Alam', 'Petaling Jaya', 'Kuching', 'Kota Kinabalu',
+  'Melaka', 'Seremban', 'Kuantan', 'Alor Setar', 'Singapore', 'Bangkok', 'Jakarta', 'Manila', 'Ho Chi Minh City',
+].map((c) => ({ value: c.toLowerCase().replace(/\s/g, '-'), label: c }));
+
+export const TextFields: Story = {
+  render: () => (
+    <Grid minChildWidth="260px" gap={6} style={{ maxWidth: 880 }}>
+      <TextField label="Full name" placeholder="Aisha Rahman" required />
+      <TextField label="Email" type="email" hint="We'll send a confirmation link." />
+      <TextField label="Username" defaultValue="aisha!" error="Use letters, numbers and underscores only." />
+      <TextField label="Search" hideLabel placeholder="Search projects" startAdornment={<SearchIcon size="sm" />} />
+      <TextField label="Price" startAdornment="RM" endAdornment="/month" inputMode="decimal" />
+      <TextField label="Disabled" disabled defaultValue="Read only value" />
+      <TextField label="Small" size="sm" />
+      <TextField label="Large" size="lg" />
+      <Textarea label="Bio" maxLength={160} showCount autoResize hint="Shown on your public profile." />
+    </Grid>
+  ),
+};
+
+export const Selection: Story = {
+  render: function Render() {
+    const [city, setCity] = React.useState<string | null>('kuala-lumpur');
+    return (
+      <Grid minChildWidth="260px" gap={6} style={{ maxWidth: 880 }}>
+        <Select label="Plan" defaultValue="pro" hint="You can change plans at any time.">
+          <Select.Item value="free">Free</Select.Item>
+          <Select.Item value="pro">Pro</Select.Item>
+          <Select.Item value="team">Team</Select.Item>
+          <Select.Separator />
+          <Select.Item value="enterprise" disabled>Enterprise (contact sales)</Select.Item>
+        </Select>
+        <Select label="Timezone" placeholder="Choose a timezone">
+          <Select.Group label="Asia">
+            <Select.Item value="kl">Kuala Lumpur (UTC+8)</Select.Item>
+            <Select.Item value="sg">Singapore (UTC+8)</Select.Item>
+          </Select.Group>
+          <Select.Group label="Europe">
+            <Select.Item value="ldn">London (UTC+0)</Select.Item>
+          </Select.Group>
+        </Select>
+        <Combobox label="City" options={cities} value={city} onValueChange={setCity} placeholder="Type to search" />
+        <DatePicker label="Start date" hint="Weekends are unavailable." isDateDisabled={(d) => d.getDay() === 0 || d.getDay() === 6} />
+        <NumberField label="Seats" defaultValue={5} min={1} max={500} />
+        <NumberField label="Budget" defaultValue={2500} step={100} formatOptions={{ style: 'currency', currency: 'MYR' }} />
+      </Grid>
+    );
+  },
+};
+
+export const Choices: Story = {
+  render: function Render() {
+    const [items, setItems] = React.useState({ email: true, sms: false, push: true });
+    const all = Object.values(items).every(Boolean);
+    const some = Object.values(items).some(Boolean);
+    return (
+      <Grid minChildWidth="260px" gap={8} style={{ maxWidth: 880 }}>
+        <Stack gap={3}>
+          <Checkbox
+            label="All notifications"
+            checked={all ? true : some ? 'indeterminate' : false}
+            onCheckedChange={(v) => setItems({ email: !!v, sms: !!v, push: !!v })}
+          />
+          <Stack gap={2} style={{ paddingInlineStart: 28 }}>
+            {(Object.keys(items) as Array<keyof typeof items>).map((k) => (
+              <Checkbox key={k} label={k.toUpperCase()} checked={items[k]} onCheckedChange={(v) => setItems({ ...items, [k]: !!v })} />
+            ))}
+          </Stack>
+          <Checkbox label="I agree to the terms" description="You can withdraw consent at any time." invalid />
+        </Stack>
+        <RadioGroup label="Billing cycle" defaultValue="monthly" hint="Yearly saves 20%.">
+          <Radio value="monthly" label="Monthly" description="RM 49 per month" />
+          <Radio value="yearly" label="Yearly" description="RM 470 per year" />
+          <Radio value="lifetime" label="Lifetime" disabled />
+        </RadioGroup>
+        <Stack gap={4}>
+          <Switch label="Two-factor authentication" description="Ask for a code when signing in." defaultChecked />
+          <Switch label="Weekly digest" />
+          <Switch label="Compact" size="sm" />
+          <Slider label="Volume" showValue defaultValue={[40]} formatValue={(v) => `${v}%`} />
+          <Slider label="Price range" showValue defaultValue={[20, 80]} thumbLabels={['Minimum price', 'Maximum price']} formatValue={(v) => `RM${v}`} />
+        </Stack>
+      </Grid>
+    );
+  },
+};
+
+export const SignUpForm: Story = {
+  render: function Render() {
+    const [submitted, setSubmitted] = React.useState(false);
+    return (
+      <form
+        noValidate
+        onSubmit={(e) => {
+          e.preventDefault();
+          setSubmitted(true);
+        }}
+        style={{ maxWidth: 420 }}
+      >
+        <Stack gap={4}>
+          <TextField label="Work email" type="email" required error={submitted ? 'Enter your work email.' : undefined} />
+          <TextField label="Password" type="password" required hint="At least 12 characters." />
+          <Select label="Team size" defaultValue="1-10">
+            <Select.Item value="1-10">1–10</Select.Item>
+            <Select.Item value="11-50">11–50</Select.Item>
+            <Select.Item value="51+">51+</Select.Item>
+          </Select>
+          <Checkbox label="Send me product updates" />
+          <Button type="submit" fullWidth>Create account</Button>
+        </Stack>
+      </form>
+    );
+  },
+};

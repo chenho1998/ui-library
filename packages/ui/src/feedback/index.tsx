@@ -1,0 +1,301 @@
+import * as React from 'react';
+import * as ProgressPrimitive from '@radix-ui/react-progress';
+import { cx, type Size } from '../utils';
+import { useLocale } from '../theme/ThemeProvider';
+import { DangerIcon, InfoIcon, SuccessIcon, WarningIcon, XIcon } from '../icons';
+
+export { Spinner, type SpinnerProps } from './Spinner';
+
+type StatusTone = 'info' | 'success' | 'warning' | 'danger';
+const toneIcon: Record<StatusTone, React.ReactNode> = {
+  info: <InfoIcon size="md" />,
+  success: <SuccessIcon size="md" />,
+  warning: <WarningIcon size="md" />,
+  danger: <DangerIcon size="md" />,
+};
+
+/* ---------- Alert ---------- */
+export interface AlertProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
+  /** Default `'info'`. */
+  tone?: StatusTone;
+  title?: React.ReactNode;
+  /** Replace the tone's default icon, or pass `null` for none. */
+  icon?: React.ReactNode;
+  /** Optional actions (buttons or links) under the message. */
+  actions?: React.ReactNode;
+  /** Shows a close button. */
+  onDismiss?: () => void;
+  /** Announce immediately to screen readers (use for alerts that appear after an action). */
+  live?: boolean;
+}
+
+/** A persistent message about the state of a page or section. */
+export const Alert = /* @__PURE__ */ React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+  { tone = 'info', title, icon, actions, onDismiss, live, className, children, ...rest },
+  ref,
+) {
+  const locale = useLocale();
+  return (
+    <div ref={ref} role={live ? 'alert' : undefined} className={cx('ui-alert', className)} data-tone={tone} {...rest}>
+      {icon === null ? null : <span className="ui-alert__icon">{icon ?? toneIcon[tone]}</span>}
+      <div className="ui-alert__body">
+        {title ? <p className="ui-alert__title">{title}</p> : null}
+        {children ? <div className="ui-alert__content">{children}</div> : null}
+        {actions ? <div className="ui-alert__actions">{actions}</div> : null}
+      </div>
+      {onDismiss ? (
+        <button type="button" className="ui-alert__close" aria-label={locale.dismiss} onClick={onDismiss}>
+          <XIcon size="sm" />
+        </button>
+      ) : null}
+    </div>
+  );
+});
+
+/* ---------- Progress ---------- */
+export interface ProgressProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+  /** Current value; `null` shows an indeterminate bar. */
+  value?: number | null;
+  max?: number;
+  /** Visible label above the bar (also its accessible name). */
+  label?: React.ReactNode;
+  /** Show the percentage beside the label. */
+  showValue?: boolean;
+  /** Bar thickness: 4 / 8 / 12 px. Default `'md'`. */
+  size?: Size;
+  tone?: 'accent' | 'success' | 'warning' | 'danger';
+}
+
+/** Shows how far a task has progressed. */
+export const Progress = /* @__PURE__ */ React.forwardRef<HTMLDivElement, ProgressProps>(function Progress(
+  { value = null, max = 100, label, showValue, size = 'md', tone = 'accent', className, 'aria-label': ariaLabel, ...rest },
+  ref,
+) {
+  const id = React.useId();
+  const pct = value === null ? null : Math.round((Math.min(max, Math.max(0, value)) / max) * 100);
+  return (
+    <div ref={ref} className={cx('ui-progress', className)} data-size={size} data-tone={tone} {...rest}>
+      {label || showValue ? (
+        <div className="ui-progress__header">
+          {label ? <span id={`${id}-label`}>{label}</span> : <span />}
+          {showValue && pct !== null ? <span className="ui-progress__value">{pct}%</span> : null}
+        </div>
+      ) : null}
+      <ProgressPrimitive.Root
+        className="ui-progress__track"
+        value={value}
+        max={max}
+        aria-label={ariaLabel}
+        aria-labelledby={label ? `${id}-label` : undefined}
+      >
+        <ProgressPrimitive.Indicator
+          className="ui-progress__bar"
+          data-indeterminate={pct === null || undefined}
+          style={pct === null ? undefined : { transform: `translateX(-${100 - pct}%)` }}
+        />
+      </ProgressPrimitive.Root>
+    </div>
+  );
+});
+
+/* ---------- Skeleton ---------- */
+export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Default `'text'`. */
+  shape?: 'text' | 'rect' | 'circle';
+  width?: number | string;
+  height?: number | string;
+  /** For `text`: number of lines; the last is shorter. */
+  lines?: number;
+}
+
+/** A placeholder shown while content loads, shaped like what will replace it. */
+export const Skeleton = /* @__PURE__ */ React.forwardRef<HTMLDivElement, SkeletonProps>(function Skeleton(
+  { shape = 'text', width, height, lines = 1, className, style, ...rest },
+  ref,
+) {
+  if (shape === 'text' && lines > 1) {
+    return (
+      <div ref={ref} className={cx('ui-skeleton-group', className)} aria-hidden="true" style={{ width, ...style }} {...rest}>
+        {Array.from({ length: lines }, (_, i) => (
+          <div key={i} className="ui-skeleton" data-shape="text" style={i === lines - 1 ? { width: '60%' } : undefined} />
+        ))}
+      </div>
+    );
+  }
+  return (
+    <div
+      ref={ref}
+      aria-hidden="true"
+      className={cx('ui-skeleton', className)}
+      data-shape={shape}
+      style={{ width, height: shape === 'circle' ? (height ?? width) : height, ...style }}
+      {...rest}
+    />
+  );
+});
+
+/* ---------- Toast ---------- */
+export interface ToastOptions {
+  title: React.ReactNode;
+  description?: React.ReactNode;
+  /** Default `'info'`. Danger toasts stay until dismissed. */
+  tone?: StatusTone;
+  /** One action. Never make a toast the only way to reach it. */
+  action?: { label: string; onClick: () => void };
+  /** Milliseconds on screen. Default 5000; `Infinity` keeps it until dismissed. */
+  duration?: number;
+  id?: string;
+}
+
+interface ToastRecord extends Required<Pick<ToastOptions, 'title' | 'tone' | 'duration'>> {
+  id: string;
+  description?: React.ReactNode;
+  action?: ToastOptions['action'];
+}
+
+let toasts: ToastRecord[] = [];
+const listeners = new Set<() => void>();
+const emit = () => listeners.forEach((l) => l());
+let toastCount = 0;
+
+function showToast(options: ToastOptions): string {
+  const id = options.id ?? `toast-${++toastCount}`;
+  const tone = options.tone ?? 'info';
+  const record: ToastRecord = {
+    id,
+    title: options.title,
+    description: options.description,
+    tone,
+    action: options.action,
+    duration: options.duration ?? (tone === 'danger' ? Infinity : 5000),
+  };
+  toasts = [record, ...toasts.filter((t) => t.id !== id)];
+  emit();
+  return id;
+}
+function dismissToast(id?: string) {
+  toasts = id ? toasts.filter((t) => t.id !== id) : [];
+  emit();
+}
+
+/**
+ * Show a toast from anywhere. Returns its id. Needs one `<Toaster />` mounted.
+ * `toast.success()`, `toast.error()` and `toast.dismiss(id?)` are shortcuts.
+ */
+export const toast = /* @__PURE__ */ Object.assign(showToast, {
+  dismiss: dismissToast,
+  success: (title: React.ReactNode, opts: Omit<ToastOptions, 'title' | 'tone'> = {}) => showToast({ ...opts, title, tone: 'success' }),
+  error: (title: React.ReactNode, opts: Omit<ToastOptions, 'title' | 'tone'> = {}) => showToast({ ...opts, title, tone: 'danger' }),
+});
+
+const subscribe = (l: () => void) => {
+  listeners.add(l);
+  return () => listeners.delete(l);
+};
+const getSnapshot = () => toasts;
+
+export interface ToasterProps {
+  /** Default `'bottom-right'`. */
+  position?: 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right';
+  /** Most toasts visible at once. Default 3. */
+  max?: number;
+  /** Keyboard shortcut that moves focus to the toasts. Default F8. */
+  hotkey?: string;
+}
+
+/** Renders the toast queue. Mount once, inside `ThemeProvider`. */
+export function Toaster({ position = 'bottom-right', max = 3, hotkey = 'F8' }: ToasterProps) {
+  const list = React.useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  const locale = useLocale();
+  const regionRef = React.useRef<HTMLOListElement>(null);
+
+  React.useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === hotkey) {
+        const first = regionRef.current?.querySelector<HTMLElement>('.ui-toast');
+        first?.focus();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [hotkey]);
+
+  return (
+    <section aria-label={`${locale.notifications} (${hotkey})`} className="ui-toaster" data-position={position}>
+      <ol ref={regionRef} className="ui-toaster__list" aria-live="polite" aria-relevant="additions">
+        {list.slice(0, max).map((t) => (
+          <ToastItem key={t.id} record={t} />
+        ))}
+      </ol>
+    </section>
+  );
+}
+
+function ToastItem({ record }: { record: ToastRecord }) {
+  const locale = useLocale();
+  const [paused, setPaused] = React.useState(false);
+  const [dx, setDx] = React.useState(0);
+  const start = React.useRef<number | null>(null);
+  const remaining = React.useRef(record.duration);
+  const since = React.useRef(Date.now());
+
+  React.useEffect(() => {
+    if (paused || !Number.isFinite(remaining.current)) return;
+    since.current = Date.now();
+    const timer = window.setTimeout(() => dismissToast(record.id), remaining.current);
+    return () => {
+      window.clearTimeout(timer);
+      remaining.current -= Date.now() - since.current;
+    };
+  }, [paused, record.id]);
+
+  return (
+    <li
+      className="ui-toast"
+      data-tone={record.tone}
+      tabIndex={0}
+      role={record.tone === 'danger' ? 'alert' : 'status'}
+      aria-atomic="true"
+      style={dx ? { transform: `translateX(${dx}px)`, opacity: 1 - Math.min(Math.abs(dx) / 160, 0.8) } : undefined}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocus={() => setPaused(true)}
+      onBlur={() => setPaused(false)}
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') toast.dismiss(record.id);
+      }}
+      onPointerDown={(e) => {
+        if (e.pointerType === 'touch') start.current = e.clientX;
+      }}
+      onPointerMove={(e) => {
+        if (start.current !== null) setDx(e.clientX - start.current);
+      }}
+      onPointerUp={() => {
+        if (Math.abs(dx) > 80) toast.dismiss(record.id);
+        start.current = null;
+        setDx(0);
+      }}
+    >
+      <span className="ui-toast__icon">{toneIcon[record.tone]}</span>
+      <div className="ui-toast__body">
+        <p className="ui-toast__title">{record.title}</p>
+        {record.description ? <p className="ui-toast__description">{record.description}</p> : null}
+        {record.action ? (
+          <button
+            type="button"
+            className="ui-toast__action"
+            onClick={() => {
+              record.action?.onClick();
+              toast.dismiss(record.id);
+            }}
+          >
+            {record.action.label}
+          </button>
+        ) : null}
+      </div>
+      <button type="button" className="ui-toast__close" aria-label={locale.dismiss} onClick={() => toast.dismiss(record.id)}>
+        <XIcon size="sm" />
+      </button>
+    </li>
+  );
+}
