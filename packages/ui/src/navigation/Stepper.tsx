@@ -3,6 +3,8 @@ import { cx } from '../utils';
 import { useLocale } from '../theme/ThemeProvider';
 import { CheckIcon } from '../icons';
 
+const STATUS = { complete: 'completed', current: 'current step', upcoming: 'not started' };
+
 export interface StepperStep {
   title: React.ReactNode;
   description?: React.ReactNode;
@@ -36,7 +38,7 @@ export const Stepper = /* @__PURE__ */ React.forwardRef<HTMLOListElement, Steppe
             <span className="ui-stepper__text">
               <span className="ui-stepper__title">{step.title}</span>
               {step.description ? <span className="ui-stepper__description">{step.description}</span> : null}
-              <span className="ui-visually-hidden">, {locale.stepStatus[status]}</span>
+              <span className="ui-visually-hidden">, {(locale.stepStatus ?? STATUS)[status]}</span>
             </span>
           </>
         );

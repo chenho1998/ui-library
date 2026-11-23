@@ -145,7 +145,7 @@ export function PinInput({
               // Focus the first box for a code the user just requested, as OS code autofill does.
               // eslint-disable-next-line jsx-a11y/no-autofocus
               autoFocus={autoFocus && i === 0}
-              aria-label={locale.pinDigit(i + 1, length)}
+              aria-label={(locale.pinDigit ?? ((n: number, of: number) => `Digit ${n} of ${of}`))(i + 1, length)}
               aria-invalid={ctx.invalid || undefined}
               disabled={disabled}
               maxLength={length}
@@ -203,6 +203,8 @@ export interface FileUploadProps extends Pick<FieldProps, 'label' | 'hideLabel' 
   id?: string;
   className?: string;
 }
+
+const ratingDefault = (value: number, max: number) => `${value} of ${max} ${max === 1 ? 'star' : 'stars'}`;
 
 const formatBytes = (n: number) => (n < 1024 ? `${n} B` : n < 1048576 ? `${(n / 1024).toFixed(1)} KB` : `${(n / 1048576).toFixed(1)} MB`);
 
@@ -269,9 +271,9 @@ export function FileUpload({
           >
             <UploadIcon size="lg" className="ui-icon ui-upload__icon" />
             <span>
-              {locale.dropFiles}{' '}
+              {locale.dropFiles ?? 'Drop files here or'}{' '}
               <button type="button" className="ui-upload__browse" disabled={disabled} aria-describedby={[ctx.hintId, ctx.errorId].filter(Boolean).join(' ') || undefined} onClick={() => inputRef.current?.click()}>
-                {locale.browseFiles}
+                {locale.browseFiles ?? 'browse'}
               </button>
             </span>
             <input
@@ -339,7 +341,7 @@ export function Rating({ label, value, defaultValue = 0, onValueChange, max = 5,
     return (
       <div className={cx('ui-rating', className)} data-size={size} data-readonly="">
         <span className="ui-rating__label">{label}</span>
-        <span className="ui-rating__stars" role="img" aria-label={locale.ratingValue(current, max)}>
+        <span className="ui-rating__stars" role="img" aria-label={(locale.ratingValue ?? ratingDefault)(current, max)}>
           {stars.map((n) => (
             <StarIcon key={n} className="ui-icon ui-rating__star" data-filled={n <= current || undefined} />
           ))}
@@ -365,7 +367,7 @@ export function Rating({ label, value, defaultValue = 0, onValueChange, max = 5,
               }}
             />
             <StarIcon className="ui-icon ui-rating__star" />
-            <span className="ui-visually-hidden">{locale.ratingValue(n, max)}</span>
+            <span className="ui-visually-hidden">{(locale.ratingValue ?? ratingDefault)(n, max)}</span>
           </label>
         ))}
       </span>

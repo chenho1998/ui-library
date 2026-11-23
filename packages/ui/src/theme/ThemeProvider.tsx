@@ -30,25 +30,27 @@ export interface Locale {
   results: (count: number) => string;
   /** Label for the button that removes one selected value (Combobox, Tag). */
   removeItem: (label: string) => string;
-  collapseSidebar: string;
-  expandSidebar: string;
+  // Strings for the v0.2 components. Optional: their English defaults live in each component, so a bundle only
+  // carries the strings of the components it uses. Set them here to translate.
+  collapseSidebar?: string;
+  expandSidebar?: string;
   /** Step status words read after each Stepper step. */
-  stepStatus: { complete: string; current: string; upcoming: string };
-  /** Command palette search box and its empty state. */
-  commandPlaceholder: string;
+  stepStatus?: { complete: string; current: string; upcoming: string };
+  /** Command palette search box. */
+  commandPlaceholder?: string;
   /** FileUpload drop zone. */
-  dropFiles: string;
-  browseFiles: string;
+  dropFiles?: string;
+  browseFiles?: string;
   /** Rating: accessible label for each star, e.g. "3 of 5 stars". */
-  ratingValue: (value: number, max: number) => string;
+  ratingValue?: (value: number, max: number) => string;
   /** PinInput: accessible label for each box. */
-  pinDigit: (index: number, length: number) => string;
+  pinDigit?: (index: number, length: number) => string;
   /** TimePicker and DateRangePicker. */
-  chooseTime: string;
-  hours: string;
-  minutes: string;
-  startDate: string;
-  endDate: string;
+  chooseTime?: string;
+  hours?: string;
+  minutes?: string;
+  startDate?: string;
+  endDate?: string;
 }
 
 export const defaultLocale: Locale = {
@@ -75,19 +77,6 @@ export const defaultLocale: Locale = {
   characterCount: (count, max) => `${count} of ${max} characters`,
   results: (count) => (count === 1 ? '1 result' : `${count} results`),
   removeItem: (label) => `Remove ${label}`,
-  collapseSidebar: 'Collapse sidebar',
-  expandSidebar: 'Expand sidebar',
-  stepStatus: { complete: 'completed', current: 'current step', upcoming: 'not started' },
-  commandPlaceholder: 'Type a command or search…',
-  dropFiles: 'Drop files here or',
-  browseFiles: 'browse',
-  ratingValue: (value, max) => `${value} of ${max} ${max === 1 ? 'star' : 'stars'}`,
-  pinDigit: (index, length) => `Digit ${index} of ${length}`,
-  chooseTime: 'Choose time',
-  hours: 'Hours',
-  minutes: 'Minutes',
-  startDate: 'Start date',
-  endDate: 'End date',
 };
 
 interface ThemeContextValue {

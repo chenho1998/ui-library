@@ -110,7 +110,7 @@ export function CommandPalette({
               aria-autocomplete="list"
               aria-activedescendant={activeItem ? `${listId}-${activeItem.id}` : undefined}
               autoComplete="off"
-              placeholder={placeholder ?? locale.commandPlaceholder}
+              placeholder={placeholder ?? locale.commandPlaceholder ?? 'Type a command or search…'}
               value={query}
               onChange={(e) => {
                 setQuery(e.target.value);

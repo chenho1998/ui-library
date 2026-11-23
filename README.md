@@ -137,10 +137,10 @@ Overlays portal into the `ThemeProvider` root, so dialogs and menus inherit the 
 | Tests | 92 passing, including axe on a page with every component, the new components, an open dialog and an open drawer |
 | Lint | ESLint and Stylelint clean, run in CI |
 | Contrast | 30 token pairs checked in light and dark, all pass; all five built-in themes pass the same pairs |
-| Button | 2.6 KB gzip |
-| TextField | 2.0 KB gzip |
-| Dialog (incl. Radix focus trap and scroll lock) | 15.0 KB gzip (budget 15 KB) |
-| Typical page (Button, TextField, Dialog) | 16.6 KB gzip |
+| Button | 2.5 KB gzip |
+| TextField | 1.8 KB gzip |
+| Dialog (incl. Radix focus trap and scroll lock) | 14.8 KB gzip |
+| Typical page (Button, TextField, Dialog) | 16.4 KB gzip |
 | Everything | 84.6 KB gzip (budget raised from 70 to 90 KB for the new components) |
 | `styles.css` (all components and themes) | 14.6 KB gzip (budget raised from 12 to 16 KB) |
 

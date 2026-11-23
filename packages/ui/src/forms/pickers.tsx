@@ -6,6 +6,8 @@ import { CalendarIcon, ClockIcon } from '../icons';
 import { Field, type FieldProps } from './Field';
 import { Calendar } from './DatePicker';
 
+const TEXT = { chooseTime: 'Choose time', hours: 'Hours', minutes: 'Minutes', startDate: 'Start date', endDate: 'End date' };
+
 const pad = (n: number) => String(n).padStart(2, '0');
 const toIso = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 
@@ -120,16 +122,16 @@ export const TimePicker = /* @__PURE__ */ React.forwardRef<HTMLButtonElement, Ti
               aria-labelledby={label ? `${ctx.labelId} ${ctx.id}` : undefined}
               aria-describedby={[ctx.hintId, ctx.errorId].filter(Boolean).join(' ') || undefined}
             >
-              <span className="ui-date-picker__value">{shown ?? placeholder ?? locale.chooseTime}</span>
+              <span className="ui-date-picker__value">{shown ?? placeholder ?? (locale.chooseTime ?? TEXT.chooseTime)}</span>
               <ClockIcon size="sm" className="ui-icon ui-date-picker__icon" />
             </button>
           </PopoverPrimitive.Trigger>
           {name ? <input type="hidden" name={name} value={current ?? ''} /> : null}
           <PopoverPrimitive.Portal container={container}>
-            <PopoverPrimitive.Content className="ui-popover ui-time" align="start" sideOffset={4} role="dialog" aria-label={locale.chooseTime} onOpenAutoFocus={(e) => e.preventDefault()}>
-              <TimeColumn label={locale.hours} options={Array.from({ length: 24 }, (_, i) => i)} value={h} onChange={(n) => set(n, m ?? 0)} onDone={() => setOpen(false)} focusOnMount />
+            <PopoverPrimitive.Content className="ui-popover ui-time" align="start" sideOffset={4} role="dialog" aria-label={(locale.chooseTime ?? TEXT.chooseTime)} onOpenAutoFocus={(e) => e.preventDefault()}>
+              <TimeColumn label={(locale.hours ?? TEXT.hours)} options={Array.from({ length: 24 }, (_, i) => i)} value={h} onChange={(n) => set(n, m ?? 0)} onDone={() => setOpen(false)} focusOnMount />
               <TimeColumn
-                label={locale.minutes}
+                label={(locale.minutes ?? TEXT.minutes)}
                 options={minutes}
                 value={m === null ? null : minutes.reduce((best, x) => (Math.abs(x - m) < Math.abs(best - m) ? x : best), 0)}
                 onChange={(n) => set(h ?? 0, n)}
@@ -217,7 +219,7 @@ export const DateRangePicker = /* @__PURE__ */ React.forwardRef<HTMLButtonElemen
               aria-labelledby={label ? `${ctx.labelId} ${ctx.id}` : undefined}
               aria-describedby={[ctx.hintId, ctx.errorId].filter(Boolean).join(' ') || undefined}
             >
-              <span className="ui-date-picker__value">{shown ?? placeholder ?? `${locale.startDate} – ${locale.endDate}`}</span>
+              <span className="ui-date-picker__value">{shown ?? placeholder ?? `${(locale.startDate ?? TEXT.startDate)} – ${(locale.endDate ?? TEXT.endDate)}`}</span>
               <CalendarIcon size="sm" className="ui-icon ui-date-picker__icon" />
             </button>
           </PopoverPrimitive.Trigger>
@@ -226,7 +228,7 @@ export const DateRangePicker = /* @__PURE__ */ React.forwardRef<HTMLButtonElemen
           <PopoverPrimitive.Portal container={container}>
             <PopoverPrimitive.Content className="ui-popover ui-date-picker__content" align="start" sideOffset={4} aria-label={locale.chooseDate} role="dialog">
               <p className="ui-date-range__hint" aria-live="polite">
-                {draft.start && !draft.end ? locale.endDate : locale.startDate}
+                {draft.start && !draft.end ? (locale.endDate ?? TEXT.endDate) : (locale.startDate ?? TEXT.startDate)}
               </p>
               <Calendar
                 range={draft}

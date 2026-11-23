@@ -182,7 +182,7 @@ const SidebarToggle = /* @__PURE__ */ React.forwardRef<HTMLButtonElement, React.
       ref={ref}
       type="button"
       className={cx('ui-sidebar__toggle', className)}
-      aria-label={collapsed ? locale.expandSidebar : locale.collapseSidebar}
+      aria-label={collapsed ? (locale.expandSidebar ?? 'Expand sidebar') : (locale.collapseSidebar ?? 'Collapse sidebar')}
       aria-expanded={!collapsed}
       onClick={(e) => {
         onClick?.(e);
