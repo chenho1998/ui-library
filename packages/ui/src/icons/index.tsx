@@ -57,4 +57,17 @@ export const CalendarIcon = /* @__PURE__ */ createIcon('CalendarIcon', <><rect x
 export const MoreIcon = /* @__PURE__ */ createIcon('MoreIcon', <><circle cx="12" cy="12" r="1" /><circle cx="19" cy="12" r="1" /><circle cx="5" cy="12" r="1" /></>);
 export const InboxIcon = /* @__PURE__ */ createIcon('InboxIcon', <><path d="M22 12h-6l-2 3h-4l-2-3H2" /><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" /></>);
 
+export const HomeIcon = /* @__PURE__ */ createIcon('HomeIcon', <><path d="m3 10 9-7 9 7v10a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z" /></>);
+export const SettingsIcon = /* @__PURE__ */ createIcon('SettingsIcon', <><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" /></>);
+export const UsersIcon = /* @__PURE__ */ createIcon('UsersIcon', <><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8" /></>);
+export const FolderIcon = /* @__PURE__ */ createIcon('FolderIcon', <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.7-.9l-.8-1.2A2 2 0 0 0 7.9 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2z" />);
+export const FileIcon = /* @__PURE__ */ createIcon('FileIcon', <><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6" /></>);
+export const ChartIcon = /* @__PURE__ */ createIcon('ChartIcon', <path d="M3 3v18h18M7 16v-4M12 16V8M17 16v-7" />);
+export const BellIcon = /* @__PURE__ */ createIcon('BellIcon', <><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0" /></>);
+export const ClockIcon = /* @__PURE__ */ createIcon('ClockIcon', <><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></>);
+export const UploadIcon = /* @__PURE__ */ createIcon('UploadIcon', <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />);
+export const StarIcon = /* @__PURE__ */ createIcon('StarIcon', <path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z" />);
+export const MenuIcon = /* @__PURE__ */ createIcon('MenuIcon', <path d="M4 6h16M4 12h16M4 18h16" />);
+export const PanelLeftIcon = /* @__PURE__ */ createIcon('PanelLeftIcon', <><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M9 3v18" /></>);
+
 export { createIcon };

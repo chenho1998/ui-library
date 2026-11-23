@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Button, ButtonGroup, IconButton, Link, PlusIcon, MoreIcon, Stack, Tooltip, toast } from '@yourorg/ui';
 
 const meta = {
-  title: 'Actions/Button',
+  title: 'Components/Actions/Button',
   component: Button,
   args: { children: 'Save changes', variant: 'solid', tone: 'accent', size: 'md' },
   argTypes: {

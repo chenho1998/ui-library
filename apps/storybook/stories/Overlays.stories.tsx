@@ -5,7 +5,7 @@ import {
   TextField, Tooltip, toast,
 } from '@yourorg/ui';
 
-const meta = { title: 'Overlays/Overview' } satisfies Meta;
+const meta = { title: 'Components/Overlays/Overview' } satisfies Meta;
 export default meta;
 type Story = StoryObj<typeof meta>;
 

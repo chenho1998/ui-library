@@ -1,6 +1,6 @@
 import { Meta } from '@storybook/addon-docs/blocks';
 
-<Meta title="Introduction" />
+<Meta title="Get started/Introduction" />
 
 # @yourorg/ui
 
@@ -40,18 +40,20 @@ const acme = createTheme({
 <ThemeProvider theme={acme}>…</ThemeProvider>
 ```
 
-Use the **Scheme**, **Theme** and **Font** toolbar buttons above to try light and dark, the example themes (including
-the anime theme, which restyles every component) and OpenDyslexic on any story.
+Use the **Scheme**, **Theme** and **Font** toolbar buttons above to try light and dark, the built-in themes (anime,
+pixel, brutalist, sketch and neon each restyle every component) and OpenDyslexic on any story. **Get started → Themes**
+shows them side by side, and **Patterns → App shell** puts the Sidebar, command palette and data components together.
 
 ## Status
 
 | Group | Components |
 | --- | --- |
 | Layout and type | Box, Stack, Grid, Container, Divider, Text, Heading, VisuallyHidden |
-| Theme and icons | ThemeProvider, createTheme, animeTheme, withFont, icon set |
+| Theme and icons | ThemeProvider, createTheme, withFont, five built-in themes, icon set |
 | Actions | Button, IconButton, ButtonGroup, Link |
-| Forms | Field, TextField, Textarea, Checkbox, RadioGroup, Switch, Select, Slider, NumberField, Combobox, DatePicker |
-| Overlays | Dialog, AlertDialog, Drawer, Popover, Tooltip, DropdownMenu |
+| Forms | Field, TextField, Textarea, Checkbox, RadioGroup, Switch, Select, Slider, NumberField, Combobox, DatePicker, DateRangePicker, TimePicker, SegmentedControl, ToggleGroup, PinInput, FileUpload, Rating |
+| Overlays | Dialog, AlertDialog, Drawer, Popover, Tooltip, DropdownMenu, ContextMenu, CommandPalette, HoverCard |
 | Feedback | Alert, Toast, Spinner, Progress, Skeleton |
-| Navigation | Tabs, Breadcrumbs, Pagination |
-| Data display | Card, Avatar, Badge, Tag, Accordion, Table, EmptyState |
+| Navigation | Sidebar, Tabs, Breadcrumbs, Pagination, Stepper, Menubar, Collapsible |
+| Data display | Card, Avatar, Badge, Tag, Accordion, Table, EmptyState, Timeline, TreeView, Stat, DescriptionList |
+| Utilities | Kbd, ScrollArea |

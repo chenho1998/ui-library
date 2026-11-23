@@ -1,0 +1,109 @@
+/* Expressive component styles. A theme with a `style` (animeTheme, pixelTheme, brutalistTheme, sketchTheme,
+   neonTheme or your own) sets data-ui-style on its root, and every component below is drawn from its style
+   tokens (README: "Style tokens"). Colours: --ui-color-style-ink (outlines), --ui-color-style-shadow. */
+
+[data-ui-style] {
+  background-image: var(--ui-style-page, none);
+  background-size: var(--ui-style-page-size, auto);
+}
+
+/* Controls and surfaces share one recipe; --_ink and --_glow are per element so states can recolour them */
+[data-ui-style] :is(.ui-button:is([data-variant='solid'], [data-variant='outline']), .ui-input, .ui-select__trigger, .ui-textarea) {
+  --_ink: var(--ui-color-style-ink, currentcolor);
+  --_glow: var(--ui-color-style-shadow, transparent);
+  --_lift: var(--ui-style-offset, 0px);
+
+  border: var(--ui-style-border-width, 2px) solid var(--_ink);
+  box-shadow: var(--_ring, 0 0 transparent), var(--_lift) var(--_lift) var(--ui-style-blur, 0px) var(--_glow);
+}
+
+[data-ui-style] :is(.ui-card:not([data-variant='subtle']), .ui-dialog, .ui-popover, .ui-menu-surface, .ui-toast, .ui-alert, .ui-table-wrap, .ui-tooltip, .ui-tabs[data-variant='pill'] .ui-tabs__list) {
+  --_ink: var(--ui-color-style-ink, currentcolor);
+  --_glow: var(--ui-color-style-shadow, transparent);
+  --_lift: calc(var(--ui-style-offset, 0px) * 1.6);
+
+  border: var(--ui-style-border-width, 2px) solid var(--_ink);
+  box-shadow: var(--_ring, 0 0 transparent), var(--_lift) var(--_lift) calc(var(--ui-style-blur, 0px) * 1.5) var(--_glow);
+}
+
+[data-ui-style] :is(.ui-alert, .ui-toast) { --_glow: var(--_tone); }
+
+/* Buttons */
+[data-ui-style] .ui-button:is([data-variant='solid'], [data-variant='outline']) {
+  font-weight: var(--ui-style-button-weight, var(--ui-font-weight-bold));
+  text-transform: var(--ui-style-button-case, none);
+  transition: transform 90ms var(--ui-easing-standard), box-shadow 90ms var(--ui-easing-standard),
+    background-color var(--ui-duration-fast) var(--ui-easing-standard);
+}
+
+[data-ui-style] .ui-button:is([data-variant='solid'], [data-variant='outline']):active:not(:disabled, [aria-disabled='true'], [data-loading]) {
+  --_lift: calc(var(--ui-style-offset, 0px) / 3);
+
+  transform: var(--ui-style-press, none);
+}
+
+[data-ui-style] .ui-button[data-variant='solid'],
+[data-ui-style] .ui-button[data-variant='solid']:hover { background-image: var(--ui-style-button-fill, none); }
+
+[data-ui-style] .ui-button[data-variant='ghost']:hover:not(:disabled, [aria-disabled='true'], [data-loading]) {
+  background-image: var(--ui-style-hover-fill, none);
+  background-size: var(--ui-style-hover-fill-size, auto);
+}
+
+[data-ui-style] :is(.ui-link, .ui-button[data-variant='link']) {
+  text-decoration-style: var(--ui-style-link-line, solid);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 4px;
+}
+
+[data-ui-style] :is(.ui-heading, .ui-dialog__title, .ui-card__title, .ui-empty__title) { text-shadow: var(--ui-style-heading-shadow, none); }
+
+/* Inputs: focus and errors recolour the outline and shadow */
+[data-ui-style] :is(.ui-input:focus-within, .ui-select__trigger:focus-visible, .ui-select__trigger[data-state='open'], .ui-textarea:focus) {
+  --_ink: var(--ui-color-accent);
+  --_glow: var(--ui-color-accent);
+
+  box-shadow: var(--_ring, 0 0 0 1px var(--_ink)), var(--_lift) var(--_lift) var(--ui-style-blur, 0px) var(--_glow);
+}
+
+[data-ui-style] :is(.ui-input, .ui-select__trigger, .ui-textarea):is([data-invalid], [aria-invalid='true']) { --_ink: var(--ui-color-danger); --_glow: var(--ui-color-danger); }
+[data-ui-style] :is(.ui-input, .ui-select__trigger, .ui-textarea):is([data-disabled], :disabled) { --_ink: var(--ui-color-border-strong); --_glow: transparent; }
+[data-ui-style] :is(.ui-checkbox, .ui-radio, .ui-slider__thumb) { border: max(2px, var(--ui-style-border-width, 2px)) solid var(--ui-color-style-ink, currentcolor); }
+[data-ui-style] :is(.ui-switch, .ui-slider__track, .ui-progress__track) { box-shadow: 0 0 0 2px var(--ui-color-style-ink, currentcolor); }
+[data-ui-style] .ui-switch__thumb { box-shadow: 0 0 0 2px var(--ui-color-style-ink, currentcolor); }
+[data-ui-style] .ui-slider__track { height: 8px; }
+[data-ui-style] .ui-progress__bar { background-image: var(--ui-style-bar-fill, none); }
+
+/* Tabs, current page, picked day, badges, avatars */
+[data-ui-style] .ui-tabs[data-variant='line'] .ui-tabs__list { border-bottom: max(2px, var(--ui-style-border-width, 2px)) solid var(--ui-color-style-ink, currentcolor); }
+[data-ui-style] .ui-tabs[data-variant='line'] .ui-tabs__trigger[data-state='active']::after { bottom: -2px; height: 5px; border-radius: 5px 5px 0 0; }
+[data-ui-style] .ui-tabs[data-variant='pill'] .ui-tabs__trigger[data-state='active'] { background: var(--ui-color-accent); color: var(--ui-color-text-on-accent); box-shadow: none; }
+
+[data-ui-style] :is(.ui-pagination__item[aria-current='page'], .ui-calendar__day[data-selected]) {
+  box-shadow: 0 0 0 2px var(--ui-color-style-ink, currentcolor), var(--ui-style-offset, 0px) var(--ui-style-offset, 0px) var(--ui-style-blur, 0px) 2px var(--ui-color-style-shadow, transparent);
+}
+
+[data-ui-style] :is(.ui-badge:not([data-variant='outline']), .ui-tag) { box-shadow: inset 0 0 0 1.5px var(--ui-color-style-ink, currentcolor); font-weight: var(--ui-font-weight-bold); }
+[data-ui-style] .ui-avatar { box-shadow: 0 0 0 2px var(--ui-color-style-ink, currentcolor); }
+
+/* Table, accordion, dialog backdrop */
+[data-ui-style] .ui-table th { border-bottom: max(2px, var(--ui-style-border-width, 2px)) solid var(--ui-color-style-ink, currentcolor); }
+[data-ui-style] .ui-accordion__item { border-bottom: 2px var(--ui-style-divider, solid) var(--ui-color-style-ink, currentcolor); }
+
+[data-ui-style] .ui-overlay {
+  background-image: var(--ui-style-backdrop, none);
+  background-size: var(--ui-style-backdrop-size, auto);
+}
+
+/* Interactive cards lift on hover */
+[data-ui-style] .ui-card[data-interactive] { transition: transform 120ms var(--ui-easing-standard), box-shadow 120ms var(--ui-easing-standard); }
+
+[data-ui-style] .ui-card[data-interactive]:hover {
+  --_lift: calc(var(--ui-style-offset, 0px) * 2.2);
+
+  transform: var(--ui-style-raise, none);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-ui-style] :is(.ui-button, .ui-card) { transform: none !important; }
+}

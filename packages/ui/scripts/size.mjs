@@ -10,7 +10,8 @@ const budgets = [
   { name: 'TextField with Field', imports: 'TextField', kb: 4 },
   { name: 'Dialog, including its primitive', imports: 'Dialog', kb: 15 },
   { name: 'Typical page: Button, TextField, Dialog', imports: 'Button, TextField, Dialog, ThemeProvider', kb: 30 },
-  { name: 'Everything', imports: '*', kb: 70 },
+  // Raised from 70 KB in v0.2 for 19 more components (six more Radix primitives); single imports are unaffected.
+  { name: 'Everything', imports: '*', kb: 90 },
 ];
 
 let failed = false;

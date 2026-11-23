@@ -63,28 +63,6 @@ export function createTheme(options: ThemeOptions = {}): Theme {
   return theme;
 }
 
-// Plain constants (not FONT_STACKS.x reads) so `animeTheme` stays tree-shakable: bundlers treat a property
-// read as a possible side effect and would keep the theme, createTheme and the palette generator in every bundle.
-export const M_PLUS_ROUNDED_STACK = "'M PLUS Rounded 1c', ui-rounded, 'Hiragino Maru Gothic ProN', ui-sans-serif, system-ui, sans-serif";
-export const MOCHIY_POP_ONE_STACK = "'Mochiy Pop One', 'M PLUS Rounded 1c', ui-rounded, ui-sans-serif, system-ui, sans-serif";
-
-/**
- * Font stacks for `withFont()` and `createTheme({ tokens: { font } })`. The library ships no font files:
- * install the face in your app (e.g. `@fontsource/opendyslexic`) and import it once.
- */
-export const FONT_STACKS = {
-  /** The default: Inter, then the platform UI font. */
-  inter: "Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
-  /** No web font at all. */
-  system: "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
-  /** Dyslexia-friendly face (SIL Open Font License). Package: `@fontsource/opendyslexic`. */
-  openDyslexic: "OpenDyslexic, 'Comic Sans MS', ui-sans-serif, system-ui, sans-serif",
-  /** Rounded Japanese and Latin body face used by the anime style. Package: `@fontsource/m-plus-rounded-1c`. */
-  mPlusRounded: M_PLUS_ROUNDED_STACK,
-  /** Chunky display face used by the anime style (one weight, 400). Package: `@fontsource/mochiy-pop-one`. */
-  mochiyPopOne: MOCHIY_POP_ONE_STACK,
-} as const;
-
 export interface WithFontOptions {
   /** Also use the font for headings and titles. Default `true`. */
   display?: boolean;

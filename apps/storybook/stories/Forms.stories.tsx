@@ -5,7 +5,7 @@ import {
   Switch, TextField, Textarea,
 } from '@yourorg/ui';
 
-const meta = { title: 'Forms/Overview', parameters: { layout: 'padded' } } satisfies Meta;
+const meta = { title: 'Components/Forms/Overview', parameters: { layout: 'padded' } } satisfies Meta;
 export default meta;
 type Story = StoryObj<typeof meta>;
 

@@ -44,14 +44,20 @@ export interface CalendarProps {
   weekStartsOn?: number;
   /** Move focus into the grid on mount. */
   autoFocus?: boolean;
+  /** Range mode: highlights start, end and the days between (the end follows the pointer while it is unset). */
+  range?: { start: Date | null; end: Date | null };
   className?: string;
 }
 
 /** A month grid for picking a date, following the WAI-ARIA date picker dialog pattern. */
-export function Calendar({ value, onSelect, min, max, isDateDisabled, locale: lang, weekStartsOn, autoFocus, className }: CalendarProps) {
+export function Calendar({ value, onSelect, min, max, isDateDisabled, locale: lang, weekStartsOn, autoFocus, range, className }: CalendarProps) {
   const locale = useLocale();
   const titleId = React.useId();
-  const [focused, setFocused] = React.useState(() => startOfDay(value ?? new Date()));
+  const [focused, setFocused] = React.useState(() => startOfDay(value ?? range?.start ?? new Date()));
+  const [hovered, setHovered] = React.useState<Date | null>(null);
+  const rangeStart = range?.start ?? null;
+  const rangeEnd = range ? (range.end ?? (rangeStart ? (hovered ?? focused) : null)) : null;
+  const [lo, hi] = rangeStart && rangeEnd && rangeEnd < rangeStart ? [rangeEnd, rangeStart] : [rangeStart, rangeEnd];
   const gridRef = React.useRef<HTMLTableElement>(null);
   const keyboardMoved = React.useRef(autoFocus ?? false);
   const first = weekStartsOn ?? weekStart(lang);
@@ -126,10 +132,12 @@ export function Calendar({ value, onSelect, min, max, isDateDisabled, locale: la
             <tr key={wi}>
               {week.map((d) => {
                 const outside = d.getMonth() !== focused.getMonth();
-                const isSelected = sameDay(d, value);
+                const isEdge = !!range && (sameDay(d, lo) || sameDay(d, hi));
+                const inRange = !!lo && !!hi && d > lo && d < hi;
+                const isSelected = range ? isEdge : sameDay(d, value);
                 const isDisabled = disabled(d);
                 return (
-                  <td key={d.toISOString()} role="gridcell" aria-selected={isSelected || undefined}>
+                  <td key={d.toISOString()} role="gridcell" aria-selected={isSelected || inRange || undefined}>
                     <button
                       type="button"
                       tabIndex={sameDay(d, focused) ? 0 : -1}
@@ -137,6 +145,8 @@ export function Calendar({ value, onSelect, min, max, isDateDisabled, locale: la
                       data-outside={outside || undefined}
                       data-today={sameDay(d, today) || undefined}
                       data-selected={isSelected || undefined}
+                      data-in-range={inRange || undefined}
+                      onMouseEnter={range ? () => setHovered(d) : undefined}
                       aria-label={dayFmt.format(d)}
                       aria-current={sameDay(d, today) ? 'date' : undefined}
                       aria-disabled={isDisabled || undefined}

@@ -2,7 +2,7 @@ import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Breadcrumbs, Pagination, Stack, Tabs, Text } from '@yourorg/ui';
 
-const meta = { title: 'Navigation/Overview' } satisfies Meta;
+const meta = { title: 'Components/Navigation/Overview' } satisfies Meta;
 export default meta;
 type Story = StoryObj<typeof meta>;
 

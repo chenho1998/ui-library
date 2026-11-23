@@ -7,6 +7,8 @@ const config: StorybookConfig = {
   framework: '@storybook/react-vite',
   stories: ['../stories/**/*.mdx', '../stories/**/*.stories.@(ts|tsx)'],
   addons: ['@storybook/addon-docs', '@storybook/addon-a11y'],
+  staticDirs: ['../public'],
+  core: { disableWhatsNewNotifications: true },
   // Work against the component source so edits hot-reload.
   viteFinal: async (cfg) => {
     cfg.resolve ??= {};

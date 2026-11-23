@@ -2,7 +2,7 @@ import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Alert, Button, Progress, Skeleton, Spinner, Stack, toast } from '@yourorg/ui';
 
-const meta = { title: 'Feedback/Overview' } satisfies Meta;
+const meta = { title: 'Components/Feedback/Overview' } satisfies Meta;
 export default meta;
 type Story = StoryObj<typeof meta>;
 

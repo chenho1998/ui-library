@@ -1,0 +1,45 @@
+/* Theme-only effects that style tokens can't express. Everything else is in expressive.css. */
+
+/* Anime: sparkles on hover and keyboard focus */
+[data-ui-style='anime'] .ui-button:is([data-variant='solid'], [data-variant='outline'])::before,
+[data-ui-style='anime'] .ui-button:is([data-variant='solid'], [data-variant='outline'])::after {
+  content: '';
+  position: absolute;
+  background: var(--ui-color-anime-sparkle, #ffb300);
+  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+  opacity: 0;
+  transform: scale(0.2) rotate(-45deg);
+  transition: opacity 150ms, transform 220ms var(--ui-easing-enter);
+  pointer-events: none;
+}
+
+[data-ui-style='anime'] .ui-button:is([data-variant='solid'], [data-variant='outline'])::after { inset-block-start: -10px; inset-inline-end: -10px; width: 18px; height: 18px; }
+[data-ui-style='anime'] .ui-button:is([data-variant='solid'], [data-variant='outline'])::before { inset-block-end: -7px; inset-inline-start: -7px; width: 11px; height: 11px; }
+
+[data-ui-style='anime'] .ui-button:is([data-variant='solid'], [data-variant='outline']):is(:hover, :focus-visible):not(:disabled, [aria-disabled='true'])::before,
+[data-ui-style='anime'] .ui-button:is([data-variant='solid'], [data-variant='outline']):is(:hover, :focus-visible):not(:disabled, [aria-disabled='true'])::after {
+  opacity: 1;
+  transform: scale(1) rotate(0);
+  animation: ui-anime-twinkle 900ms ease-in-out 250ms infinite alternate;
+}
+
+@keyframes ui-anime-twinkle { to { transform: scale(0.7) rotate(20deg); } }
+
+/* Pixel: notched outlines drawn with shadows (its border width is 0), crisp type */
+[data-ui-style='pixel'] { -webkit-font-smoothing: none; }
+
+[data-ui-style='pixel'] * {
+  --_ring: 0 -3px var(--_ink, transparent), 0 3px var(--_ink, transparent), -3px 0 var(--_ink, transparent), 3px 0 var(--_ink, transparent);
+}
+
+/* Sketch: cards without form fields sit slightly askew, like notes on a desk */
+[data-ui-style='sketch'] .ui-card:not(:has(input, textarea, [role='combobox'])):nth-child(odd) { rotate: -0.6deg; }
+[data-ui-style='sketch'] .ui-card:not(:has(input, textarea, [role='combobox'])):nth-child(even) { rotate: 0.5deg; }
+
+/* Neon: the glow grows on hover and focus */
+[data-ui-style='neon'] .ui-button:is([data-variant='solid'], [data-variant='outline']):is(:hover, :focus-visible):not(:disabled, [aria-disabled='true']),
+[data-ui-style='neon'] .ui-card[data-interactive]:hover {
+  box-shadow: 0 0 18px var(--_glow), inset 0 0 8px var(--_glow);
+}
+
+[data-ui-style='neon'] .ui-link:hover { text-shadow: 0 0 8px currentcolor; }

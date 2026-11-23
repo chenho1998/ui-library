@@ -5,7 +5,7 @@ import {
   Select, Stack, Switch, Tabs, Text, TextField, Textarea, toast, useTheme,
 } from '@yourorg/ui';
 
-const meta = { title: 'Examples/Settings page', parameters: { layout: 'fullscreen' } } satisfies Meta;
+const meta = { title: 'Patterns/Settings page', parameters: { layout: 'fullscreen' } } satisfies Meta;
 export default meta;
 type Story = StoryObj<typeof meta>;
 

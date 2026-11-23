@@ -26,6 +26,17 @@
     "at-rule-empty-line-before": null,
     "comment-empty-line-before": null,
     "import-notation": "string",
-    "declaration-empty-line-before": null
+    "declaration-empty-line-before": null,
+    "length-zero-no-unit": [
+      true,
+      {
+        "ignore": [
+          "custom-properties"
+        ],
+        "ignoreFunctions": [
+          "var"
+        ]
+      }
+    ]
   }
 }

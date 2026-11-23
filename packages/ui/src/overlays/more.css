@@ -1,0 +1,42 @@
+/* CommandPalette */
+.ui-command {
+  top: 15vh; transform: translateX(-50%);
+  width: min(640px, calc(100vw - 32px)); padding: 0; gap: 0; overflow: hidden;
+  animation: ui-command-in var(--ui-duration-normal) var(--ui-easing-enter);
+}
+@keyframes ui-command-in { from { opacity: 0; transform: translate(-50%, -8px) scale(0.98); } to { opacity: 1; transform: translateX(-50%); } }
+.ui-command__search {
+  display: flex; align-items: center; gap: var(--ui-space-3); padding: 0 var(--ui-space-4);
+  border-bottom: 1px solid var(--ui-color-border); color: var(--ui-color-text-secondary);
+}
+.ui-command__input {
+  flex: 1; height: 52px; border: 0; outline: 0; background: transparent;
+  color: var(--ui-color-text-primary); font: inherit; font-size: var(--ui-text-md);
+}
+.ui-command__input::placeholder { color: var(--ui-color-text-secondary); }
+/* The open palette is the focus indicator; a ring inside it would be clipped and redundant. */
+.ui-command__input:focus-visible { outline: none; }
+.ui-command__list { max-height: min(400px, 60vh); overflow-y: auto; padding: var(--ui-space-2); }
+.ui-command__empty { padding: var(--ui-space-8) var(--ui-space-4); color: var(--ui-color-text-secondary); font-size: var(--ui-text-sm); text-align: center; }
+
+/* HoverCard */
+.ui-hover-card { width: 300px; }
+
+/* Kbd */
+.ui-kbd {
+  display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 6px;
+  border: 1px solid var(--ui-color-border-strong); border-bottom-width: 2px; border-radius: var(--ui-radius-sm);
+  background: var(--ui-color-surface); color: var(--ui-color-text-primary);
+  font-family: var(--ui-font-mono); font-size: var(--ui-text-xs); line-height: 1;
+}
+.ui-kbd + .ui-kbd { margin-inline-start: 4px; }
+
+/* ScrollArea */
+.ui-scroll { position: relative; overflow: hidden; }
+.ui-scroll__viewport { width: 100%; height: 100%; max-height: inherit; border-radius: inherit; }
+.ui-scroll__viewport:focus-visible { outline: 2px solid var(--ui-color-focus-ring); outline-offset: -2px; }
+.ui-scroll__bar { display: flex; padding: 2px; touch-action: none; user-select: none; }
+.ui-scroll__bar[data-orientation='vertical'] { width: 10px; }
+.ui-scroll__bar[data-orientation='horizontal'] { height: 10px; flex-direction: column; }
+.ui-scroll__thumb { position: relative; flex: 1; border-radius: var(--ui-radius-full); background: var(--ui-color-border-strong); }
+.ui-scroll__thumb:hover { background: var(--ui-color-text-secondary); }

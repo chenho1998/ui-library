@@ -2,7 +2,11 @@ import * as React from 'react';
 import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { contrast, semanticRefs, tokens } from '@yourorg/tokens';
-import { Button, FONT_STACKS, ThemeProvider, animeTheme, createTheme, withFont, type Theme } from '../src';
+import {
+  Button, FONT_STACKS, ThemeProvider, animeTheme, brutalistTheme, createTheme, neonTheme, pixelTheme, sketchTheme, withFont, type Theme,
+} from '../src';
+
+const THEMES = { anime: animeTheme, pixel: pixelTheme, brutalist: brutalistTheme, sketch: sketchTheme, neon: neonTheme };
 
 const rootOf = (container: HTMLElement) => container.querySelector('.ui-theme')!;
 
@@ -40,14 +44,25 @@ describe('Anime theme', () => {
     expect(root.style.getPropertyValue('--ui-font-sans')).toBe(FONT_STACKS.mPlusRounded);
   });
 
-  it.each(['light', 'dark'] as const)('meets the token contrast targets in %s mode', (scheme) => {
-    const colors = resolvedColors(animeTheme, scheme);
+});
+
+describe('Built-in themes', () => {
+  const cases = Object.entries(THEMES).flatMap(([name, theme]) => (['light', 'dark'] as const).map((scheme) => [name, scheme, theme] as const));
+
+  it.each(cases)('%s meets the token contrast targets in %s mode', (_name, scheme, theme) => {
+    const colors = resolvedColors(theme, scheme);
     const failures = PAIRS.filter(([fg, bg, min]) => contrast(colors[fg]!, colors[bg]!) < min).map(
       ([fg, bg, min]) => `${fg} on ${bg}: ${contrast(colors[fg]!, colors[bg]!).toFixed(2)} < ${min}`,
     );
     expect(failures).toEqual([]);
     // Outlines must stand out from the page.
-    expect(contrast(colors['anime-ink']!, colors.bg!)).toBeGreaterThanOrEqual(3);
+    expect(contrast(colors['style-ink']!, colors.bg!)).toBeGreaterThanOrEqual(3);
+  });
+
+  it.each(Object.entries(THEMES))('%s sets its style name and style tokens', (name, theme) => {
+    expect(theme.style).toBe(name);
+    expect(theme.vars['--ui-style-border-width']).toBeDefined();
+    expect(theme.vars['--ui-font-display']).toBeDefined();
   });
 });
 

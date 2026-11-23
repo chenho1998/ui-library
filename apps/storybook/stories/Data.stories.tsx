@@ -4,7 +4,7 @@ import {
   Accordion, Avatar, Badge, Button, Card, EmptyState, Grid, PlusIcon, Stack, Table, Tag, Text, type TableSort,
 } from '@yourorg/ui';
 
-const meta = { title: 'Data display/Overview' } satisfies Meta;
+const meta = { title: 'Components/Data display/Overview' } satisfies Meta;
 export default meta;
 type Story = StoryObj<typeof meta>;
 
