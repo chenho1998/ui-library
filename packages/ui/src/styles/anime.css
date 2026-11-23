@@ -1,0 +1,133 @@
+/* Anime style. Opt in with <ThemeProvider theme={animeTheme}>, which sets data-ui-style="anime".
+   Colours come from the theme: --ui-color-anime-ink (outlines), -shadow (offset shadows), -sparkle. */
+
+/* Buttons: ink outline, chunky offset shadow that squashes on press */
+[data-ui-style='anime'] .ui-button:is([data-variant='solid'], [data-variant='outline']) {
+  border: 2.5px solid var(--ui-color-anime-ink);
+  box-shadow: 3px 3px 0 var(--ui-color-anime-shadow);
+  font-weight: var(--ui-font-weight-bold);
+  transition: transform 90ms var(--ui-easing-standard), box-shadow 90ms var(--ui-easing-standard),
+    background-color var(--ui-duration-fast) var(--ui-easing-standard);
+}
+
+[data-ui-style='anime'] .ui-button:is([data-variant='solid'], [data-variant='outline']):active:not(:disabled, [aria-disabled='true'], [data-loading]) {
+  transform: translate(2px, 2px) scale(1.03, 0.94);
+  box-shadow: 1px 1px 0 var(--ui-color-anime-shadow);
+}
+
+/* Cel shading: a hard-edged highlight band across the top of solid buttons */
+[data-ui-style='anime'] .ui-button[data-variant='solid'],
+[data-ui-style='anime'] .ui-button[data-variant='solid']:hover {
+  background-image: linear-gradient(180deg, transparent 0 10%, rgb(255 255 255 / 30%) 10% 40%, transparent 40%);
+}
+
+/* Sparkles on hover and keyboard focus */
+[data-ui-style='anime'] .ui-button:is([data-variant='solid'], [data-variant='outline'])::before,
+[data-ui-style='anime'] .ui-button:is([data-variant='solid'], [data-variant='outline'])::after {
+  content: '';
+  position: absolute;
+  background: var(--ui-color-anime-sparkle);
+  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+  opacity: 0;
+  transform: scale(0.2) rotate(-45deg);
+  transition: opacity 150ms, transform 220ms var(--ui-easing-enter);
+  pointer-events: none;
+}
+
+[data-ui-style='anime'] .ui-button:is([data-variant='solid'], [data-variant='outline'])::after { inset-block-start: -10px; inset-inline-end: -10px; width: 18px; height: 18px; }
+[data-ui-style='anime'] .ui-button:is([data-variant='solid'], [data-variant='outline'])::before { inset-block-end: -7px; inset-inline-start: -7px; width: 11px; height: 11px; }
+
+[data-ui-style='anime'] .ui-button:is([data-variant='solid'], [data-variant='outline']):is(:hover, :focus-visible):not(:disabled, [aria-disabled='true'])::before,
+[data-ui-style='anime'] .ui-button:is([data-variant='solid'], [data-variant='outline']):is(:hover, :focus-visible):not(:disabled, [aria-disabled='true'])::after {
+  opacity: 1;
+  transform: scale(1) rotate(0);
+  animation: ui-anime-twinkle 900ms ease-in-out 250ms infinite alternate;
+}
+
+@keyframes ui-anime-twinkle { to { transform: scale(0.7) rotate(20deg); } }
+
+/* Manga screentone on ghost hover */
+[data-ui-style='anime'] .ui-button[data-variant='ghost']:hover:not(:disabled, [aria-disabled='true'], [data-loading]) {
+  background-image: radial-gradient(color-mix(in srgb, currentcolor 30%, transparent) 1px, transparent 1.4px);
+  background-size: 5px 5px;
+}
+
+/* Wavy underlines */
+[data-ui-style='anime'] :is(.ui-link, .ui-button[data-variant='link']) {
+  text-decoration-style: wavy;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 4px;
+}
+
+/* Inputs: ink outline and a small offset shadow; focus turns both brand pink */
+[data-ui-style='anime'] :is(.ui-input, .ui-select__trigger, .ui-textarea) {
+  border: 2.5px solid var(--ui-color-anime-ink);
+  box-shadow: 2px 2px 0 var(--ui-color-anime-shadow);
+}
+
+[data-ui-style='anime'] :is(.ui-input:focus-within, .ui-select__trigger:focus-visible, .ui-select__trigger[data-state='open'], .ui-textarea:focus) {
+  border-color: var(--ui-color-accent);
+  box-shadow: 3px 3px 0 var(--ui-color-accent);
+}
+
+[data-ui-style='anime'] :is(.ui-input, .ui-select__trigger, .ui-textarea):is([data-invalid], [aria-invalid='true']) {
+  border-color: var(--ui-color-danger);
+  box-shadow: 2px 2px 0 var(--ui-color-danger);
+}
+
+[data-ui-style='anime'] :is(.ui-input, .ui-select__trigger, .ui-textarea):is([data-disabled], :disabled) { border-color: var(--ui-color-border-strong); box-shadow: none; }
+[data-ui-style='anime'] :is(.ui-checkbox, .ui-radio) { border: 2.5px solid var(--ui-color-anime-ink); }
+
+/* Cards and floating surfaces */
+[data-ui-style='anime'] .ui-card:not([data-variant='subtle']),
+[data-ui-style='anime'] :is(.ui-dialog, .ui-popover, .ui-menu-surface, .ui-toast) {
+  border: 2.5px solid var(--ui-color-anime-ink);
+  box-shadow: 5px 5px 0 var(--ui-color-anime-shadow);
+}
+
+[data-ui-style='anime'] .ui-card[data-interactive] { transition: transform 120ms var(--ui-easing-standard), box-shadow 120ms var(--ui-easing-standard); }
+[data-ui-style='anime'] .ui-card[data-interactive]:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--ui-color-anime-shadow); }
+
+/* Headings and titles: a soft pink offset behind the display face */
+[data-ui-style='anime'] :is(.ui-heading, .ui-dialog__title, .ui-card__title, .ui-empty__title) {
+  text-shadow: 2px 2px 0 color-mix(in srgb, var(--ui-color-accent) 30%, transparent);
+}
+
+/* Tabs */
+[data-ui-style='anime'] .ui-tabs[data-variant='line'] .ui-tabs__list { border-bottom: 2.5px solid var(--ui-color-anime-ink); }
+[data-ui-style='anime'] .ui-tabs[data-variant='line'] .ui-tabs__trigger[data-state='active']::after { bottom: -2.5px; height: 5px; border-radius: 5px 5px 0 0; }
+[data-ui-style='anime'] .ui-tabs[data-variant='pill'] .ui-tabs__list { border: 2.5px solid var(--ui-color-anime-ink); box-shadow: 3px 3px 0 var(--ui-color-anime-shadow); }
+[data-ui-style='anime'] .ui-tabs[data-variant='pill'] .ui-tabs__trigger[data-state='active'] { background: var(--ui-color-accent); color: var(--ui-color-text-on-accent); box-shadow: none; }
+
+/* Current page and picked day: inked stickers */
+[data-ui-style='anime'] :is(.ui-pagination__item[aria-current='page'], .ui-calendar__day[data-selected]) {
+  box-shadow: 0 0 0 2px var(--ui-color-anime-ink), 3px 3px 0 2px var(--ui-color-anime-shadow);
+}
+
+/* Badges, tags and avatars */
+[data-ui-style='anime'] :is(.ui-badge:not([data-variant='outline']), .ui-tag) { box-shadow: inset 0 0 0 1.5px var(--ui-color-anime-ink); font-weight: var(--ui-font-weight-bold); }
+[data-ui-style='anime'] .ui-avatar { box-shadow: 0 0 0 2px var(--ui-color-anime-ink); }
+
+/* Alerts: inked panels with a shadow in their tone */
+[data-ui-style='anime'] .ui-alert { border: 2.5px solid var(--ui-color-anime-ink); box-shadow: 4px 4px 0 var(--_tone); }
+
+/* Switch, slider and progress */
+[data-ui-style='anime'] .ui-switch { box-shadow: inset 0 0 0 2px var(--ui-color-anime-ink); }
+[data-ui-style='anime'] .ui-switch__thumb { box-shadow: 0 0 0 2px var(--ui-color-anime-ink); }
+[data-ui-style='anime'] .ui-slider__track { height: 8px; }
+[data-ui-style='anime'] :is(.ui-slider__track, .ui-progress__track) { box-shadow: 0 0 0 2px var(--ui-color-anime-ink); }
+[data-ui-style='anime'] .ui-slider__thumb { border: 2.5px solid var(--ui-color-anime-ink); box-shadow: 2px 2px 0 var(--ui-color-anime-shadow); }
+[data-ui-style='anime'] .ui-progress__bar { background-image: repeating-linear-gradient(-45deg, transparent 0 6px, rgb(255 255 255 / 30%) 6px 12px); }
+
+/* Table and accordion */
+[data-ui-style='anime'] .ui-table-wrap { border: 2.5px solid var(--ui-color-anime-ink); box-shadow: 5px 5px 0 var(--ui-color-anime-shadow); }
+[data-ui-style='anime'] .ui-table th { border-bottom: 2.5px solid var(--ui-color-anime-ink); }
+[data-ui-style='anime'] .ui-accordion__item { border-bottom: 2px dashed var(--ui-color-anime-ink); }
+
+/* Tooltip as a speech bubble; dialog backdrop as screentone */
+[data-ui-style='anime'] .ui-tooltip { border: 2px solid var(--ui-color-anime-ink); border-radius: var(--ui-radius-lg); box-shadow: 3px 3px 0 var(--ui-color-anime-shadow); }
+[data-ui-style='anime'] .ui-overlay { background-image: radial-gradient(rgb(255 255 255 / 14%) 1px, transparent 1.5px); background-size: 6px 6px; }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-ui-style='anime'] :is(.ui-button, .ui-card) { transform: none !important; }
+}

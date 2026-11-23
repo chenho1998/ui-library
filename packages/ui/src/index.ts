@@ -1,8 +1,9 @@
 // Theme
 export { ThemeProvider, useTheme, useLocale, usePortalContainer, getThemeScript, defaultLocale } from './theme/ThemeProvider';
 export type { ThemeProviderProps, ColorScheme, Locale } from './theme/ThemeProvider';
-export { createTheme } from './theme/createTheme';
-export type { Theme, ThemeOptions } from './theme/createTheme';
+export { createTheme, withFont, FONT_STACKS } from './theme/createTheme';
+export type { Theme, ThemeOptions, WithFontOptions } from './theme/createTheme';
+export { animeTheme } from './theme/animeTheme';
 
 // Layout and type
 export * from './layout';

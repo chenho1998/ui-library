@@ -26,6 +26,10 @@ export interface Locale {
   selectAll: string;
   selectRow: (name: string) => string;
   characterCount: (count: number, max: number) => string;
+  /** Announced as Combobox results change. */
+  results: (count: number) => string;
+  /** Label for the button that removes one selected value (Combobox, Tag). */
+  removeItem: (label: string) => string;
 }
 
 export const defaultLocale: Locale = {
@@ -50,6 +54,8 @@ export const defaultLocale: Locale = {
   selectAll: 'Select all rows',
   selectRow: (name) => `Select ${name}`,
   characterCount: (count, max) => `${count} of ${max} characters`,
+  results: (count) => (count === 1 ? '1 result' : `${count} results`),
+  removeItem: (label) => `Remove ${label}`,
 };
 
 interface ThemeContextValue {
@@ -73,16 +79,20 @@ export const useLocale = () => React.useContext(ThemeContext).locale;
 /** Container that overlays portal into, so they inherit the theme's CSS variables. */
 export const usePortalContainer = () => React.useContext(ThemeContext).portalContainer ?? undefined;
 
+const DARK_QUERY = '(prefers-color-scheme: dark)';
+const darkQuery = () => (typeof window !== 'undefined' && window.matchMedia ? window.matchMedia(DARK_QUERY) : null);
+const subscribeToScheme = (onChange: () => void) => {
+  const mq = darkQuery();
+  mq?.addEventListener?.('change', onChange);
+  return () => mq?.removeEventListener?.('change', onChange);
+};
+
 function useSystemScheme(): 'light' | 'dark' {
-  const [dark, setDark] = React.useState(false);
-  React.useEffect(() => {
-    if (typeof window === 'undefined' || !window.matchMedia) return;
-    const mq = window.matchMedia('(prefers-color-scheme: dark)');
-    setDark(mq.matches);
-    const onChange = (e: MediaQueryListEvent) => setDark(e.matches);
-    mq.addEventListener?.('change', onChange);
-    return () => mq.removeEventListener?.('change', onChange);
-  }, []);
+  const dark = React.useSyncExternalStore(
+    subscribeToScheme,
+    () => darkQuery()?.matches ?? false,
+    () => false, // server render: light until hydrated (getThemeScript avoids the flash)
+  );
   return dark ? 'dark' : 'light';
 }
 
@@ -163,7 +173,7 @@ export const ThemeProvider = /* @__PURE__ */ React.forwardRef<HTMLDivElement, Th
 
   return (
     <ThemeContext.Provider value={value}>
-      <div ref={ref} data-theme={colorScheme} className={cx('ui-theme', className)} style={themeStyle} {...rest}>
+      <div ref={ref} data-theme={colorScheme} data-ui-style={theme?.style} className={cx('ui-theme', className)} style={themeStyle} {...rest}>
         {children}
         <div ref={setPortalContainer} data-ui-portal-root="" />
       </div>

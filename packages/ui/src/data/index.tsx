@@ -114,7 +114,7 @@ export interface TagProps extends React.HTMLAttributes<HTMLSpanElement> {
   tone?: BadgeProps['tone'];
   /** Shows a remove button. */
   onRemove?: () => void;
-  /** Accessible label for the remove button. Default "Remove <children>" if children is a string. */
+  /** Accessible label for the remove button. Default: the locale's `removeItem(children)` if children is a string. */
   removeLabel?: string;
   disabled?: boolean;
 }
@@ -124,7 +124,8 @@ export const Tag = /* @__PURE__ */ React.forwardRef<HTMLSpanElement, TagProps>(f
   { tone = 'neutral', onRemove, removeLabel, disabled, className, children, ...rest },
   ref,
 ) {
-  const label = removeLabel ?? (typeof children === 'string' ? `Remove ${children}` : 'Remove');
+  const locale = useLocale();
+  const label = removeLabel ?? (typeof children === 'string' ? locale.removeItem(children) : locale.dismiss);
   return (
     <span ref={ref} className={cx('ui-tag', className)} data-tone={tone} data-disabled={disabled || undefined} {...rest}>
       <span className="ui-tag__label">{children}</span>

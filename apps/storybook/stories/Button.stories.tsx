@@ -47,7 +47,7 @@ export const SizesAndStates: Story = {
 
 export const IconButtons: Story = {
   render: () => (
-    <Stack direction="row" gap={2}>
+    <Stack direction="row" gap={2} align="center">
       <Tooltip content="More actions">
         <IconButton aria-label="More actions"><MoreIcon /></IconButton>
       </Tooltip>

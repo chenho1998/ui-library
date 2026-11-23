@@ -9,3 +9,4 @@
 @import '../feedback/feedback.css' layer(ui.components);
 @import '../navigation/navigation.css' layer(ui.components);
 @import '../data/data.css' layer(ui.components);
+@import './anime.css' layer(ui.components);

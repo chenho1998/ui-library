@@ -60,6 +60,73 @@ export const Selection: Story = {
   },
 };
 
+export const ComboboxMultiple: Story = {
+  name: 'Combobox: multiple',
+  render: function Render() {
+    const [picked, setPicked] = React.useState<string[]>(['kuala-lumpur', 'singapore']);
+    return (
+      <div style={{ maxWidth: 420 }}>
+        <Combobox
+          multiple
+          label="Cities to visit"
+          hint="Pick as many as you like. Backspace removes the last one."
+          options={cities}
+          value={picked}
+          onValueChange={setPicked}
+          placeholder="Type to search"
+          name="cities"
+        />
+      </div>
+    );
+  },
+};
+
+// Pretend server: filters the cities after a short delay.
+function searchCities(query: string): Promise<typeof cities> {
+  const q = query.trim().toLowerCase();
+  return new Promise((resolve) => setTimeout(() => resolve(cities.filter((c) => c.label.toLowerCase().includes(q))), 600));
+}
+
+// Loads options from the pretend server, ignoring responses that arrive out of order.
+function useCitySearch() {
+  const [options, setOptions] = React.useState<typeof cities>([]);
+  const [loading, setLoading] = React.useState(true);
+  const latest = React.useRef(0);
+  const fetchCities = React.useCallback((query: string) => {
+    const call = ++latest.current;
+    void searchCities(query).then((result) => {
+      if (call !== latest.current) return;
+      setOptions(result);
+      setLoading(false);
+    });
+  }, []);
+  const load = React.useCallback(
+    (query: string) => {
+      setLoading(true);
+      fetchCities(query);
+    },
+    [fetchCities],
+  );
+  React.useEffect(() => fetchCities(''), [fetchCities]);
+  return { options, loading, onInputChange: load, filter: false as const };
+}
+
+export const ComboboxAsync: Story = {
+  name: 'Combobox: async loading',
+  render: function Render() {
+    const single = useCitySearch();
+    const several = useCitySearch();
+    return (
+      <div style={{ maxWidth: 420 }}>
+        <Stack gap={6}>
+          <Combobox label="City (server search)" placeholder="Type to search" {...single} />
+          <Combobox multiple label="Cities (server search)" placeholder="Type to search" {...several} />
+        </Stack>
+      </div>
+    );
+  },
+};
+
 export const Choices: Story = {
   render: function Render() {
     const [items, setItems] = React.useState({ email: true, sms: false, push: true });

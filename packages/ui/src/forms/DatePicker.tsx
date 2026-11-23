@@ -218,9 +218,8 @@ export const DatePicker = /* @__PURE__ */ React.forwardRef<HTMLButtonElement, Da
               disabled={disabled}
               aria-haspopup="dialog"
               aria-labelledby={label ? `${ctx.labelId} ${ctx.id}` : undefined}
+              // A button can't carry aria-invalid/aria-required; the label marks "required" and the error is in the description.
               aria-describedby={[ctx.hintId, ctx.errorId].filter(Boolean).join(' ') || undefined}
-              aria-invalid={ctx.invalid || undefined}
-              aria-required={required || undefined}
             >
               <span className="ui-date-picker__value">{current ? fmt.format(current) : (placeholder ?? locale.chooseDate)}</span>
               <CalendarIcon size="sm" className="ui-icon ui-date-picker__icon" />
@@ -236,6 +235,8 @@ export const DatePicker = /* @__PURE__ */ React.forwardRef<HTMLButtonElement, Da
                 isDateDisabled={isDateDisabled}
                 locale={lang}
                 weekStartsOn={weekStartsOn}
+                // WAI-ARIA date picker dialog: focus moves to the selected (or today's) day when it opens.
+                // eslint-disable-next-line jsx-a11y/no-autofocus
                 autoFocus
                 onSelect={(d) => {
                   if (value === undefined) setInner(d);

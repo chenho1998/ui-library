@@ -18,7 +18,7 @@
 .ui-card[data-interactive]:hover { border-color: var(--ui-color-border-strong); box-shadow: var(--ui-shadow-md); }
 .ui-card[data-interactive]:focus-visible { outline: 2px solid var(--ui-color-focus-ring); outline-offset: 2px; }
 .ui-card__header { display: grid; gap: var(--ui-space-1); }
-.ui-card__title { margin: 0; font-size: var(--ui-text-lg); line-height: var(--ui-leading-lg); font-weight: var(--ui-font-weight-semibold); }
+.ui-card__title { margin: 0; font-size: var(--ui-text-lg); line-height: var(--ui-leading-lg); font-family: var(--ui-font-display, var(--ui-font-sans)); font-weight: var(--ui-font-display-weight, var(--ui-font-weight-semibold)); }
 .ui-card__description { margin: 0; color: var(--ui-color-text-secondary); font-size: var(--ui-text-sm); line-height: var(--ui-leading-sm); }
 .ui-card__footer { display: flex; gap: var(--ui-space-2); align-items: center; margin-top: auto; padding-top: var(--ui-space-2); }
 
@@ -76,7 +76,7 @@
   border: 0; border-radius: var(--ui-radius-sm); padding: 0;
   background: transparent; color: inherit; cursor: pointer;
 }
-.ui-tag__remove:hover:not(:disabled) { background: color-mix(in srgb, currentColor 15%, transparent); }
+.ui-tag__remove:hover:not(:disabled) { background: color-mix(in srgb, currentcolor 15%, transparent); }
 
 /* Accordion */
 .ui-accordion { border-top: 1px solid var(--ui-color-border); }
@@ -102,7 +102,7 @@
 /* EmptyState */
 .ui-empty { display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--ui-space-2); padding: var(--ui-space-10) var(--ui-space-6); }
 .ui-empty__icon { display: flex; color: var(--ui-color-text-secondary); margin-bottom: var(--ui-space-1); }
-.ui-empty__title { margin: 0; font-weight: var(--ui-font-weight-semibold); }
+.ui-empty__title { margin: 0; font-family: var(--ui-font-display, var(--ui-font-sans)); font-weight: var(--ui-font-display-weight, var(--ui-font-weight-semibold)); }
 .ui-empty__description { margin: 0; max-width: 40ch; color: var(--ui-color-text-secondary); font-size: var(--ui-text-sm); line-height: var(--ui-leading-sm); }
 .ui-empty__action { margin-top: var(--ui-space-3); }
 

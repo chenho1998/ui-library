@@ -420,7 +420,7 @@ const SelectRoot = /* @__PURE__ */ React.forwardRef<HTMLButtonElement, SelectPro
   );
 });
 
-export interface SelectItemProps extends React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item> {}
+export type SelectItemProps = React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>;
 
 export const SelectItem = /* @__PURE__ */ React.forwardRef<HTMLDivElement, SelectItemProps>(function SelectItem(
   { className, children, ...rest },

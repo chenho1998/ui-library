@@ -224,39 +224,71 @@ export function Toaster({ position = 'bottom-right', max = 3, hotkey = 'F8' }: T
     <section aria-label={`${locale.notifications} (${hotkey})`} className="ui-toaster" data-position={position}>
       <ol ref={regionRef} className="ui-toaster__list" aria-live="polite" aria-relevant="additions">
         {list.slice(0, max).map((t) => (
-          <ToastItem key={t.id} record={t} />
+          <ToastItem key={t.id} record={t} position={position} />
         ))}
       </ol>
     </section>
   );
 }
 
-function ToastItem({ record }: { record: ToastRecord }) {
+const SWIPE_START = 6; // px of horizontal movement before a drag counts as a swipe
+const SWIPE_DISMISS = 80; // px
+const SWIPE_FLICK = 0.5; // px per ms
+const EXIT_MS = 200;
+
+function ToastItem({ record, position }: { record: ToastRecord; position: NonNullable<ToasterProps['position']> }) {
   const locale = useLocale();
   const [paused, setPaused] = React.useState(false);
-  const [dx, setDx] = React.useState(0);
-  const start = React.useRef<number | null>(null);
+  const [dx, setDx] = React.useState<number | null>(null); // horizontal offset while dragging
+  const [leaving, setLeaving] = React.useState<-1 | 0 | 1>(0); // exit direction once dismissed by swipe
+  const gesture = React.useRef<{ x: number; y: number; t: number; swiping: boolean } | null>(null);
   const remaining = React.useRef(record.duration);
-  const since = React.useRef(Date.now());
+  const since = React.useRef(0); // set when the timer starts
+  const held = paused || dx !== null || leaving !== 0;
+
+  // Toasts swipe away towards the screen edge they sit on; centred toasts go either way.
+  const allowed = (d: number) => (position.endsWith('right') ? d > 0 : position.endsWith('left') ? d < 0 : true);
+  // Dragging the "wrong" way moves a little, with resistance, so it still feels responsive.
+  const resist = (d: number) => (allowed(d) ? d : Math.sign(d) * Math.min(Math.abs(d) / 4, 16));
 
   React.useEffect(() => {
-    if (paused || !Number.isFinite(remaining.current)) return;
+    if (held || !Number.isFinite(remaining.current)) return;
     since.current = Date.now();
     const timer = window.setTimeout(() => dismissToast(record.id), remaining.current);
     return () => {
       window.clearTimeout(timer);
       remaining.current -= Date.now() - since.current;
     };
-  }, [paused, record.id]);
+  }, [held, record.id]);
+
+  React.useEffect(() => {
+    if (!leaving) return;
+    const timer = window.setTimeout(() => dismissToast(record.id), EXIT_MS);
+    return () => window.clearTimeout(timer);
+  }, [leaving, record.id]);
+
+  const endGesture = () => {
+    gesture.current = null;
+    setDx(null);
+  };
+
+  const style: React.CSSProperties | undefined = leaving
+    ? { transform: `translateX(${leaving * 110}%)`, opacity: 0 }
+    : dx !== null
+      ? { transform: `translateX(${dx}px)`, opacity: Math.max(0.25, 1 - Math.abs(dx) / 240) }
+      : undefined;
 
   return (
+    // Focusable live region item: F8 focuses it, Escape dismisses it and pointer swipes dismiss it.
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
     <li
       className="ui-toast"
       data-tone={record.tone}
+      data-swiping={dx !== null || undefined}
       tabIndex={0}
       role={record.tone === 'danger' ? 'alert' : 'status'}
       aria-atomic="true"
-      style={dx ? { transform: `translateX(${dx}px)`, opacity: 1 - Math.min(Math.abs(dx) / 160, 0.8) } : undefined}
+      style={style}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
@@ -265,16 +297,38 @@ function ToastItem({ record }: { record: ToastRecord }) {
         if (e.key === 'Escape') toast.dismiss(record.id);
       }}
       onPointerDown={(e) => {
-        if (e.pointerType === 'touch') start.current = e.clientX;
+        // Leave clicks on the action and close buttons alone.
+        if (e.button !== 0 || leaving || (e.target as HTMLElement).closest('button, a')) return;
+        gesture.current = { x: e.clientX, y: e.clientY, t: e.timeStamp, swiping: false };
       }}
       onPointerMove={(e) => {
-        if (start.current !== null) setDx(e.clientX - start.current);
+        const g = gesture.current;
+        if (!g) return;
+        const moveX = e.clientX - g.x;
+        const moveY = e.clientY - g.y;
+        if (!g.swiping) {
+          if (Math.abs(moveX) > SWIPE_START && Math.abs(moveX) > Math.abs(moveY)) {
+            g.swiping = true;
+            e.currentTarget.setPointerCapture?.(e.pointerId);
+          } else if (Math.abs(moveY) > SWIPE_START) {
+            gesture.current = null; // vertical: let the page scroll
+          }
+          return;
+        }
+        setDx(resist(moveX));
       }}
-      onPointerUp={() => {
-        if (Math.abs(dx) > 80) toast.dismiss(record.id);
-        start.current = null;
-        setDx(0);
+      onPointerUp={(e) => {
+        const g = gesture.current;
+        if (g?.swiping) {
+          const moveX = e.clientX - g.x;
+          const speed = Math.abs(moveX) / Math.max(1, e.timeStamp - g.t);
+          if (allowed(moveX) && (Math.abs(moveX) > SWIPE_DISMISS || (speed > SWIPE_FLICK && Math.abs(moveX) > 2 * SWIPE_START))) {
+            setLeaving(moveX > 0 ? 1 : -1);
+          }
+        }
+        endGesture();
       }}
+      onPointerCancel={endGesture}
     >
       <span className="ui-toast__icon">{toneIcon[record.tone]}</span>
       <div className="ui-toast__body">

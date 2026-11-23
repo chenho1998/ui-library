@@ -101,7 +101,7 @@
 
 .ui-radio-group { display: grid; align-content: start; gap: var(--ui-space-2); border: 0; padding: 0; margin: 0; }
 .ui-radio-group__items { display: flex; flex-direction: column; gap: var(--ui-space-2); }
-.ui-radio-group__items[data-orientation='horizontal'] { flex-direction: row; flex-wrap: wrap; gap: var(--ui-space-4); }
+.ui-radio-group__items[data-orientation='horizontal'] { flex-flow: row wrap; gap: var(--ui-space-4); }
 
 .ui-switch {
   --_w: 40px; --_hgt: 24px; --_thumb: 18px;
@@ -196,9 +196,16 @@
 
 /* Combobox */
 .ui-combobox__toggle { cursor: pointer; }
+.ui-combobox[data-multiple] { height: auto; min-height: var(--_h); padding-block: 3px; cursor: text; }
+.ui-combobox__values { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: var(--ui-space-1); }
+.ui-combobox__values .ui-input__control { flex: 1 0 80px; width: auto; height: calc(var(--_h) - 8px); }
+.ui-combobox__tag { height: calc(var(--_h) - 12px); max-width: 100%; }
+.ui-combobox__tag .ui-tag__label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ui-combobox[data-size='sm'] .ui-combobox__tag { font-size: var(--ui-text-xs); }
+.ui-combobox__spinner { flex-shrink: 0; color: var(--ui-color-text-secondary); }
 .ui-combobox__content { width: var(--radix-popover-trigger-width); max-height: min(var(--radix-popover-content-available-height), 320px); overflow-y: auto; }
 .ui-combobox__list { list-style: none; margin: 0; padding: var(--ui-space-1); }
-.ui-combobox__empty { padding: var(--ui-space-3); font-size: var(--ui-text-sm); color: var(--ui-color-text-secondary); }
+.ui-combobox__empty { display: flex; align-items: center; gap: var(--ui-space-2); padding: var(--ui-space-3); font-size: var(--ui-text-sm); color: var(--ui-color-text-secondary); }
 
 /* DatePicker + Calendar */
 .ui-date-picker__trigger { justify-content: space-between; cursor: pointer; text-align: start; }

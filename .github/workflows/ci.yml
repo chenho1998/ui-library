@@ -13,6 +13,8 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: pnpm }
       - run: pnpm install --frozen-lockfile
+      - name: Lint (ESLint with React hooks and a11y rules, Stylelint)
+        run: pnpm lint
       - name: Build (tokens build fails on any contrast failure)
         run: pnpm build
       - name: Typecheck

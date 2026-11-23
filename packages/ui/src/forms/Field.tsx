@@ -2,7 +2,7 @@ import * as React from 'react';
 import { cx } from '../utils';
 import { DangerIcon } from '../icons';
 
-interface FieldContextValue {
+export interface FieldContextValue {
   id: string;
   labelId: string;
   hintId?: string;

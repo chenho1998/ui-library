@@ -1,0 +1,31 @@
+{
+  "extends": [
+    "stylelint-config-standard"
+  ],
+  "ignoreFiles": [
+    "**/dist/**",
+    "**/node_modules/**",
+    "**/storybook-static/**"
+  ],
+  "rules": {
+    "selector-class-pattern": [
+      "^ui-[a-z0-9-]+(__[a-z0-9-]+)?$",
+      {
+        "message": "Use the ui- prefix with BEM-style parts, e.g. ui-toast__title"
+      }
+    ],
+    "custom-property-pattern": [
+      "^(ui-[a-z0-9-]+|_[a-z0-9-]+|radix-[a-z0-9-]+)$",
+      {
+        "message": "Custom properties are --ui-* tokens or --_* component locals"
+      }
+    ],
+    "keyframes-name-pattern": "^ui-[a-z0-9-]+$",
+    "no-descending-specificity": null,
+    "rule-empty-line-before": null,
+    "at-rule-empty-line-before": null,
+    "comment-empty-line-before": null,
+    "import-notation": "string",
+    "declaration-empty-line-before": null
+  }
+}

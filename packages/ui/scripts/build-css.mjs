@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(import.meta.url);
 const tokens = readFileSync(require.resolve('@yourorg/tokens/tokens.css'), 'utf8');
-const parts = ['styles/base.css', 'layout/layout.css', 'actions/actions.css', 'forms/forms.css', 'overlays/overlays.css', 'feedback/feedback.css', 'navigation/navigation.css', 'data/data.css'];
+const parts = ['styles/base.css', 'layout/layout.css', 'actions/actions.css', 'forms/forms.css', 'overlays/overlays.css', 'feedback/feedback.css', 'navigation/navigation.css', 'data/data.css', 'styles/anime.css'];
 const components = parts.map((p) => `/* ${p} */\n` + readFileSync(join(root, 'src', p), 'utf8')).join('\n');
 const out = `@layer ui.reset, ui.tokens, ui.components;\n${tokens}\n@layer ui.components {\n${components}\n}\n`;
 mkdirSync(join(root, 'dist'), { recursive: true });
