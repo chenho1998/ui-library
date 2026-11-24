@@ -12,11 +12,14 @@ export interface TimelineItemProps extends Omit<React.LiHTMLAttributes<HTMLLIEle
   tone?: 'neutral' | 'accent' | 'success' | 'warning' | 'danger';
 }
 
-function TimelineItem({ title, time, icon, tone = 'neutral', className, children, ...rest }: TimelineItemProps) {
+const TimelineItem = /* @__PURE__ */ React.forwardRef<HTMLLIElement, TimelineItemProps>(function TimelineItem(
+  { title, time, icon, tone = 'neutral', className, children, ...rest },
+  ref,
+) {
   const iso = time instanceof Date ? time.toISOString() : undefined;
   const shown = time instanceof Date ? new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(time) : time;
   return (
-    <li className={cx('ui-timeline__item', className)} data-tone={tone} {...rest}>
+    <li ref={ref} className={cx('ui-timeline__item', className)} data-tone={tone} {...rest}>
       <span className="ui-timeline__marker" aria-hidden="true">
         {icon ?? <span className="ui-timeline__dot" />}
       </span>
@@ -29,7 +32,7 @@ function TimelineItem({ title, time, icon, tone = 'neutral', className, children
       </div>
     </li>
   );
-}
+});
 
 /** Events in order, newest first or oldest first: activity feeds, order history, audit logs. */
 export const Timeline = /* @__PURE__ */ Object.assign(
@@ -48,7 +51,7 @@ export interface TreeNode {
   disabled?: boolean;
 }
 
-export interface TreeViewProps {
+export interface TreeViewProps extends Omit<React.HTMLAttributes<HTMLUListElement>, 'onSelect'> {
   items: TreeNode[];
   'aria-label': string;
   expanded?: string[];
@@ -57,13 +60,13 @@ export interface TreeViewProps {
   selected?: string | null;
   defaultSelected?: string | null;
   onSelect?: (id: string) => void;
-  className?: string;
 }
 
-/** A nested, expandable list such as files and folders (WAI-ARIA tree: arrows move and expand, Enter selects). */
-export function TreeView({
-  items, 'aria-label': ariaLabel, expanded, defaultExpanded = [], onExpandedChange, selected, defaultSelected = null, onSelect, className,
-}: TreeViewProps) {
+/** A nested, expandable list such as files and folders (WAI-ARIA tree: arrows move and expand, `*` expands siblings, type-ahead jumps, Enter selects). */
+export const TreeView = /* @__PURE__ */ React.forwardRef<HTMLUListElement, TreeViewProps>(function TreeView(
+  { items, 'aria-label': ariaLabel, expanded, defaultExpanded = [], onExpandedChange, selected, defaultSelected = null, onSelect, className, onKeyDown: userKeyDown, ...rest },
+  ref,
+) {
   const baseId = React.useId();
   const [innerOpen, setInnerOpen] = React.useState<string[]>(defaultExpanded);
   const open = expanded ?? innerOpen;
@@ -72,11 +75,11 @@ export function TreeView({
   const [focusId, setFocusId] = React.useState<string | null>(null);
   const moved = React.useRef(false);
 
-  // Visible rows in order, with their parent, for keyboard movement.
-  const rows: Array<{ node: TreeNode; parent: string | null }> = [];
+  // Visible rows in order, with their parent and sibling list, for keyboard movement.
+  const rows: Array<{ node: TreeNode; parent: string | null; siblings: TreeNode[] }> = [];
   const walk = (nodes: TreeNode[], parent: string | null) => {
     for (const node of nodes) {
-      rows.push({ node, parent });
+      rows.push({ node, parent, siblings: nodes });
       if (node.children?.length && open.includes(node.id)) walk(node.children, node.id);
     }
   };
@@ -107,7 +110,9 @@ export function TreeView({
     setFocusId(id);
   };
 
-  const onKeyDown = (e: React.KeyboardEvent) => {
+  const onKeyDown = (e: React.KeyboardEvent<HTMLUListElement>) => {
+    userKeyDown?.(e);
+    if (e.defaultPrevented) return;
     const index = rows.findIndex((r) => r.node.id === current);
     const row = rows[index];
     if (!row) return;
@@ -126,11 +131,27 @@ export function TreeView({
         if (hasKids && isOpen) toggle(row.node.id, false);
         else focus(row.parent);
         break;
+      case '*': {
+        const expandable = row.siblings.filter((n) => n.children?.length && !open.includes(n.id)).map((n) => n.id);
+        if (expandable.length) setOpen([...open, ...expandable]);
+        break;
+      }
       case 'Enter':
       case ' ':
         select(row.node);
         break;
       default:
+        if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+          const ch = e.key.toLowerCase();
+          for (let offset = 1; offset <= rows.length; offset++) {
+            const candidate = rows[(index + offset) % rows.length]!.node;
+            if (typeof candidate.label === 'string' && candidate.label.toLowerCase().startsWith(ch)) {
+              focus(candidate.id);
+              e.preventDefault();
+              return;
+            }
+          }
+        }
         return;
     }
     e.preventDefault();
@@ -185,12 +206,11 @@ export function TreeView({
 
   return (
     // The tree owns arrow-key navigation between its items (WAI-ARIA tree pattern).
-     
-    <ul role="tree" aria-label={ariaLabel} className={cx('ui-tree', className)} onKeyDown={onKeyDown}>
+    <ul ref={ref} role="tree" aria-label={ariaLabel} className={cx('ui-tree', className)} onKeyDown={onKeyDown} {...rest}>
       {renderNodes(items, 1)}
     </ul>
   );
-}
+});
 
 /* ---------- Stat ---------- */
 export interface StatProps extends Omit<React.HTMLAttributes<HTMLDListElement>, 'children'> {
@@ -241,14 +261,21 @@ export interface DescriptionListProps extends React.HTMLAttributes<HTMLDListElem
   columns?: number;
 }
 
-function DescriptionItem({ term, children, className }: { term: React.ReactNode; children?: React.ReactNode; className?: string }) {
+export interface DescriptionItemProps extends React.HTMLAttributes<HTMLDivElement> {
+  term: React.ReactNode;
+}
+
+const DescriptionItem = /* @__PURE__ */ React.forwardRef<HTMLDivElement, DescriptionItemProps>(function DescriptionItem(
+  { term, children, className, ...rest },
+  ref,
+) {
   return (
-    <div className={cx('ui-dl__item', className)}>
+    <div ref={ref} className={cx('ui-dl__item', className)} {...rest}>
       <dt className="ui-dl__term">{term}</dt>
       <dd className="ui-dl__detail">{children}</dd>
     </div>
   );
-}
+});
 
 /** Label and value pairs, such as order details or a profile summary. */
 export const DescriptionList = /* @__PURE__ */ Object.assign(

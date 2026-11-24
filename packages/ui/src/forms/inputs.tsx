@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
-import { cx, type Size } from '../utils';
-import { useLocale } from '../theme/ThemeProvider';
+import { cx, mergeRefs, useControllableState, type Size } from '../utils';
+import { useLocaleOverrides } from '../theme/ThemeProvider';
 import { FileIcon, StarIcon, UploadIcon, XIcon } from '../icons';
 import { Field, type FieldProps } from './Field';
 
@@ -94,27 +94,31 @@ export interface PinInputProps extends Pick<FieldProps, 'label' | 'hideLabel' | 
   type?: 'numeric' | 'alphanumeric';
   /** Hide the characters, like a password. */
   mask?: boolean;
+  required?: boolean;
   disabled?: boolean;
   autoFocus?: boolean;
   name?: string;
   id?: string;
   className?: string;
+  fieldClassName?: string;
 }
 
 /** Boxes for a one-time code or PIN. Typing moves forward, Backspace moves back, and pasting fills every box. */
-export function PinInput({
-  label, hideLabel, hint, error, length = 6, value, defaultValue = '', onValueChange, onComplete, type = 'numeric', mask, disabled,
-  autoFocus, name, id, className,
-}: PinInputProps) {
-  const locale = useLocale();
-  const [inner, setInner] = React.useState(defaultValue);
-  const code = (value ?? inner).slice(0, length);
+export const PinInput = /* @__PURE__ */ React.forwardRef<HTMLDivElement, PinInputProps>(function PinInput(
+  {
+    label, hideLabel, hint, error, length = 6, value, defaultValue = '', onValueChange, onComplete, type = 'numeric', mask, required, disabled,
+    autoFocus, name, id, className, fieldClassName,
+  },
+  ref,
+) {
+  const locale = useLocaleOverrides();
+  const [rawCode, setRawCode] = useControllableState(value, defaultValue, onValueChange);
+  const code = rawCode.slice(0, length);
   const refs = React.useRef<Array<HTMLInputElement | null>>([]);
   const allowed = type === 'numeric' ? /[0-9]/ : /[0-9a-z]/i;
 
   const commit = (next: string) => {
-    if (value === undefined) setInner(next);
-    onValueChange?.(next);
+    setRawCode(next);
     if (next.length === length && !next.includes(' ')) onComplete?.(next);
   };
   const focus = (i: number) => refs.current[Math.max(0, Math.min(length - 1, i))]?.focus();
@@ -128,9 +132,9 @@ export function PinInput({
   const clean = (text: string) => [...text].filter((c) => allowed.test(c)).join('');
 
   return (
-    <Field label={label} hideLabel={hideLabel} hint={hint} error={error} disabled={disabled} id={id}>
+    <Field label={label} hideLabel={hideLabel} hint={hint} error={error} required={required} disabled={disabled} id={id} className={fieldClassName}>
       {(ctx) => (
-        <div role="group" aria-labelledby={ctx.labelId} aria-describedby={[ctx.hintId, ctx.errorId].filter(Boolean).join(' ') || undefined} className={cx('ui-pin', className)}>
+        <div ref={ref} role="group" aria-labelledby={ctx.labelId} aria-describedby={[ctx.hintId, ctx.errorId].filter(Boolean).join(' ') || undefined} className={cx('ui-pin', className)}>
           {Array.from({ length }, (_, i) => (
             <input
               key={i}
@@ -147,6 +151,7 @@ export function PinInput({
               autoFocus={autoFocus && i === 0}
               aria-label={(locale.pinDigit ?? ((n: number, of: number) => `Digit ${n} of ${of}`))(i + 1, length)}
               aria-invalid={ctx.invalid || undefined}
+              required={required}
               disabled={disabled}
               maxLength={length}
               value={code[i]?.trim() ?? ''}
@@ -183,7 +188,7 @@ export function PinInput({
       )}
     </Field>
   );
-}
+});
 
 /* ---------- FileUpload ---------- */
 export interface FileUploadProps extends Pick<FieldProps, 'label' | 'hideLabel' | 'hint' | 'error'> {
@@ -198,10 +203,12 @@ export interface FileUploadProps extends Pick<FieldProps, 'label' | 'hideLabel' 
   onFilesChange?: (files: File[]) => void;
   /** Called with the files that were turned away and why. */
   onReject?: (rejections: Array<{ file: File; reason: 'type' | 'size' | 'count' }>) => void;
+  required?: boolean;
   disabled?: boolean;
   name?: string;
   id?: string;
   className?: string;
+  fieldClassName?: string;
 }
 
 const ratingDefault = (value: number, max: number) => `${value} of ${max} ${max === 1 ? 'star' : 'stars'}`;
@@ -218,20 +225,19 @@ const matchesAccept = (file: File, accept?: string) =>
   });
 
 /** A drop zone with a browse button and a list of chosen files that can be removed. */
-export function FileUpload({
-  label, hideLabel, hint, error, accept, multiple, maxSize, maxFiles, files, defaultFiles = [], onFilesChange, onReject, disabled, name, id,
-  className,
-}: FileUploadProps) {
-  const locale = useLocale();
-  const [inner, setInner] = React.useState<File[]>(defaultFiles);
-  const current = files ?? inner;
+export const FileUpload = /* @__PURE__ */ React.forwardRef<HTMLInputElement, FileUploadProps>(function FileUpload(
+  {
+    label, hideLabel, hint, error, accept, multiple, maxSize, maxFiles, files, defaultFiles = [], onFilesChange, onReject,
+    required, disabled, name, id, className, fieldClassName,
+  },
+  ref,
+) {
+  const locale = useLocaleOverrides();
+  const [current, commit] = useControllableState<File[]>(files, defaultFiles, onFilesChange);
   const [dragging, setDragging] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const setInputRef = React.useMemo(() => mergeRefs(inputRef, ref), [ref]);
 
-  const commit = (next: File[]) => {
-    if (files === undefined) setInner(next);
-    onFilesChange?.(next);
-  };
   const add = (incoming: File[]) => {
     const rejected: Array<{ file: File; reason: 'type' | 'size' | 'count' }> = [];
     const ok: File[] = [];
@@ -247,9 +253,9 @@ export function FileUpload({
   };
 
   return (
-    <Field label={label} hideLabel={hideLabel} hint={hint} error={error} disabled={disabled} id={id} className={className}>
+    <Field label={label} hideLabel={hideLabel} hint={hint} error={error} required={required} disabled={disabled} id={id} className={fieldClassName ?? className}>
       {(ctx) => (
-        <div className="ui-upload">
+        <div className={cx('ui-upload', fieldClassName && className)}>
           {/* Drop target for pointer users; the browse button is the keyboard path. */}
           { }
           <div
@@ -277,7 +283,7 @@ export function FileUpload({
               </button>
             </span>
             <input
-              ref={inputRef}
+              ref={setInputRef}
               id={ctx.id}
               type="file"
               className="ui-visually-hidden"
@@ -285,6 +291,7 @@ export function FileUpload({
               accept={accept}
               multiple={multiple}
               name={name}
+              required={required && current.length === 0}
               disabled={disabled}
               onChange={(e) => {
                 add([...(e.target.files ?? [])]);
@@ -299,7 +306,13 @@ export function FileUpload({
                   <FileIcon size="sm" />
                   <span className="ui-upload__name">{file.name}</span>
                   <span className="ui-upload__size">{formatBytes(file.size)}</span>
-                  <button type="button" className="ui-upload__remove" aria-label={locale.removeItem(file.name)} disabled={disabled} onClick={() => commit(current.filter((_, k) => k !== i))}>
+                  <button
+                    type="button"
+                    className="ui-upload__remove"
+                    aria-label={(locale.removeItem ?? ((l: string) => `Remove ${l}`))(file.name)}
+                    disabled={disabled}
+                    onClick={() => commit(current.filter((_, k) => k !== i))}
+                  >
                     <XIcon size="sm" />
                   </button>
                 </li>
@@ -310,10 +323,10 @@ export function FileUpload({
       )}
     </Field>
   );
-}
+});
 
 /* ---------- Rating ---------- */
-export interface RatingProps {
+export interface RatingProps extends Omit<React.HTMLAttributes<HTMLElement>, 'onChange' | 'defaultValue'> {
   /** Visible label (also the group's accessible name). */
   label: React.ReactNode;
   value?: number;
@@ -321,25 +334,28 @@ export interface RatingProps {
   onValueChange?: (value: number) => void;
   /** Number of stars. Default 5. */
   max?: number;
+  /** Clicking the already-selected star resets the rating to 0. */
+  allowClear?: boolean;
   /** Show the value without letting people change it. */
   readOnly?: boolean;
   size?: Size;
   disabled?: boolean;
   name?: string;
-  className?: string;
 }
 
 /** Picks or shows a score out of a few stars. Uses native radio buttons, so arrow keys work. */
-export function Rating({ label, value, defaultValue = 0, onValueChange, max = 5, readOnly, size = 'md', disabled, name, className }: RatingProps) {
-  const locale = useLocale();
+export const Rating = /* @__PURE__ */ React.forwardRef<HTMLElement, RatingProps>(function Rating(
+  { label, value, defaultValue = 0, onValueChange, max = 5, allowClear, readOnly, size = 'md', disabled, name, className, ...rest },
+  ref,
+) {
+  const locale = useLocaleOverrides();
   const groupName = React.useId();
-  const [inner, setInner] = React.useState(defaultValue);
-  const current = value ?? inner;
+  const [current, setCurrent] = useControllableState(value, defaultValue, onValueChange);
   const stars = Array.from({ length: max }, (_, i) => i + 1);
 
   if (readOnly) {
     return (
-      <div className={cx('ui-rating', className)} data-size={size} data-readonly="">
+      <div ref={ref as React.Ref<HTMLDivElement>} className={cx('ui-rating', className)} data-size={size} data-readonly="" {...rest}>
         <span className="ui-rating__label">{label}</span>
         <span className="ui-rating__stars" role="img" aria-label={(locale.ratingValue ?? ratingDefault)(current, max)}>
           {stars.map((n) => (
@@ -350,7 +366,7 @@ export function Rating({ label, value, defaultValue = 0, onValueChange, max = 5,
     );
   }
   return (
-    <fieldset className={cx('ui-rating', className)} data-size={size} disabled={disabled}>
+    <fieldset ref={ref as React.Ref<HTMLFieldSetElement>} className={cx('ui-rating', className)} data-size={size} disabled={disabled} {...rest}>
       <legend className="ui-rating__label">{label}</legend>
       <span className="ui-rating__stars">
         {stars.map((n) => (
@@ -361,10 +377,10 @@ export function Rating({ label, value, defaultValue = 0, onValueChange, max = 5,
               name={name ?? groupName}
               value={n}
               checked={current === n}
-              onChange={() => {
-                if (value === undefined) setInner(n);
-                onValueChange?.(n);
+              onClick={() => {
+                if (allowClear && current === n) setCurrent(0);
               }}
+              onChange={() => setCurrent(n)}
             />
             <StarIcon className="ui-icon ui-rating__star" />
             <span className="ui-visually-hidden">{(locale.ratingValue ?? ratingDefault)(n, max)}</span>
@@ -373,4 +389,4 @@ export function Rating({ label, value, defaultValue = 0, onValueChange, max = 5,
       </span>
     </fieldset>
   );
-}
+});

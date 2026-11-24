@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import * as HoverCardPrimitive from '@radix-ui/react-hover-card';
 import { cx } from '../utils';
-import { useLocale, usePortalContainer } from '../theme/ThemeProvider';
+import { useLocaleOverrides, usePortalContainer } from '../theme/ThemeProvider';
 import { SearchIcon } from '../icons';
 
 /* ---------- CommandPalette ---------- */
@@ -42,7 +42,7 @@ const matches = (item: CommandItem, query: string) => {
 export function CommandPalette({
   items, open: controlled, defaultOpen = false, onOpenChange, hotkey = 'k', placeholder, emptyMessage, label = 'Command palette',
 }: CommandPaletteProps) {
-  const locale = useLocale();
+  const locale = useLocaleOverrides();
   const container = usePortalContainer();
   const listId = React.useId();
   const [inner, setInner] = React.useState(defaultOpen);
@@ -116,6 +116,7 @@ export function CommandPalette({
                 setActive(0);
               }}
               onKeyDown={(e) => {
+                if (enabled.length === 0) return;
                 const last = enabled.length - 1;
                 const moves: Record<string, number> = { ArrowDown: active >= last ? 0 : active + 1, ArrowUp: active <= 0 ? last : active - 1, Home: 0, End: last };
                 if (e.key in moves) {
@@ -130,7 +131,7 @@ export function CommandPalette({
           </div>
           <div id={listId} role="listbox" aria-label={label} className="ui-command__list">
             {visible.length === 0 ? (
-              <div className="ui-command__empty">{emptyMessage ?? locale.noResults}</div>
+              <div className="ui-command__empty">{emptyMessage ?? locale.noResults ?? 'No results'}</div>
             ) : (
               groups.map((group) => (
                 <div key={group.name || 'ungrouped'} role="group" aria-label={group.name || undefined}>

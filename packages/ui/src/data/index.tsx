@@ -369,7 +369,18 @@ export function Table<T>({
                   key={key}
                   data-selected={isSelected || undefined}
                   data-clickable={onRowClick ? '' : undefined}
+                  tabIndex={onRowClick ? 0 : undefined}
                   onClick={onRowClick ? () => onRowClick(row) : undefined}
+                  onKeyDown={
+                    onRowClick
+                      ? (e) => {
+                          if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) {
+                            e.preventDefault();
+                            onRowClick(row);
+                          }
+                        }
+                      : undefined
+                  }
                 >
                   {selectable ? (
                     <td className="ui-table__select" onClick={(e) => e.stopPropagation()}>

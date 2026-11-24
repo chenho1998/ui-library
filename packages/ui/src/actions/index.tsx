@@ -58,7 +58,7 @@ export const Button = /* @__PURE__ */ React.forwardRef<HTMLButtonElement, Button
       aria-disabled={asChild && disabled ? true : undefined}
       aria-busy={loading || undefined}
       onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-        if (loading) {
+        if (loading || disabled) {
           e.preventDefault();
           return;
         }

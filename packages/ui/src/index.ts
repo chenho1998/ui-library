@@ -35,8 +35,8 @@ export { TimePicker, DateRangePicker, type TimePickerProps, type DateRangePicker
 export { Collapsible, type CollapsibleProps } from './data/Collapsible';
 export {
   Timeline, TreeView, Stat, DescriptionList,
-  type TimelineItemProps, type TreeNode, type TreeViewProps, type StatProps, type DescriptionListProps,
+  type TimelineItemProps, type TreeNode, type TreeViewProps, type StatProps, type DescriptionListProps, type DescriptionItemProps,
 } from './data/more';
 // Utilities
-export { cx, mergeRefs } from './utils';
+export { cx, mergeRefs, useControllableState } from './utils';
 export type { Size, Tone } from './utils';

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { cx } from '../utils';
-import { useLocale } from '../theme/ThemeProvider';
+import { useLocaleOverrides } from '../theme/ThemeProvider';
 import { CheckIcon } from '../icons';
 
 const STATUS = { complete: 'completed', current: 'current step', upcoming: 'not started' };
@@ -8,6 +8,8 @@ const STATUS = { complete: 'completed', current: 'current step', upcoming: 'not 
 export interface StepperStep {
   title: React.ReactNode;
   description?: React.ReactNode;
+  /** Custom icon shown in the step circle while not completed. */
+  icon?: React.ReactNode;
 }
 
 export interface StepperProps extends Omit<React.HTMLAttributes<HTMLOListElement>, 'onChange'> {
@@ -16,24 +18,27 @@ export interface StepperProps extends Omit<React.HTMLAttributes<HTMLOListElement
   current: number;
   /** Default `'horizontal'`. */
   orientation?: 'horizontal' | 'vertical';
-  /** Lets people go back to a completed step. */
+  /** Lets people click steps. By default only completed steps are clickable; set `allowClickAll` for non-linear flows. */
   onStepClick?: (index: number) => void;
+  /** Allow clicking upcoming steps as well as completed steps when `onStepClick` is set. */
+  allowClickAll?: boolean;
 }
 
 /** Shows progress through a multi-step task such as checkout or onboarding. */
 export const Stepper = /* @__PURE__ */ React.forwardRef<HTMLOListElement, StepperProps>(function Stepper(
-  { steps, current, orientation = 'horizontal', onStepClick, className, ...rest },
+  { steps, current, orientation = 'horizontal', onStepClick, allowClickAll, className, ...rest },
   ref,
 ) {
-  const locale = useLocale();
+  const locale = useLocaleOverrides();
   return (
     <ol ref={ref} className={cx('ui-stepper', className)} data-orientation={orientation} {...rest}>
       {steps.map((step, i) => {
         const status = i < current ? 'complete' : i === current ? 'current' : 'upcoming';
+        const clickable = Boolean(onStepClick && (status === 'complete' || (allowClickAll && status !== 'current')));
         const body = (
           <>
             <span className="ui-stepper__indicator" aria-hidden="true">
-              {status === 'complete' ? <CheckIcon size="sm" /> : i + 1}
+              {status === 'complete' ? <CheckIcon size="sm" /> : (step.icon ?? i + 1)}
             </span>
             <span className="ui-stepper__text">
               <span className="ui-stepper__title">{step.title}</span>
@@ -44,8 +49,8 @@ export const Stepper = /* @__PURE__ */ React.forwardRef<HTMLOListElement, Steppe
         );
         return (
           <li key={i} className="ui-stepper__step" data-status={status} aria-current={status === 'current' ? 'step' : undefined}>
-            {onStepClick && status === 'complete' ? (
-              <button type="button" className="ui-stepper__button" onClick={() => onStepClick(i)}>
+            {clickable ? (
+              <button type="button" className="ui-stepper__button" onClick={() => onStepClick!(i)}>
                 {body}
               </button>
             ) : (

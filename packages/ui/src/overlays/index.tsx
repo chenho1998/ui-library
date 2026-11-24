@@ -73,12 +73,18 @@ const DialogDescription = /* @__PURE__ */ React.forwardRef<HTMLParagraphElement,
   },
 );
 
-const DialogBody = ({ className, ...rest }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cx('ui-dialog__body', className)} {...rest} />
-);
-const DialogFooter = ({ className, ...rest }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cx('ui-dialog__footer', className)} {...rest} />
-);
+const DialogBody = /* @__PURE__ */ React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(function DialogBody(
+  { className, ...rest },
+  ref,
+) {
+  return <div ref={ref} className={cx('ui-dialog__body', className)} {...rest} />;
+});
+const DialogFooter = /* @__PURE__ */ React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(function DialogFooter(
+  { className, ...rest },
+  ref,
+) {
+  return <div ref={ref} className={cx('ui-dialog__footer', className)} {...rest} />;
+});
 
 /**
  * A modal window for a focused task. Focus is trapped inside and returns to the trigger on close.
@@ -131,16 +137,26 @@ export function AlertDialog({
 }: AlertDialogProps) {
   const [inner, setInner] = React.useState(defaultOpen ?? false);
   const open = controlled ?? inner;
+  const [busy, setBusy] = React.useState(false);
   const setOpen = (v: boolean) => {
+    if (busy && !v) return;
     if (controlled === undefined) setInner(v);
     onOpenChange?.(v);
   };
-  const [busy, setBusy] = React.useState(false);
   const cancelRef = React.useRef<HTMLButtonElement>(null);
   return (
     <DialogPrimitive.Root open={open} onOpenChange={setOpen}>
       {trigger ? <DialogPrimitive.Trigger asChild>{trigger}</DialogPrimitive.Trigger> : null}
-      <DialogContent size="sm" role="alertdialog" closeOnOverlayClick={false} showClose={false} initialFocus={cancelRef}>
+      <DialogContent
+        size="sm"
+        role="alertdialog"
+        closeOnOverlayClick={false}
+        showClose={false}
+        initialFocus={cancelRef}
+        onEscapeKeyDown={(e) => {
+          if (busy) e.preventDefault();
+        }}
+      >
         <DialogTitle>{title}</DialogTitle>
         {description ? <DialogDescription>{description}</DialogDescription> : null}
         <DialogFooter>
@@ -148,6 +164,7 @@ export function AlertDialog({
             ref={cancelRef}
             variant="outline"
             tone="neutral"
+            disabled={busy}
             onClick={() => {
               onCancel?.();
               setOpen(false);
@@ -162,7 +179,9 @@ export function AlertDialog({
               try {
                 setBusy(true);
                 await onConfirm?.();
-                setOpen(false);
+                setBusy(false);
+                if (controlled === undefined) setInner(false);
+                onOpenChange?.(false);
               } finally {
                 setBusy(false);
               }
@@ -250,11 +269,14 @@ export interface TooltipProps {
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
+  /** Disable the tooltip and render `children` directly. */
+  disabled?: boolean;
 }
 
 /** A short label or hint for a control, shown on hover and keyboard focus. */
-export function Tooltip({ content, children, side = 'top', align = 'center', delay = 400, open, defaultOpen, onOpenChange }: TooltipProps) {
+export function Tooltip({ content, children, side = 'top', align = 'center', delay = 400, open, defaultOpen, onOpenChange, disabled }: TooltipProps) {
   const container = usePortalContainer();
+  if (disabled) return children;
   return (
     <TooltipPrimitive.Provider delayDuration={delay}>
       <TooltipPrimitive.Root open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>

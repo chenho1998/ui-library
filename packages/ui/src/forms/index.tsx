@@ -533,15 +533,19 @@ export const NumberField = /* @__PURE__ */ React.forwardRef<HTMLInputElement, Nu
   const [draft, setDraft] = React.useState<string | null>(null);
 
   const clamp = (n: number) => Math.min(max ?? Infinity, Math.max(min ?? -Infinity, n));
+  const parse = (text: string) => {
+    const cleaned = text.replace(/[^\d.,-]/g, '').replace(/,/g, '');
+    return cleaned === '' || cleaned === '-' ? null : Number(cleaned);
+  };
   const commit = (n: number | null) => {
     const next = n === null || Number.isNaN(n) ? null : clamp(Number(n.toFixed(10)));
     if (value === undefined) setInner(next);
     onValueChange?.(next);
   };
-  const bump = (delta: number) => commit(clamp((current ?? min ?? 0) + delta));
-  const parse = (text: string) => {
-    const cleaned = text.replace(/[^\d.,-]/g, '').replace(/,/g, '');
-    return cleaned === '' || cleaned === '-' ? null : Number(cleaned);
+  const bump = (delta: number) => {
+    const parsed = draft !== null ? parse(draft) : current;
+    const base = parsed === null || Number.isNaN(parsed) ? (min ?? 0) : parsed;
+    commit(clamp(base + delta));
   };
 
   return (
@@ -575,6 +579,14 @@ export const NumberField = /* @__PURE__ */ React.forwardRef<HTMLInputElement, Nu
             onKeyDown={(e) => {
               onKeyDown?.(e);
               if (readOnly) return;
+              if (e.key === 'Enter') {
+                if (draft !== null) {
+                  e.preventDefault();
+                  commit(parse(draft));
+                  setDraft(null);
+                }
+                return;
+              }
               const keys: Record<string, () => void> = {
                 ArrowUp: () => bump(step),
                 ArrowDown: () => bump(-step),
@@ -582,10 +594,6 @@ export const NumberField = /* @__PURE__ */ React.forwardRef<HTMLInputElement, Nu
                 PageDown: () => bump(-step * 10),
                 Home: () => min !== undefined && commit(min),
                 End: () => max !== undefined && commit(max),
-                Enter: () => {
-                  if (draft !== null) commit(parse(draft));
-                  setDraft(null);
-                },
               };
               const action = keys[e.key];
               if (action) {

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as TabsPrimitive from '@radix-ui/react-tabs';
 import { Slot } from '@radix-ui/react-slot';
-import { cx } from '../utils';
-import { useLocale } from '../theme/ThemeProvider';
+import { cx, useControllableState } from '../utils';
+import { useLocaleOverrides } from '../theme/ThemeProvider';
 import { ChevronLeftIcon, ChevronRightIcon } from '../icons';
 
 /* ---------- Tabs ---------- */
@@ -57,9 +57,9 @@ export const Breadcrumbs = /* @__PURE__ */ React.forwardRef<HTMLElement, Breadcr
   { items, renderLink, className, ...rest },
   ref,
 ) {
-  const locale = useLocale();
+  const locale = useLocaleOverrides();
   return (
-    <nav ref={ref} aria-label={locale.breadcrumb} className={cx('ui-breadcrumbs', className)} {...rest}>
+    <nav ref={ref} aria-label={locale.breadcrumb ?? 'Breadcrumb'} className={cx('ui-breadcrumbs', className)} {...rest}>
       <ol>
         {items.map((item, i) => {
           const last = i === items.length - 1;
@@ -91,16 +91,19 @@ export const Breadcrumbs = /* @__PURE__ */ React.forwardRef<HTMLElement, Breadcr
 
 /* ---------- Pagination ---------- */
 export interface PaginationProps extends Omit<React.HTMLAttributes<HTMLElement>, 'onChange'> {
-  /** Current page, 1-based. */
-  page: number;
+  /** Current page, 1-based. Omit with `defaultPage` for uncontrolled usage. */
+  page?: number;
+  /** Initial page when uncontrolled. Default 1. */
+  defaultPage?: number;
   pageCount: number;
-  onPageChange: (page: number) => void;
+  onPageChange?: (page: number) => void;
   /** Pages shown each side of the current one. Default 1. */
   siblingCount?: number;
 }
 
 /** Build the list of page numbers with `'…'` gaps. Exported for custom pagers. */
 export function getPageRange(page: number, pageCount: number, siblingCount = 1): Array<number | 'gap'> {
+  if (pageCount <= 0) return [];
   const range = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
   if (pageCount <= siblingCount * 2 + 5) return range(1, pageCount);
   const left = Math.max(page - siblingCount, 1);
@@ -115,16 +118,20 @@ export function getPageRange(page: number, pageCount: number, siblingCount = 1):
 
 /** Moves between pages of a long list or table. */
 export const Pagination = /* @__PURE__ */ React.forwardRef<HTMLElement, PaginationProps>(function Pagination(
-  { page, pageCount, onPageChange, siblingCount = 1, className, ...rest },
+  { page: controlledPage, defaultPage = 1, pageCount, onPageChange, siblingCount = 1, className, ...rest },
   ref,
 ) {
-  const locale = useLocale();
-  const range = getPageRange(page, pageCount, siblingCount);
+  const locale = useLocaleOverrides();
+  const [rawPage, setPage] = useControllableState(controlledPage, defaultPage, onPageChange);
+  const total = Math.max(1, pageCount);
+  const page = Math.min(total, Math.max(1, rawPage));
+  const range = getPageRange(page, total, siblingCount);
+  const pageLabel = locale.page ?? ((n: number) => `Page ${n}`);
   return (
-    <nav ref={ref} aria-label={locale.pagination} className={cx('ui-pagination', className)} {...rest}>
+    <nav ref={ref} aria-label={locale.pagination ?? 'Pagination'} className={cx('ui-pagination', className)} {...rest}>
       <ul>
         <li>
-          <button type="button" className="ui-pagination__item" aria-label={locale.previousPage} disabled={page <= 1} onClick={() => onPageChange(page - 1)}>
+          <button type="button" className="ui-pagination__item" aria-label={locale.previousPage ?? 'Previous page'} disabled={page <= 1} onClick={() => setPage(page - 1)}>
             <ChevronLeftIcon size="sm" />
           </button>
         </li>
@@ -138,9 +145,9 @@ export const Pagination = /* @__PURE__ */ React.forwardRef<HTMLElement, Paginati
               <button
                 type="button"
                 className="ui-pagination__item"
-                aria-label={locale.page(p)}
+                aria-label={pageLabel(p)}
                 aria-current={p === page ? 'page' : undefined}
-                onClick={() => onPageChange(p)}
+                onClick={() => setPage(p)}
               >
                 {p}
               </button>
@@ -148,7 +155,7 @@ export const Pagination = /* @__PURE__ */ React.forwardRef<HTMLElement, Paginati
           ),
         )}
         <li>
-          <button type="button" className="ui-pagination__item" aria-label={locale.nextPage} disabled={page >= pageCount} onClick={() => onPageChange(page + 1)}>
+          <button type="button" className="ui-pagination__item" aria-label={locale.nextPage ?? 'Next page'} disabled={page >= total} onClick={() => setPage(page + 1)}>
             <ChevronRightIcon size="sm" />
           </button>
         </li>

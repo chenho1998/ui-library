@@ -187,14 +187,38 @@ function dismissToast(id?: string) {
   emit();
 }
 
+export interface ToastPromiseMessages<T> {
+  loading: React.ReactNode;
+  success: React.ReactNode | ((data: T) => React.ReactNode);
+  error: React.ReactNode | ((err: unknown) => React.ReactNode);
+}
+
+function promiseToast<T>(promise: Promise<T>, messages: ToastPromiseMessages<T>): Promise<T> {
+  const id = showToast({ title: messages.loading, tone: 'info', duration: Infinity });
+  promise.then(
+    (data) => {
+      const title = typeof messages.success === 'function' ? messages.success(data) : messages.success;
+      showToast({ id, title, tone: 'success' });
+    },
+    (err) => {
+      const title = typeof messages.error === 'function' ? messages.error(err) : messages.error;
+      showToast({ id, title, tone: 'danger' });
+    },
+  );
+  return promise;
+}
+
 /**
  * Show a toast from anywhere. Returns its id. Needs one `<Toaster />` mounted.
- * `toast.success()`, `toast.error()` and `toast.dismiss(id?)` are shortcuts.
+ * `toast.info()`, `toast.success()`, `toast.warning()`, `toast.error()`, `toast.promise()` and `toast.dismiss(id?)` are shortcuts.
  */
 export const toast = /* @__PURE__ */ Object.assign(showToast, {
   dismiss: dismissToast,
+  info: (title: React.ReactNode, opts: Omit<ToastOptions, 'title' | 'tone'> = {}) => showToast({ ...opts, title, tone: 'info' }),
   success: (title: React.ReactNode, opts: Omit<ToastOptions, 'title' | 'tone'> = {}) => showToast({ ...opts, title, tone: 'success' }),
+  warning: (title: React.ReactNode, opts: Omit<ToastOptions, 'title' | 'tone'> = {}) => showToast({ ...opts, title, tone: 'warning' }),
   error: (title: React.ReactNode, opts: Omit<ToastOptions, 'title' | 'tone'> = {}) => showToast({ ...opts, title, tone: 'danger' }),
+  promise: promiseToast,
 });
 
 const subscribe = (l: () => void) => {

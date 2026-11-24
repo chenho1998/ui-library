@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as PopoverPrimitive from '@radix-ui/react-popover';
-import { cx, mergeRefs, type Size } from '../utils';
-import { useLocale, usePortalContainer } from '../theme/ThemeProvider';
+import { cx, mergeRefs, useControllableState, type Size } from '../utils';
+import { useLocaleOverrides, usePortalContainer } from '../theme/ThemeProvider';
 import { CheckIcon, ChevronDownIcon, XIcon } from '../icons';
 import { Spinner } from '../feedback/Spinner';
 import { Field, type FieldContextValue, type FieldProps } from './Field';
@@ -29,6 +29,10 @@ interface ComboboxBaseProps extends Pick<FieldProps, 'label' | 'hideLabel' | 'hi
   id?: string;
   /** Form field name. With `multiple`, one hidden input is submitted per selected value. */
   name?: string;
+  /** Controlled open state of the option list. */
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
   className?: string;
   fieldClassName?: string;
 }
@@ -60,10 +64,10 @@ const toArray = (v: string | string[] | null | undefined): string[] => (v == nul
 export const Combobox = /* @__PURE__ */ React.forwardRef<HTMLInputElement, ComboboxProps>(function Combobox(props, ref) {
   const {
     label, hideLabel, hint, error, options, onInputChange, filter = defaultFilter, loading, placeholder, emptyMessage,
-    size = 'md', required, disabled, id, name, className, fieldClassName,
+    size = 'md', required, disabled, id, name, open: controlledOpen, defaultOpen = false, onOpenChange, className, fieldClassName,
   } = props;
   const multiple = props.multiple === true;
-  const locale = useLocale();
+  const locale = useLocaleOverrides();
   const container = usePortalContainer();
   const listId = React.useId();
 
@@ -75,7 +79,7 @@ export const Combobox = /* @__PURE__ */ React.forwardRef<HTMLInputElement, Combo
   const optionFor = (v: string): ComboboxOption =>
     options.find((o) => o.value === v) ?? picked.get(v) ?? { value: v, label: v };
 
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useControllableState(controlledOpen, defaultOpen, onOpenChange);
   const [query, setQuery] = React.useState<string | null>(null); // null = not typing; show selected label
   const [active, setActive] = React.useState(-1);
   const anchorRef = React.useRef<HTMLDivElement>(null);
@@ -118,9 +122,12 @@ export const Combobox = /* @__PURE__ */ React.forwardRef<HTMLInputElement, Combo
     let i = active;
     for (let n = 0; n < visible.length; n++) {
       i = (i + dir + visible.length) % visible.length;
-      if (!visible.at(i)?.disabled) break;
+      if (!visible.at(i)?.disabled) {
+        setActive(i);
+        return;
+      }
     }
-    setActive(i);
+    setActive(-1);
   };
 
   const openList = () => {
@@ -136,7 +143,8 @@ export const Combobox = /* @__PURE__ */ React.forwardRef<HTMLInputElement, Combo
 
   const activeOption = active >= 0 ? visible.at(active) : undefined;
   const single = multiple ? undefined : selected[0] !== undefined ? optionFor(selected[0]) : undefined;
-  const status = open && query ? (loading ? locale.loading : locale.results(visible.length)) : '';
+  const formatResults = locale.results ?? ((c: number) => (c === 1 ? '1 result' : `${c} results`));
+  const status = open && query ? (loading ? (locale.loading ?? 'Loading') : formatResults(visible.length)) : '';
 
   const renderInput = (ctx: FieldContextValue) => (
     <input
@@ -227,7 +235,7 @@ export const Combobox = /* @__PURE__ */ React.forwardRef<HTMLInputElement, Combo
                         <button
                           type="button"
                           className="ui-tag__remove"
-                          aria-label={locale.removeItem(o.label)}
+                          aria-label={(locale.removeItem ?? ((l: string) => `Remove ${l}`))(o.label)}
                           disabled={disabled}
                           onClick={() => {
                             remove(v);
@@ -289,10 +297,10 @@ export const Combobox = /* @__PURE__ */ React.forwardRef<HTMLInputElement, Combo
                   <li className="ui-combobox__empty" role="presentation">
                     {loading ? (
                       <>
-                        <Spinner size="sm" decorative /> {locale.loading}
+                        <Spinner size="sm" decorative /> {locale.loading ?? 'Loading'}
                       </>
                     ) : (
-                      (emptyMessage ?? locale.noResults)
+                      (emptyMessage ?? locale.noResults ?? 'No results')
                     )}
                   </li>
                 ) : (

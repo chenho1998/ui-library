@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as PopoverPrimitive from '@radix-ui/react-popover';
-import { cx, type Size } from '../utils';
-import { useLocale, usePortalContainer } from '../theme/ThemeProvider';
+import { cx, useControllableState, type Size } from '../utils';
+import { useLocaleOverrides, usePortalContainer } from '../theme/ThemeProvider';
 import { CalendarIcon, ClockIcon } from '../icons';
 import { Field, type FieldProps } from './Field';
 import { Calendar } from './DatePicker';
@@ -17,6 +17,9 @@ export interface TimePickerProps extends Pick<FieldProps, 'label' | 'hideLabel' 
   value?: string | null;
   defaultValue?: string | null;
   onValueChange?: (value: string | null) => void;
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
   /** Minutes between choices. Default 5. */
   minuteStep?: number;
   /** BCP 47 locale for the shown time. Defaults to the browser's. */
@@ -85,23 +88,19 @@ function TimeColumn({ label, options, value, onChange, onDone, focusOnMount }: {
 /** Picks a time of day from hour and minute columns. */
 export const TimePicker = /* @__PURE__ */ React.forwardRef<HTMLButtonElement, TimePickerProps>(function TimePicker(
   {
-    label, hideLabel, hint, error, value, defaultValue = null, onValueChange, minuteStep = 5, locale: lang, placeholder, size = 'md', required,
-    disabled, name, id, className, fieldClassName,
+    label, hideLabel, hint, error, value, defaultValue = null, onValueChange, open: controlledOpen, defaultOpen = false, onOpenChange,
+    minuteStep = 5, locale: lang, placeholder, size = 'md', required, disabled, name, id, className, fieldClassName,
   },
   ref,
 ) {
-  const locale = useLocale();
+  const locale = useLocaleOverrides();
   const container = usePortalContainer();
-  const [inner, setInner] = React.useState<string | null>(defaultValue);
-  const current = value !== undefined ? value : inner;
-  const [open, setOpen] = React.useState(false);
+  const [current, setCurrent] = useControllableState<string | null>(value, defaultValue, onValueChange);
+  const [open, setOpen] = useControllableState(controlledOpen, defaultOpen, onOpenChange);
   const [h, m] = current ? current.split(':').map(Number) : [null, null];
-  const shown = current ? new Intl.DateTimeFormat(lang, { hour: 'numeric', minute: '2-digit' }).format(new Date(2000, 0, 1, h!, m!)) : null;
-  const set = (hour: number, minute: number) => {
-    const next = `${pad(hour)}:${pad(minute)}`;
-    if (value === undefined) setInner(next);
-    onValueChange?.(next);
-  };
+  const timeFmt = React.useMemo(() => new Intl.DateTimeFormat(lang, { hour: 'numeric', minute: '2-digit' }), [lang]);
+  const shown = current ? timeFmt.format(new Date(2000, 0, 1, h!, m!)) : null;
+  const set = (hour: number, minute: number) => setCurrent(`${pad(hour)}:${pad(minute)}`);
   const minutes = Array.from({ length: Math.ceil(60 / minuteStep) }, (_, i) => i * minuteStep);
 
   return (
@@ -156,6 +155,9 @@ export interface DateRangePickerProps extends Pick<FieldProps, 'label' | 'hideLa
   defaultValue?: DateRange;
   /** Called once both dates are picked (the end is never before the start). */
   onValueChange?: (range: DateRange) => void;
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
   min?: Date;
   max?: Date;
   isDateDisabled?: (date: Date) => boolean;
@@ -176,22 +178,24 @@ export interface DateRangePickerProps extends Pick<FieldProps, 'label' | 'hideLa
   fieldClassName?: string;
 }
 
+const EMPTY_RANGE: DateRange = { start: null, end: null };
+const DEFAULT_RANGE_FORMAT: Intl.DateTimeFormatOptions = { dateStyle: 'medium' };
+
 /** Picks a start and an end date in one calendar: the first click sets the start, the second the end. */
 export const DateRangePicker = /* @__PURE__ */ React.forwardRef<HTMLButtonElement, DateRangePickerProps>(function DateRangePicker(
   {
-    label, hideLabel, hint, error, value, defaultValue = { start: null, end: null }, onValueChange, min, max, isDateDisabled, locale: lang,
-    formatOptions = { dateStyle: 'medium' }, weekStartsOn, placeholder, size = 'md', required, disabled, startName, endName, id, className,
-    fieldClassName,
+    label, hideLabel, hint, error, value, defaultValue = EMPTY_RANGE, onValueChange, open: controlledOpen, defaultOpen = false, onOpenChange,
+    min, max, isDateDisabled, locale: lang, formatOptions = DEFAULT_RANGE_FORMAT, weekStartsOn, placeholder, size = 'md', required, disabled,
+    startName, endName, id, className, fieldClassName,
   },
   ref,
 ) {
-  const locale = useLocale();
+  const locale = useLocaleOverrides();
   const container = usePortalContainer();
-  const [inner, setInner] = React.useState<DateRange>(defaultValue);
-  const current = value ?? inner;
-  const [open, setOpen] = React.useState(false);
+  const [current, setCurrent] = useControllableState<DateRange>(value, defaultValue, onValueChange);
+  const [open, setOpen] = useControllableState(controlledOpen, defaultOpen, onOpenChange);
   const [draft, setDraft] = React.useState<DateRange>(current);
-  const fmt = new Intl.DateTimeFormat(lang, formatOptions);
+  const fmt = React.useMemo(() => new Intl.DateTimeFormat(lang, formatOptions), [lang, formatOptions]);
   const shown =
     current.start && current.end ? fmt.formatRange(current.start, current.end) : current.start ? `${fmt.format(current.start)} – …` : null;
 
@@ -226,7 +230,7 @@ export const DateRangePicker = /* @__PURE__ */ React.forwardRef<HTMLButtonElemen
           {startName ? <input type="hidden" name={startName} value={current.start ? toIso(current.start) : ''} /> : null}
           {endName ? <input type="hidden" name={endName} value={current.end ? toIso(current.end) : ''} /> : null}
           <PopoverPrimitive.Portal container={container}>
-            <PopoverPrimitive.Content className="ui-popover ui-date-picker__content" align="start" sideOffset={4} aria-label={locale.chooseDate} role="dialog">
+            <PopoverPrimitive.Content className="ui-popover ui-date-picker__content" align="start" sideOffset={4} aria-label={locale.chooseDate ?? 'Choose date'} role="dialog">
               <p className="ui-date-range__hint" aria-live="polite">
                 {draft.start && !draft.end ? (locale.endDate ?? TEXT.endDate) : (locale.startDate ?? TEXT.startDate)}
               </p>
@@ -247,8 +251,7 @@ export const DateRangePicker = /* @__PURE__ */ React.forwardRef<HTMLButtonElemen
                   }
                   const next = d < draft.start ? { start: d, end: draft.start } : { start: draft.start, end: d };
                   setDraft(next);
-                  if (value === undefined) setInner(next);
-                  onValueChange?.(next);
+                  setCurrent(next);
                   setOpen(false);
                 }}
               />

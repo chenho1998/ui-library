@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as CollapsiblePrimitive from '@radix-ui/react-collapsible';
 import { Slot, Slottable } from '@radix-ui/react-slot';
 import { cx } from '../utils';
-import { useLocale } from '../theme/ThemeProvider';
+import { useLocaleOverrides } from '../theme/ThemeProvider';
 import { ChevronDownIcon, PanelLeftIcon } from '../icons';
 import { Tooltip } from '../overlays';
 
@@ -59,10 +59,13 @@ export interface SidebarGroupProps extends Omit<React.HTMLAttributes<HTMLDivElem
   label?: React.ReactNode;
 }
 
-function SidebarGroup({ label, className, children, ...rest }: SidebarGroupProps) {
+const SidebarGroup = /* @__PURE__ */ React.forwardRef<HTMLDivElement, SidebarGroupProps>(function SidebarGroup(
+  { label, className, children, ...rest },
+  ref,
+) {
   const id = React.useId();
   return (
-    <div role="group" aria-labelledby={label ? id : undefined} className={cx('ui-sidebar__group', className)} {...rest}>
+    <div ref={ref} role="group" aria-labelledby={label ? id : undefined} className={cx('ui-sidebar__group', className)} {...rest}>
       {label ? (
         <div id={id} className="ui-sidebar__group-label">
           {label}
@@ -71,7 +74,7 @@ function SidebarGroup({ label, className, children, ...rest }: SidebarGroupProps
       <ul className="ui-sidebar__list">{children}</ul>
     </div>
   );
-}
+});
 
 export interface SidebarItemProps extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'children'> {
   icon?: React.ReactNode;
@@ -138,7 +141,10 @@ export interface SidebarSubmenuProps {
 }
 
 /** A labelled, expandable list of nested items. Expanding it from a collapsed sidebar opens the sidebar too. */
-function SidebarSubmenu({ label, icon, open: controlled, defaultOpen = false, onOpenChange, children }: SidebarSubmenuProps) {
+const SidebarSubmenu = /* @__PURE__ */ React.forwardRef<HTMLLIElement, SidebarSubmenuProps>(function SidebarSubmenu(
+  { label, icon, open: controlled, defaultOpen = false, onOpenChange, children },
+  ref,
+) {
   const { collapsed, setCollapsed } = useSidebar();
   const [inner, setInner] = React.useState(defaultOpen);
   const open = (controlled ?? inner) && !collapsed;
@@ -147,7 +153,7 @@ function SidebarSubmenu({ label, icon, open: controlled, defaultOpen = false, on
     onOpenChange?.(next);
   };
   return (
-    <li>
+    <li ref={ref}>
       <CollapsiblePrimitive.Root
         open={open}
         onOpenChange={(next) => {
@@ -168,7 +174,7 @@ function SidebarSubmenu({ label, icon, open: controlled, defaultOpen = false, on
       </CollapsiblePrimitive.Root>
     </li>
   );
-}
+});
 
 /** Button that collapses and expands the surrounding Sidebar. */
 const SidebarToggle = /* @__PURE__ */ React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(function SidebarToggle(
@@ -176,7 +182,7 @@ const SidebarToggle = /* @__PURE__ */ React.forwardRef<HTMLButtonElement, React.
   ref,
 ) {
   const { collapsed, setCollapsed } = useSidebar();
-  const locale = useLocale();
+  const locale = useLocaleOverrides();
   return (
     <button
       ref={ref}
