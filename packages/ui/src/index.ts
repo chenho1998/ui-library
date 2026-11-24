@@ -8,8 +8,18 @@ export { animeTheme, pixelTheme, brutalistTheme, sketchTheme, neonTheme } from '
 
 // Layout and type
 export * from './layout';
-// Icons
-export * from './icons';
+// Icons (from @yourorg/icons; named re-exports preserve full tree-shaking)
+export {
+  createIcon,
+  type IconProps,
+  CheckIcon, MinusIcon, PlusIcon, XIcon,
+  ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, ChevronRightIcon,
+  ArrowUpIcon, ArrowDownIcon, SearchIcon,
+  InfoIcon, SuccessIcon, WarningIcon, DangerIcon,
+  CalendarIcon, MoreIcon, InboxIcon,
+  HomeIcon, SettingsIcon, UsersIcon, FolderIcon, FileIcon, ChartIcon, BellIcon, ClockIcon, UploadIcon, StarIcon, MenuIcon, PanelLeftIcon,
+  CopyIcon, TrashIcon, EditIcon, FilterIcon, SunIcon, MoonIcon, EyeIcon, EyeOffIcon, ExternalLinkIcon, RefreshIcon,
+} from '@yourorg/icons';
 // Actions
 export * from './actions';
 // Forms
