@@ -25,7 +25,7 @@
     "globals": "^17.14.0",
     "stylelint": "^18.1.0",
     "stylelint-config-standard": "^41.1.0",
-    "typescript": "^5.6.0",
+    "typescript": "~6.0.3",
     "typescript-eslint": "^8.74.0"
   }
 }
