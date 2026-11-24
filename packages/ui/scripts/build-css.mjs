@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(import.meta.url);
 const tokens = readFileSync(require.resolve('@yourorg/tokens/tokens.css'), 'utf8');
-const parts = ['styles/base.css', 'layout/layout.css', 'actions/actions.css', 'forms/forms.css', 'overlays/overlays.css', 'feedback/feedback.css', 'navigation/navigation.css', 'data/data.css', 'navigation/more.css', 'forms/more.css', 'overlays/more.css', 'data/more.css', 'styles/expressive.css', 'styles/themes.css'];
+const parts = ['styles/base.css', 'layout/layout.css', 'actions/actions.css', 'forms/forms.css', 'overlays/overlays.css', 'feedback/feedback.css', 'navigation/navigation.css', 'data/data.css', 'navigation/more.css', 'forms/more.css', 'overlays/more.css', 'data/more.css', 'styles/extra.css', 'styles/expressive.css', 'styles/themes.css'];
 const components = parts.map((p) => `/* ${p} */\n` + readFileSync(join(root, 'src', p), 'utf8')).join('\n');
 const source = `@layer ui.reset, ui.tokens, ui.components;\n${tokens}\n@layer ui.components {\n${components}\n}\n`;
 // Minified for shipping (no lowering: nesting, layers and modern colour functions stay as written).

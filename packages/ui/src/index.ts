@@ -37,6 +37,11 @@ export {
   Timeline, TreeView, Stat, DescriptionList,
   type TimelineItemProps, type TreeNode, type TreeViewProps, type StatProps, type DescriptionListProps, type DescriptionItemProps,
 } from './data/more';
+export { DataTable, type DataTableProps, type DataTableColumn } from './data/DataTable';
+export { Carousel, type CarouselProps, type CarouselSlideProps } from './data/Carousel';
+export { ColorPicker, type ColorPickerProps } from './forms/ColorPicker';
+export { Resizable, type ResizableProps, type ResizablePanelProps, type ResizableHandleProps } from './layout/Resizable';
+export { Banner, type BannerProps } from './feedback/Banner';
 // Utilities
 export { cx, mergeRefs, useControllableState } from './utils';
 export type { Size, Tone } from './utils';

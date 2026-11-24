@@ -51,6 +51,20 @@ export interface Locale {
   minutes?: string;
   startDate?: string;
   endDate?: string;
+  /** DataTable search input. */
+  searchPlaceholder?: string;
+  /** Carousel navigation and announcements. */
+  previousSlide?: string;
+  nextSlide?: string;
+  slideOf?: (n: number, total: number) => string;
+  pauseCarousel?: string;
+  playCarousel?: string;
+  /** ColorPicker controls. */
+  chooseColor?: string;
+  hue?: string;
+  colorHex?: string;
+  /** Resizable split handle. */
+  resizePanel?: string;
 }
 
 export const defaultLocale: Locale = {
