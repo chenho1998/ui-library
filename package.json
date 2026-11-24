@@ -13,6 +13,8 @@
     "lint": "eslint . && stylelint \"packages/**/*.css\"",
     "storybook": "pnpm --filter storybook dev",
     "build-storybook": "pnpm --filter storybook build",
+    "test:visual": "pnpm --filter storybook test:visual",
+    "test:visual:update": "pnpm --filter storybook test:visual:update",
     "changeset": "changeset",
     "size": "pnpm --filter @yourorg/ui size"
   },

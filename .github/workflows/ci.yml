@@ -25,9 +25,27 @@ jobs:
         run: pnpm --filter @yourorg/ui size
       - name: Build Storybook
         run: pnpm build-storybook
-      # Visual regression: add Chromatic here once a project token exists
-      # - uses: chromaui/action@v11
-      #   with: { projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}, storybookBuildDir: apps/storybook/storybook-static }
+      - name: Install Playwright Chromium
+        run: pnpm --filter storybook exec playwright install --with-deps chromium
+      - name: Visual regression tests (Playwright)
+        run: pnpm test:visual -- --update-snapshots=missing
+      - name: Upload Playwright visual diff report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-visual-report
+          path: |
+            apps/storybook/playwright-report
+            apps/storybook/test-results
+          retention-days: 14
+      - name: Visual review (Chromatic, when CHROMATIC_PROJECT_TOKEN is set)
+        if: env.CHROMATIC_PROJECT_TOKEN != ''
+        uses: chromaui/action@v18
+        env:
+          CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          storybookBuildDir: apps/storybook/storybook-static
 
   # Publishes to npm. Off until you're ready: rename the @yourorg packages, add an NPM_TOKEN
   # secret, then set the repo variable ENABLE_RELEASE to "true" (Settings → Secrets and
