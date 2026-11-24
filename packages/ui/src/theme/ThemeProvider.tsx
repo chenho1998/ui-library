@@ -83,20 +83,34 @@ interface ThemeContextValue {
   colorScheme: ColorScheme;
   resolvedColorScheme: 'light' | 'dark';
   setColorScheme: (scheme: ColorScheme) => void;
-  locale: Locale;
+  localeOverrides: Partial<Locale>;
   portalContainer: HTMLElement | null;
 }
+
+const EMPTY_LOCALE: Partial<Locale> = {};
 
 const ThemeContext = /* @__PURE__ */ React.createContext<ThemeContextValue>({
   colorScheme: 'light',
   resolvedColorScheme: 'light',
   setColorScheme: () => {},
-  locale: defaultLocale,
+  localeOverrides: EMPTY_LOCALE,
   portalContainer: null,
 });
 
-export const useTheme = () => React.useContext(ThemeContext);
-export const useLocale = () => React.useContext(ThemeContext).locale;
+export const useTheme = () => {
+  const { colorScheme, resolvedColorScheme, setColorScheme, portalContainer, localeOverrides } = React.useContext(ThemeContext);
+  const locale = React.useMemo(() => ({ ...defaultLocale, ...localeOverrides }), [localeOverrides]);
+  return React.useMemo(
+    () => ({ colorScheme, resolvedColorScheme, setColorScheme, portalContainer, locale }),
+    [colorScheme, resolvedColorScheme, setColorScheme, portalContainer, locale],
+  );
+};
+export const useLocale = () => {
+  const overrides = React.useContext(ThemeContext).localeOverrides;
+  return React.useMemo(() => ({ ...defaultLocale, ...overrides }), [overrides]);
+};
+/** Internal hook returning only caller-supplied locale overrides, so single-component bundles omit unused defaults. */
+export const useLocaleOverrides = () => React.useContext(ThemeContext).localeOverrides;
 /** Container that overlays portal into, so they inherit the theme's CSS variables. */
 export const usePortalContainer = () => React.useContext(ThemeContext).portalContainer ?? undefined;
 
@@ -181,10 +195,10 @@ export const ThemeProvider = /* @__PURE__ */ React.forwardRef<HTMLDivElement, Th
   );
 
   const [portalContainer, setPortalContainer] = React.useState<HTMLElement | null>(null);
-  const mergedLocale = React.useMemo(() => ({ ...defaultLocale, ...locale }), [locale]);
+  const localeOverrides = locale ?? EMPTY_LOCALE;
   const value = React.useMemo(
-    () => ({ colorScheme, resolvedColorScheme, setColorScheme, locale: mergedLocale, portalContainer }),
-    [colorScheme, resolvedColorScheme, setColorScheme, mergedLocale, portalContainer],
+    () => ({ colorScheme, resolvedColorScheme, setColorScheme, localeOverrides, portalContainer }),
+    [colorScheme, resolvedColorScheme, setColorScheme, localeOverrides, portalContainer],
   );
 
   const themeStyle = React.useMemo(

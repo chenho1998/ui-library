@@ -2,6 +2,7 @@
 // so any un-layered app CSS overrides the library without !important.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
+import { transform } from 'esbuild';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -11,7 +12,9 @@ const require = createRequire(import.meta.url);
 const tokens = readFileSync(require.resolve('@yourorg/tokens/tokens.css'), 'utf8');
 const parts = ['styles/base.css', 'layout/layout.css', 'actions/actions.css', 'forms/forms.css', 'overlays/overlays.css', 'feedback/feedback.css', 'navigation/navigation.css', 'data/data.css', 'navigation/more.css', 'forms/more.css', 'overlays/more.css', 'data/more.css', 'styles/expressive.css', 'styles/themes.css'];
 const components = parts.map((p) => `/* ${p} */\n` + readFileSync(join(root, 'src', p), 'utf8')).join('\n');
-const out = `@layer ui.reset, ui.tokens, ui.components;\n${tokens}\n@layer ui.components {\n${components}\n}\n`;
+const source = `@layer ui.reset, ui.tokens, ui.components;\n${tokens}\n@layer ui.components {\n${components}\n}\n`;
+// Minified for shipping (no lowering: nesting, layers and modern colour functions stay as written).
+const { code: out } = await transform(source, { loader: 'css', minify: true, legalComments: 'none' });
 mkdirSync(join(root, 'dist'), { recursive: true });
 writeFileSync(join(root, 'dist/styles.css'), out);
 const gz = gzipSync(out).length / 1024;

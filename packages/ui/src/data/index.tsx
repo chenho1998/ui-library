@@ -1,9 +1,8 @@
 import * as React from 'react';
-import * as AvatarPrimitive from '@radix-ui/react-avatar';
 import * as AccordionPrimitive from '@radix-ui/react-accordion';
 import { Slot } from '@radix-ui/react-slot';
 import { cx, type Size } from '../utils';
-import { useLocale } from '../theme/ThemeProvider';
+import { useLocaleOverrides } from '../theme/ThemeProvider';
 import { ArrowDownIcon, ArrowUpIcon, ChevronDownIcon, InboxIcon, XIcon } from '../icons';
 import { Checkbox } from '../forms';
 import { Skeleton } from '../feedback';
@@ -60,7 +59,7 @@ export const Card = /* @__PURE__ */ Object.assign(CardRoot, {
 });
 
 /* ---------- Avatar ---------- */
-export interface AvatarProps extends React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root> {
+export interface AvatarProps extends React.HTMLAttributes<HTMLSpanElement> {
   src?: string;
   /** Person or entity name: used for alt text and initials. */
   name: string;
@@ -82,14 +81,44 @@ export const Avatar = /* @__PURE__ */ React.forwardRef<HTMLSpanElement, AvatarPr
   { src, name, size = 'md', shape = 'circle', className, ...rest },
   ref,
 ) {
+  const [state, setState] = React.useState<{ src?: string; status: 'loading' | 'loaded' | 'error'; showFallback: boolean }>(() => ({
+    src,
+    status: src ? 'loading' : 'error',
+    showFallback: !src,
+  }));
+  const current = state.src === src ? state : { src, status: src ? ('loading' as const) : ('error' as const), showFallback: !src };
+
+  React.useEffect(() => {
+    if (!src) return;
+    const timer = window.setTimeout(() => {
+      setState((prev) =>
+        prev.src === src && prev.status === 'loaded'
+          ? prev
+          : { src, status: prev.src === src ? prev.status : 'loading', showFallback: true },
+      );
+    }, 300);
+    return () => window.clearTimeout(timer);
+  }, [src]);
+
   return (
-    <AvatarPrimitive.Root ref={ref} className={cx('ui-avatar', className)} data-size={size} data-shape={shape} {...rest}>
-      {src ? <AvatarPrimitive.Image className="ui-avatar__image" src={src} alt={name} /> : null}
-      <AvatarPrimitive.Fallback className="ui-avatar__fallback" delayMs={src ? 300 : 0}>
-        <span aria-hidden="true">{initials(name)}</span>
-        <span className="ui-visually-hidden">{name}</span>
-      </AvatarPrimitive.Fallback>
-    </AvatarPrimitive.Root>
+    <span ref={ref} className={cx('ui-avatar', className)} data-size={size} data-shape={shape} {...rest}>
+      {src && current.status !== 'error' ? (
+        <img
+          className="ui-avatar__image"
+          src={src}
+          alt={name}
+          hidden={current.status !== 'loaded'}
+          onLoad={() => setState({ src, status: 'loaded', showFallback: false })}
+          onError={() => setState({ src, status: 'error', showFallback: true })}
+        />
+      ) : null}
+      {current.status !== 'loaded' && current.showFallback ? (
+        <span className="ui-avatar__fallback">
+          <span aria-hidden="true">{initials(name)}</span>
+          <span className="ui-visually-hidden">{name}</span>
+        </span>
+      ) : null}
+    </span>
   );
 });
 
@@ -124,8 +153,8 @@ export const Tag = /* @__PURE__ */ React.forwardRef<HTMLSpanElement, TagProps>(f
   { tone = 'neutral', onRemove, removeLabel, disabled, className, children, ...rest },
   ref,
 ) {
-  const locale = useLocale();
-  const label = removeLabel ?? (typeof children === 'string' ? locale.removeItem(children) : locale.dismiss);
+  const locale = useLocaleOverrides();
+  const label = removeLabel ?? (typeof children === 'string' ? (locale.removeItem ?? ((s: string) => `Remove ${s}`))(children) : (locale.dismiss ?? 'Dismiss'));
   return (
     <span ref={ref} className={cx('ui-tag', className)} data-tone={tone} data-disabled={disabled || undefined} {...rest}>
       <span className="ui-tag__label">{children}</span>
@@ -251,7 +280,7 @@ export function Table<T>({
   columns, data, rowKey, caption, hideCaption, sort, onSortChange, selection, onSelectionChange, rowLabel,
   density = 'default', stickyHeader, loading, emptyState, onRowClick, className, ...rest
 }: TableProps<T>) {
-  const locale = useLocale();
+  const locale = useLocaleOverrides();
   const selectable = selection !== undefined;
   const keys = data.map(rowKey);
   const selectedCount = selectable ? keys.filter((k) => selection.has(k)).length : 0;
@@ -282,7 +311,7 @@ export function Table<T>({
             {selectable ? (
               <th scope="col" className="ui-table__select">
                 <Checkbox
-                  aria-label={locale.selectAll}
+                  aria-label={locale.selectAll ?? 'Select all rows'}
                   checked={allState}
                   disabled={!keys.length}
                   onCheckedChange={() => onSelectionChange?.(allState === true ? new Set() : new Set(keys))}
@@ -328,7 +357,7 @@ export function Table<T>({
           ) : data.length === 0 ? (
             <tr>
               <td colSpan={colCount} className="ui-table__empty">
-                {emptyState ?? <EmptyState title={locale.empty} />}
+                {emptyState ?? <EmptyState title={locale.empty ?? 'No data'} />}
               </td>
             </tr>
           ) : (
@@ -345,7 +374,7 @@ export function Table<T>({
                   {selectable ? (
                     <td className="ui-table__select" onClick={(e) => e.stopPropagation()}>
                       <Checkbox
-                        aria-label={locale.selectRow(rowLabel ? rowLabel(row) : key)}
+                        aria-label={(locale.selectRow ?? ((n: string) => `Select ${n}`))(rowLabel ? rowLabel(row) : key)}
                         checked={isSelected}
                         onCheckedChange={() => toggleRow(key)}
                       />

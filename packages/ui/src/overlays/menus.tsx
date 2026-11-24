@@ -12,14 +12,14 @@ interface Loose {
   [prop: string]: unknown;
 }
 
-type ItemExtras = {
+export type MenuItemExtras = {
   icon?: React.ReactNode;
   /** Keyboard shortcut hint shown on the right (display only). */
   shortcut?: string;
   tone?: 'neutral' | 'danger';
 };
 
-function menuParts<
+export function menuParts<
   P extends {
     Portal: React.ElementType;
     Content: React.ElementType;
@@ -32,19 +32,19 @@ function menuParts<
     SubTrigger: React.ElementType;
     SubContent: React.ElementType;
   },
->(P: P) {
+>(P: P, contentDefaults?: Loose) {
   const Content = React.forwardRef(
     function MenuContent({ className, ...rest }: Loose, ref: React.ForwardedRef<HTMLDivElement>) {
       const container = usePortalContainer();
       return (
         <P.Portal container={container}>
-          <P.Content ref={ref} className={cx('ui-menu-surface', 'ui-menu', className)} {...rest} />
+          <P.Content ref={ref} {...contentDefaults} className={cx('ui-menu-surface', 'ui-menu', className)} {...rest} />
         </P.Portal>
       );
     },
   );
   const Item = React.forwardRef(
-    function MenuItem({ icon, shortcut, tone = 'neutral', className, children, ...rest }: ItemExtras & Loose, ref: React.ForwardedRef<HTMLDivElement>) {
+    function MenuItem({ icon, shortcut, tone = 'neutral', className, children, ...rest }: MenuItemExtras & Loose, ref: React.ForwardedRef<HTMLDivElement>) {
       return (
         <P.Item ref={ref} className={cx('ui-menu-item', className)} data-tone={tone} {...rest}>
           <span className="ui-menu-item__main">
@@ -84,39 +84,49 @@ function menuParts<
       );
     },
   );
-  const Label = ({ className, ...rest }: Loose) => <P.Label className={cx('ui-menu-label', className)} {...rest} />;
-  const Separator = () => <P.Separator className="ui-menu-separator" />;
-  const SubTrigger = ({ className, children, ...rest }: Loose) => (
-    <P.SubTrigger className={cx('ui-menu-item', className)} {...rest}>
-      <span className="ui-menu-item__main">{children}</span>
-      <ChevronRightIcon size="sm" className="ui-icon ui-menu-item__shortcut" />
-    </P.SubTrigger>
+  const Label = React.forwardRef(
+    function MenuLabel({ className, ...rest }: Loose, ref: React.ForwardedRef<HTMLDivElement>) {
+      return <P.Label ref={ref} className={cx('ui-menu-label', className)} {...rest} />;
+    },
   );
-  const SubContent = ({ className, ...rest }: Loose) => {
-    const container = usePortalContainer();
-    return (
-      <P.Portal container={container}>
-        <P.SubContent className={cx('ui-menu-surface', 'ui-menu', className)} sideOffset={4} {...rest} />
-      </P.Portal>
-    );
-  };
+  const Separator = () => <P.Separator className="ui-menu-separator" />;
+  const SubTrigger = React.forwardRef(
+    function MenuSubTrigger({ className, children, ...rest }: Loose, ref: React.ForwardedRef<HTMLDivElement>) {
+      return (
+        <P.SubTrigger ref={ref} className={cx('ui-menu-item', className)} {...rest}>
+          <span className="ui-menu-item__main">{children}</span>
+          <ChevronRightIcon size="sm" className="ui-icon ui-menu-item__shortcut" />
+        </P.SubTrigger>
+      );
+    },
+  );
+  const SubContent = React.forwardRef(
+    function MenuSubContent({ className, ...rest }: Loose, ref: React.ForwardedRef<HTMLDivElement>) {
+      const container = usePortalContainer();
+      return (
+        <P.Portal container={container}>
+          <P.SubContent ref={ref} className={cx('ui-menu-surface', 'ui-menu', className)} sideOffset={4} {...rest} />
+        </P.Portal>
+      );
+    },
+  );
   return { Content, Item, CheckboxItem, RadioItem, Label, Separator, SubTrigger, SubContent };
 }
 
 type Extra<T extends React.ElementType> = React.ComponentPropsWithoutRef<T>;
-type PartTypes<P extends typeof ContextMenuPrimitive | typeof MenubarPrimitive> = {
+export type MenuPartTypes<P extends { Content: React.ElementType; Item: React.ElementType; CheckboxItem: React.ElementType; RadioItem: React.ElementType; Label: React.ElementType; SubTrigger: React.ElementType; SubContent: React.ElementType }> = {
   Content: React.ForwardRefExoticComponent<Extra<P['Content']> & React.RefAttributes<HTMLDivElement>>;
-  Item: React.ForwardRefExoticComponent<Extra<P['Item']> & ItemExtras & React.RefAttributes<HTMLDivElement>>;
+  Item: React.ForwardRefExoticComponent<Extra<P['Item']> & MenuItemExtras & React.RefAttributes<HTMLDivElement>>;
   CheckboxItem: React.ForwardRefExoticComponent<Extra<P['CheckboxItem']> & React.RefAttributes<HTMLDivElement>>;
   RadioItem: React.ForwardRefExoticComponent<Extra<P['RadioItem']> & React.RefAttributes<HTMLDivElement>>;
-  Label: (props: Extra<P['Label']>) => React.JSX.Element;
+  Label: React.ForwardRefExoticComponent<Extra<P['Label']> & React.RefAttributes<HTMLDivElement>>;
   Separator: () => React.JSX.Element;
-  SubTrigger: (props: Extra<P['SubTrigger']>) => React.JSX.Element;
-  SubContent: (props: Extra<P['SubContent']>) => React.JSX.Element;
+  SubTrigger: React.ForwardRefExoticComponent<Extra<P['SubTrigger']> & React.RefAttributes<HTMLDivElement>>;
+  SubContent: React.ForwardRefExoticComponent<Extra<P['SubContent']> & React.RefAttributes<HTMLDivElement>>;
 };
 
 /** Attach the shared parts to a menu root in one call, so bundlers can drop unused menus (no property reads at module level). */
-function withParts<T>(root: object, extra: object, parts: object): T {
+export function withParts<T>(root: object, extra: object, parts: object): T {
   return Object.assign(root, extra, parts) as T;
 }
 
@@ -126,7 +136,7 @@ type ContextMenuComponent = ((props: ContextMenuPrimitive.ContextMenuProps) => R
   Group: typeof ContextMenuPrimitive.Group;
   RadioGroup: typeof ContextMenuPrimitive.RadioGroup;
   Sub: typeof ContextMenuPrimitive.Sub;
-} & PartTypes<typeof ContextMenuPrimitive>;
+} & MenuPartTypes<typeof ContextMenuPrimitive>;
 
 /** A menu opened by right-clicking (or long-pressing, or Shift+F10) an area. Same parts as DropdownMenu. */
 export const ContextMenu: ContextMenuComponent = /* @__PURE__ */ withParts(
@@ -160,7 +170,7 @@ type MenubarComponent = typeof MenubarRoot & {
   Group: typeof MenubarPrimitive.Group;
   RadioGroup: typeof MenubarPrimitive.RadioGroup;
   Sub: typeof MenubarPrimitive.Sub;
-} & PartTypes<typeof MenubarPrimitive>;
+} & MenuPartTypes<typeof MenubarPrimitive>;
 
 /** A row of menus (File, Edit, View…) for app-like tools, with arrow-key movement between menus. */
 export const Menubar: MenubarComponent = /* @__PURE__ */ withParts(

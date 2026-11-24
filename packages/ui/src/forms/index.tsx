@@ -5,7 +5,7 @@ import * as SwitchPrimitive from '@radix-ui/react-switch';
 import * as SelectPrimitive from '@radix-ui/react-select';
 import * as SliderPrimitive from '@radix-ui/react-slider';
 import { cx, type Size } from '../utils';
-import { useLocale, usePortalContainer } from '../theme/ThemeProvider';
+import { useLocaleOverrides, usePortalContainer } from '../theme/ThemeProvider';
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon, MinusIcon } from '../icons';
 import { Field, useFieldControlProps, type FieldProps } from './Field';
 
@@ -60,11 +60,11 @@ export const TextField = /* @__PURE__ */ React.forwardRef<HTMLInputElement, Text
   },
   ref,
 ) {
-  const locale = useLocale();
+  const locale = useLocaleOverrides();
   const [count, setCount] = useCharCount(value, defaultValue);
   const counter =
     showCount && maxLength ? (
-      <span className="ui-field__count" aria-live="polite" aria-label={locale.characterCount(count, maxLength)}>
+      <span className="ui-field__count" aria-live="polite" aria-label={(locale.characterCount ?? ((c: number, m: number) => `${c} of ${m} characters`))(count, maxLength)}>
         {count} / {maxLength}
       </span>
     ) : null;
@@ -134,7 +134,7 @@ export const Textarea = /* @__PURE__ */ React.forwardRef<HTMLTextAreaElement, Te
   { label, hideLabel, hint, error, required, disabled, id, autoResize, maxRows = 10, rows = 3, showCount, maxLength, value, defaultValue, onChange, className, fieldClassName, ...rest },
   forwardedRef,
 ) {
-  const locale = useLocale();
+  const locale = useLocaleOverrides();
   const [count, setCount] = useCharCount(value, defaultValue);
   const innerRef = React.useRef<HTMLTextAreaElement | null>(null);
   const resize = React.useCallback(() => {
@@ -158,7 +158,7 @@ export const Textarea = /* @__PURE__ */ React.forwardRef<HTMLTextAreaElement, Te
       className={fieldClassName}
       labelEnd={
         showCount && maxLength ? (
-          <span className="ui-field__count" aria-label={locale.characterCount(count, maxLength)}>
+          <span className="ui-field__count" aria-label={(locale.characterCount ?? ((c: number, m: number) => `${c} of ${m} characters`))(count, maxLength)}>
             {count} / {maxLength}
           </span>
         ) : null
@@ -381,7 +381,7 @@ const SelectRoot = /* @__PURE__ */ React.forwardRef<HTMLButtonElement, SelectPro
   { label, hideLabel, hint, error, placeholder, size = 'md', id, required, disabled, className, fieldClassName, children, 'aria-label': ariaLabel, ...rest },
   ref,
 ) {
-  const locale = useLocale();
+  const locale = useLocaleOverrides();
   const container = usePortalContainer();
   return (
     <Field label={label} hideLabel={hideLabel} hint={hint} error={error} required={required} disabled={disabled} id={id} className={fieldClassName}>
@@ -398,7 +398,7 @@ const SelectRoot = /* @__PURE__ */ React.forwardRef<HTMLButtonElement, SelectPro
             aria-invalid={ctx.invalid || undefined}
             data-invalid={ctx.invalid || undefined}
           >
-            <SelectPrimitive.Value placeholder={placeholder ?? locale.selectPlaceholder} />
+            <SelectPrimitive.Value placeholder={placeholder ?? locale.selectPlaceholder ?? 'Select…'} />
             <SelectPrimitive.Icon className="ui-select__icon">
               <ChevronDownIcon size="sm" />
             </SelectPrimitive.Icon>
@@ -526,7 +526,7 @@ export const NumberField = /* @__PURE__ */ React.forwardRef<HTMLInputElement, Nu
   { label, hideLabel, hint, error, value, defaultValue = null, onValueChange, min, max, step = 1, formatOptions, size = 'md', required, disabled, readOnly, id, className, fieldClassName, onBlur, onKeyDown, ...rest },
   ref,
 ) {
-  const locale = useLocale();
+  const locale = useLocaleOverrides();
   const [inner, setInner] = React.useState<number | null>(defaultValue);
   const current = value !== undefined ? value : inner;
   const format = React.useMemo(() => new Intl.NumberFormat(undefined, formatOptions), [formatOptions]);
@@ -600,7 +600,7 @@ export const NumberField = /* @__PURE__ */ React.forwardRef<HTMLInputElement, Nu
             <button
               type="button"
               tabIndex={-1}
-              aria-label={locale.increment}
+              aria-label={locale.increment ?? 'Increase'}
               disabled={disabled || readOnly || (max !== undefined && (current ?? -Infinity) >= max)}
               onClick={() => bump(step)}
             >
@@ -609,7 +609,7 @@ export const NumberField = /* @__PURE__ */ React.forwardRef<HTMLInputElement, Nu
             <button
               type="button"
               tabIndex={-1}
-              aria-label={locale.decrement}
+              aria-label={locale.decrement ?? 'Decrease'}
               disabled={disabled || readOnly || (min !== undefined && (current ?? Infinity) <= min)}
               onClick={() => bump(-step)}
             >

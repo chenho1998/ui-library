@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import * as HoverCardPrimitive from '@radix-ui/react-hover-card';
-import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
 import { cx } from '../utils';
 import { useLocale, usePortalContainer } from '../theme/ThemeProvider';
 import { SearchIcon } from '../icons';
@@ -200,36 +199,31 @@ export const Kbd = /* @__PURE__ */ React.forwardRef<HTMLElement, React.HTMLAttri
 });
 
 /* ---------- ScrollArea ---------- */
-export interface ScrollAreaProps extends Omit<React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root>, 'dir'> {
-  /** Which scrollbars to show. Default `'vertical'`. */
+export interface ScrollAreaProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Which directions scroll. Default `'vertical'`. */
   orientation?: 'vertical' | 'horizontal' | 'both';
   /** Names the scrollable region, so keyboard users know what they are scrolling. */
   'aria-label'?: string;
 }
 
-/** A scroll container with slim, themed scrollbars. Keyboard users can focus it and scroll with arrow keys. */
+/**
+ * A scroll container with slim, themed scrollbars. It uses the browser's own scrolling (no JS scrollbars), so
+ * touch, wheel, keyboard and assistive tech all behave natively. Keyboard users can focus it and scroll with arrows.
+ */
 export const ScrollArea = /* @__PURE__ */ React.forwardRef<HTMLDivElement, ScrollAreaProps>(function ScrollArea(
-  { orientation = 'vertical', className, children, 'aria-label': ariaLabel, ...rest },
+  { orientation = 'vertical', className, 'aria-label': ariaLabel, ...rest },
   ref,
 ) {
   return (
-    <ScrollAreaPrimitive.Root ref={ref} className={cx('ui-scroll', className)} {...rest}>
-      {/* Focusable so keyboard users can scroll it. */}
-      { }
-      <ScrollAreaPrimitive.Viewport className="ui-scroll__viewport" tabIndex={0} role={ariaLabel ? 'region' : undefined} aria-label={ariaLabel}>
-        {children}
-      </ScrollAreaPrimitive.Viewport>
-      {orientation !== 'horizontal' ? (
-        <ScrollAreaPrimitive.Scrollbar orientation="vertical" className="ui-scroll__bar">
-          <ScrollAreaPrimitive.Thumb className="ui-scroll__thumb" />
-        </ScrollAreaPrimitive.Scrollbar>
-      ) : null}
-      {orientation !== 'vertical' ? (
-        <ScrollAreaPrimitive.Scrollbar orientation="horizontal" className="ui-scroll__bar">
-          <ScrollAreaPrimitive.Thumb className="ui-scroll__thumb" />
-        </ScrollAreaPrimitive.Scrollbar>
-      ) : null}
-      <ScrollAreaPrimitive.Corner />
-    </ScrollAreaPrimitive.Root>
+    <div
+      ref={ref}
+      // Focusable so keyboard users can scroll it; a named region when labelled.
+      tabIndex={0}
+      role={ariaLabel ? 'region' : undefined}
+      aria-label={ariaLabel}
+      data-orientation={orientation}
+      className={cx('ui-scroll', className)}
+      {...rest}
+    />
   );
 });

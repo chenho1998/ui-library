@@ -4,9 +4,10 @@ import * as PopoverPrimitive from '@radix-ui/react-popover';
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import * as MenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { cx } from '../utils';
-import { useLocale, usePortalContainer } from '../theme/ThemeProvider';
-import { CheckIcon, XIcon } from '../icons';
+import { useLocaleOverrides, usePortalContainer } from '../theme/ThemeProvider';
+import { XIcon } from '../icons';
 import { Button, type ButtonProps } from '../actions';
+import { menuParts, withParts, type MenuItemExtras, type MenuPartTypes } from './menus';
 
 /* =====================================================================
  * Dialog
@@ -27,7 +28,7 @@ const DialogContent = /* @__PURE__ */ React.forwardRef<HTMLDivElement, DialogCon
   { size = 'md', closeOnOverlayClick = true, showClose = true, initialFocus, className, children, onPointerDownOutside, onOpenAutoFocus, ...rest },
   ref,
 ) {
-  const locale = useLocale();
+  const locale = useLocaleOverrides();
   const container = usePortalContainer();
   return (
     <DialogPrimitive.Portal container={container}>
@@ -51,7 +52,7 @@ const DialogContent = /* @__PURE__ */ React.forwardRef<HTMLDivElement, DialogCon
       >
         {children}
         {showClose ? (
-          <DialogPrimitive.Close className="ui-dialog__close" aria-label={locale.close}>
+          <DialogPrimitive.Close className="ui-dialog__close" aria-label={locale.close ?? 'Close'}>
             <XIcon size="sm" />
           </DialogPrimitive.Close>
         ) : null}
@@ -272,81 +273,25 @@ export function Tooltip({ content, children, side = 'top', align = 'center', del
 /* =====================================================================
  * DropdownMenu
  * ===================================================================== */
-const MenuContent = /* @__PURE__ */ React.forwardRef<HTMLDivElement, React.ComponentPropsWithoutRef<typeof MenuPrimitive.Content>>(
-  function MenuContent({ className, sideOffset = 4, align = 'start', ...rest }, ref) {
-    const container = usePortalContainer();
-    return (
-      <MenuPrimitive.Portal container={container}>
-        <MenuPrimitive.Content ref={ref} sideOffset={sideOffset} align={align} className={cx('ui-menu-surface', 'ui-menu', className)} {...rest} />
-      </MenuPrimitive.Portal>
-    );
+export interface MenuItemProps extends React.ComponentPropsWithoutRef<typeof MenuPrimitive.Item>, MenuItemExtras {}
+
+type DropdownMenuComponent = ((props: MenuPrimitive.DropdownMenuProps) => React.JSX.Element) & {
+  Root: typeof MenuPrimitive.Root;
+  Trigger: typeof MenuPrimitive.Trigger;
+  Group: typeof MenuPrimitive.Group;
+  RadioGroup: typeof MenuPrimitive.RadioGroup;
+  Sub: typeof MenuPrimitive.Sub;
+} & MenuPartTypes<typeof MenuPrimitive>;
+
+/** A list of actions or options opened from a button. Full keyboard, submenu and type-ahead support. */
+export const DropdownMenu: DropdownMenuComponent = /* @__PURE__ */ withParts(
+  (props: MenuPrimitive.DropdownMenuProps) => <MenuPrimitive.Root {...props} />,
+  {
+    Root: MenuPrimitive.Root,
+    Trigger: MenuPrimitive.Trigger,
+    Group: MenuPrimitive.Group,
+    RadioGroup: MenuPrimitive.RadioGroup,
+    Sub: MenuPrimitive.Sub,
   },
+  /* @__PURE__ */ menuParts(MenuPrimitive, { sideOffset: 4, align: 'start' }),
 );
-
-export interface MenuItemProps extends React.ComponentPropsWithoutRef<typeof MenuPrimitive.Item> {
-  icon?: React.ReactNode;
-  /** Keyboard shortcut hint shown on the right (display only). */
-  shortcut?: string;
-  tone?: 'neutral' | 'danger';
-}
-
-const MenuItem = /* @__PURE__ */ React.forwardRef<HTMLDivElement, MenuItemProps>(function MenuItem(
-  { icon, shortcut, tone = 'neutral', className, children, ...rest },
-  ref,
-) {
-  return (
-    <MenuPrimitive.Item ref={ref} className={cx('ui-menu-item', className)} data-tone={tone} {...rest}>
-      <span className="ui-menu-item__main">
-        {icon ? <span className="ui-menu-item__icon">{icon}</span> : null}
-        {children}
-      </span>
-      {shortcut ? <span className="ui-menu-item__shortcut" aria-hidden="true">{shortcut}</span> : null}
-    </MenuPrimitive.Item>
-  );
-});
-
-const MenuCheckboxItem = /* @__PURE__ */ React.forwardRef<HTMLDivElement, React.ComponentPropsWithoutRef<typeof MenuPrimitive.CheckboxItem>>(
-  function MenuCheckboxItem({ className, children, ...rest }, ref) {
-    return (
-      <MenuPrimitive.CheckboxItem ref={ref} className={cx('ui-menu-item', 'ui-menu-item--check', className)} {...rest}>
-        <span className="ui-menu-item__check">
-          <MenuPrimitive.ItemIndicator>
-            <CheckIcon size="sm" />
-          </MenuPrimitive.ItemIndicator>
-        </span>
-        <span className="ui-menu-item__main">{children}</span>
-      </MenuPrimitive.CheckboxItem>
-    );
-  },
-);
-
-const MenuRadioItem = /* @__PURE__ */ React.forwardRef<HTMLDivElement, React.ComponentPropsWithoutRef<typeof MenuPrimitive.RadioItem>>(
-  function MenuRadioItem({ className, children, ...rest }, ref) {
-    return (
-      <MenuPrimitive.RadioItem ref={ref} className={cx('ui-menu-item', 'ui-menu-item--check', className)} {...rest}>
-        <span className="ui-menu-item__check">
-          <MenuPrimitive.ItemIndicator>
-            <span className="ui-menu-item__dot" />
-          </MenuPrimitive.ItemIndicator>
-        </span>
-        <span className="ui-menu-item__main">{children}</span>
-      </MenuPrimitive.RadioItem>
-    );
-  },
-);
-
-/** A list of actions or options opened from a button. Full keyboard and type-ahead support. */
-export const DropdownMenu = /* @__PURE__ */ Object.assign((props: MenuPrimitive.DropdownMenuProps) => <MenuPrimitive.Root {...props} />, {
-  Root: MenuPrimitive.Root,
-  Trigger: MenuPrimitive.Trigger,
-  Content: MenuContent,
-  Item: MenuItem,
-  CheckboxItem: MenuCheckboxItem,
-  RadioGroup: MenuPrimitive.RadioGroup,
-  RadioItem: MenuRadioItem,
-  Group: MenuPrimitive.Group,
-  Label: /* @__PURE__ */ React.forwardRef<HTMLDivElement, React.ComponentPropsWithoutRef<typeof MenuPrimitive.Label>>(function MenuLabel({ className, ...rest }, ref) {
-    return <MenuPrimitive.Label ref={ref} className={cx('ui-menu-label', className)} {...rest} />;
-  }),
-  Separator: () => <MenuPrimitive.Separator className="ui-menu-separator" />,
-});
