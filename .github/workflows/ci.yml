@@ -26,7 +26,7 @@ jobs:
       - name: Build Storybook
         run: pnpm build-storybook
       - name: Install Playwright Chromium
-        run: pnpm --filter storybook exec playwright install --with-deps chromium
+        run: pnpm --filter @yourorg/storybook exec playwright install --with-deps chromium
       - name: Visual regression tests (Playwright)
         run: pnpm test:visual -- --update-snapshots=missing
       - name: Upload Playwright visual diff report
