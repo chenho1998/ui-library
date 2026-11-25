@@ -1,6 +1,7 @@
 import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Avatar, Badge, Button, DataTable, EmptyState, Stack, toast, type DataTableColumn } from '@yourorg/ui';
+import { DemoFrame } from '../PreviewKit';
 
 interface Member {
   id: string;
@@ -82,31 +83,47 @@ type Story = StoryObj<typeof meta>;
 
 export const Playground: Story = {
   render: (args) => (
-    <DataTable<Member>
-      {...args}
-      columns={columns}
-      data={members}
-      rowKey={(r) => r.id}
-      rowLabel={(r) => r.name}
-      defaultSort={{ key: 'projects', direction: 'desc' }}
-      toolbar={<Button size="sm" onClick={() => toast.info('Invite modal opened')}>Invite member</Button>}
-      bulkActions={(selected, clear) => (
-        <>
-          <Button
-            size="sm"
-            variant="outline"
-            tone="neutral"
-            onClick={() => {
-              toast.success(`Exported ${selected.size} member(s)`);
-              clear();
-            }}
-          >
-            Export CSV
-          </Button>
-          <Button size="sm" variant="ghost" tone="neutral" onClick={clear}>Clear</Button>
-        </>
-      )}
-      emptyState={<EmptyState title="No matching members" description="Try another search query." />}
-    />
+    <DemoFrame
+      title="Workspace members"
+      description="Search, sort columns, select rows for bulk actions, and paginate client- or server-side."
+      badge="Search · Sort · Bulk"
+      maxWidth={1040}
+      code={`<DataTable
+  caption="Workspace members"
+  columns={columns}
+  data={members}
+  rowKey={(r) => r.id}
+  searchable
+  selectable
+  pageSize={5}
+/>`}
+    >
+      <DataTable<Member>
+        {...args}
+        columns={columns}
+        data={members}
+        rowKey={(r) => r.id}
+        rowLabel={(r) => r.name}
+        defaultSort={{ key: 'projects', direction: 'desc' }}
+        toolbar={<Button size="sm" onClick={() => toast.info('Invite modal opened')}>Invite member</Button>}
+        bulkActions={(selected, clear) => (
+          <>
+            <Button
+              size="sm"
+              variant="outline"
+              tone="neutral"
+              onClick={() => {
+                toast.success(`Exported ${selected.size} member(s)`);
+                clear();
+              }}
+            >
+              Export CSV
+            </Button>
+            <Button size="sm" variant="ghost" tone="neutral" onClick={clear}>Clear</Button>
+          </>
+        )}
+        emptyState={<EmptyState title="No matching members" description="Try another search query." />}
+      />
+    </DemoFrame>
   ),
 };

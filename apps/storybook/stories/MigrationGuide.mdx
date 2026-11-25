@@ -52,10 +52,33 @@ import { CheckIcon, PlusIcon } from '@yourorg/icons';
 
 ## Migrating from raw HTML / custom components
 
-| HTML / custom pattern | Replace with |
-| --- | --- |
-| `<label>` + `<input>` + error `<p>` | [`<TextField label="…" hint="…" error="…" />`](?path=/story/components-forms-overview--text-fields) (or `<Field>` for custom controls) |
-| Custom modal `<div>` | [`<Dialog>`](?path=/story/components-overlays-overview--dialog-example) (handles focus trap, scroll lock, `Escape`, and `aria-labelledby`) |
-| `window.confirm()` | [`<AlertDialog>`](?path=/story/components-overlays-overview--confirm) (async `onConfirm` spinner, Cancel focused first) |
-| Hand-rolled table + search + pager | [`<DataTable searchable selectable pageSize={10} … />`](?path=/story/components-data-display-datatable--playground) |
-| Inline `<svg>` icons | [`@yourorg/icons`](?path=/story/foundations-icons--gallery) or `createIcon('MyIcon', <path … />)` |
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '36%' }}>HTML / custom pattern</th>
+      <th>Replace with</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>&lt;label&gt;</code> + <code>&lt;input&gt;</code> + error <code>&lt;p&gt;</code></td>
+      <td><a href="?path=/story/components-forms-overview--text-fields" target="_top"><code>&lt;TextField label="…" hint="…" error="…" /&gt;</code></a> (or <code>&lt;Field&gt;</code> for custom controls)</td>
+    </tr>
+    <tr>
+      <td>Custom modal <code>&lt;div&gt;</code></td>
+      <td><a href="?path=/story/components-overlays-overview--dialog-example" target="_top"><code>&lt;Dialog&gt;</code></a> (handles focus trap, scroll lock, <code>Escape</code>, and <code>aria-labelledby</code>)</td>
+    </tr>
+    <tr>
+      <td><code>window.confirm()</code></td>
+      <td><a href="?path=/story/components-overlays-overview--confirm" target="_top"><code>&lt;AlertDialog&gt;</code></a> (async <code>onConfirm</code> spinner, Cancel focused first)</td>
+    </tr>
+    <tr>
+      <td>Hand-rolled table + search + pager</td>
+      <td><a href="?path=/story/components-data-display-datatable--playground" target="_top"><code>&lt;DataTable searchable selectable pageSize=&#123;10&#125; … /&gt;</code></a></td>
+    </tr>
+    <tr>
+      <td>Inline <code>&lt;svg&gt;</code> icons</td>
+      <td><a href="?path=/story/foundations-icons--gallery" target="_top"><code>@yourorg/icons</code></a> or <code>createIcon('MyIcon', &lt;path … /&gt;)</code></td>
+    </tr>
+  </tbody>
+</table>

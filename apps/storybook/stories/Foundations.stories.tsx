@@ -2,7 +2,10 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { tokens, STEPS } from '@yourorg/tokens';
 import { Grid, Heading, Stack, Text } from '@yourorg/ui';
 
-const meta = { title: 'Foundations/Tokens', parameters: { a11y: { test: 'off' } } } satisfies Meta;
+const meta = {
+  title: 'Foundations/Tokens',
+  parameters: { controls: { disable: true }, a11y: { test: 'off' } },
+} satisfies Meta;
 export default meta;
 type Story = StoryObj<typeof meta>;
 

@@ -186,53 +186,60 @@ const CarouselRoot = /* @__PURE__ */ React.forwardRef<HTMLElement, CarouselProps
         </div>
       </div>
 
-      {showControls && count > 1 ? (
-        <div className="ui-carousel__controls">
-          <button
-            type="button"
-            className="ui-carousel__nav"
-            aria-label={locale.previousSlide ?? 'Previous slide'}
-            disabled={!canPrev}
-            onClick={() => goTo(current - 1)}
-          >
-            <ChevronLeftIcon size="sm" />
-          </button>
-          {autoPlay ? (
+      {(showControls && count > 1) || (showIndicators && maxIndex > 0) ? (
+        <div className="ui-carousel__footer">
+          {showControls && count > 1 ? (
             <button
               type="button"
-              className="ui-carousel__nav ui-carousel__pause"
-              aria-label={pausedByUser ? (locale.playCarousel ?? 'Play slides') : (locale.pauseCarousel ?? 'Pause slides')}
-              aria-pressed={pausedByUser}
-              onClick={() => setPausedByUser((p) => !p)}
+              className="ui-carousel__nav"
+              aria-label={locale.previousSlide ?? 'Previous slide'}
+              disabled={!canPrev}
+              onClick={() => goTo(current - 1)}
             >
-              {pausedByUser ? '▶' : '❚❚'}
+              <ChevronLeftIcon size="sm" />
             </button>
           ) : null}
-          <button
-            type="button"
-            className="ui-carousel__nav"
-            aria-label={locale.nextSlide ?? 'Next slide'}
-            disabled={!canNext}
-            onClick={() => goTo(current + 1)}
-          >
-            <ChevronRightIcon size="sm" />
-          </button>
-        </div>
-      ) : null}
 
-      {showIndicators && maxIndex > 0 ? (
-        <div className="ui-carousel__dots" role="group" aria-label="Slides">
-          {Array.from({ length: maxIndex + 1 }, (_, i) => (
+          <div className="ui-carousel__center">
+            {showIndicators && maxIndex > 0 ? (
+              <div className="ui-carousel__dots" role="group" aria-label="Slides">
+                {Array.from({ length: maxIndex + 1 }, (_, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    className="ui-carousel__dot"
+                    aria-label={`Slide ${i + 1}`}
+                    aria-current={i === current ? 'true' : undefined}
+                    data-active={i === current || undefined}
+                    onClick={() => goTo(i)}
+                  />
+                ))}
+              </div>
+            ) : null}
+            {showControls && autoPlay && count > 1 ? (
+              <button
+                type="button"
+                className="ui-carousel__nav ui-carousel__pause"
+                aria-label={pausedByUser ? (locale.playCarousel ?? 'Play slides') : (locale.pauseCarousel ?? 'Pause slides')}
+                aria-pressed={pausedByUser}
+                onClick={() => setPausedByUser((p) => !p)}
+              >
+                {pausedByUser ? '▶' : '❚❚'}
+              </button>
+            ) : null}
+          </div>
+
+          {showControls && count > 1 ? (
             <button
-              key={i}
               type="button"
-              className="ui-carousel__dot"
-              aria-label={`Slide ${i + 1}`}
-              aria-current={i === current ? 'true' : undefined}
-              data-active={i === current || undefined}
-              onClick={() => goTo(i)}
-            />
-          ))}
+              className="ui-carousel__nav"
+              aria-label={locale.nextSlide ?? 'Next slide'}
+              disabled={!canNext}
+              onClick={() => goTo(current + 1)}
+            >
+              <ChevronRightIcon size="sm" />
+            </button>
+          ) : null}
         </div>
       ) : null}
     </section>

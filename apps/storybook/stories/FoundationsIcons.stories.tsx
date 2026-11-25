@@ -7,6 +7,7 @@ const meta = {
   title: 'Foundations/Icons',
   tags: ['new'],
   parameters: {
+    controls: { disable: true },
     docs: {
       description: {
         component: '40 tree-shakeable SVG icons from `@yourorg/icons` (also re-exported from `@yourorg/ui`), plus `createIcon` for custom icons.',
