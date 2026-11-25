@@ -47,11 +47,34 @@ const preview: Preview = {
   globalTypes: {
     scheme: {
       description: 'Colour scheme',
-      toolbar: { title: 'Scheme', icon: 'mirror', items: ['light', 'dark', 'system'], dynamicTitle: true },
+      toolbar: {
+        title: 'Scheme',
+        icon: 'mirror',
+        items: [
+          { value: 'light', title: 'Light', icon: 'sun' },
+          { value: 'dark', title: 'Dark', icon: 'moon' },
+          { value: 'system', title: 'System', icon: 'browser' },
+        ],
+        dynamicTitle: true,
+      },
     },
     theme: {
       description: 'Theme: one switch restyles every component',
-      toolbar: { title: 'Theme', icon: 'paintbrush', items: Object.keys(themes), dynamicTitle: true },
+      toolbar: {
+        title: 'Theme',
+        icon: 'paintbrush',
+        items: [
+          { value: 'default', title: 'Theme: Default' },
+          { value: 'violet', title: 'Theme: Violet' },
+          { value: 'teal', title: 'Theme: Teal' },
+          { value: 'anime', title: 'Theme: Anime' },
+          { value: 'pixel', title: 'Theme: Pixel' },
+          { value: 'brutalist', title: 'Theme: Brutalist' },
+          { value: 'sketch', title: 'Theme: Sketch' },
+          { value: 'neon', title: 'Theme: Neon' },
+        ],
+        dynamicTitle: true,
+      },
     },
     font: {
       description: 'Font: the theme’s own, or OpenDyslexic everywhere via withFont()',
@@ -59,8 +82,8 @@ const preview: Preview = {
         title: 'Font',
         icon: 'eye',
         items: [
-          { value: 'theme', title: 'Theme font' },
-          { value: 'openDyslexic', title: 'OpenDyslexic' },
+          { value: 'theme', title: 'Font: Default' },
+          { value: 'openDyslexic', title: 'Font: OpenDyslexic' },
         ],
         dynamicTitle: true,
       },
@@ -69,6 +92,7 @@ const preview: Preview = {
   initialGlobals: { scheme: 'light', theme: 'default', font: 'theme' },
   parameters: {
     layout: 'padded',
+    backgrounds: { disable: true },
     docs: {
       page: ComponentDocPage,
       toc: {

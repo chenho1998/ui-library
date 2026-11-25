@@ -66,16 +66,30 @@
     font-weight: 500;
     font-size: 11px;
   }
+  /* Clean MUI-style Docs preview frame (removes redundant zoom/reload strip & double borders) */
   .sbdocs .sbdocs-preview {
+    padding-top: 0 !important;
     border-radius: 14px;
-    border-color: #e2e6ee;
+    border: 1px solid #e2e6ee;
     box-shadow: 0 1px 3px rgb(15 23 42 / 5%);
     margin: 14px 0 28px;
+    overflow: hidden;
   }
-  .sbdocs .sbdocs-preview button[title='Zoom in'],
-  .sbdocs .sbdocs-preview button[title='Zoom out'],
-  .sbdocs .sbdocs-preview button[title='Reset zoom'] {
-    display: none;
+  /* Hide Storybook's inner Reload / Zoom in / Zoom out / Reset zoom bar inside Docs canvases */
+  .sbdocs .sbdocs-preview > div:first-child:has(button[aria-label='Zoom in']),
+  .sbdocs .sbdocs-preview > div:first-child:has(button[aria-label='Reload story']) {
+    display: none !important;
+  }
+  /* Avoid double-card framing when DemoFrame renders inside Storybook's Docs preview container */
+  .sbdocs .sbdocs-preview .docs-story:has(.ui-demo-frame),
+  .sbdocs .sbdocs-preview .ui-theme:has(.ui-demo-frame) {
+    padding: 0 !important;
+  }
+  .sbdocs .sbdocs-preview .ui-demo-frame {
+    max-width: 100% !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
   }
   .sbdocs table {
     width: 100%;
@@ -114,7 +128,6 @@
     border: 1px solid #e2e6ee;
     box-shadow: 0 1px 2px rgb(15 23 42 / 4%);
   }
-  /* Clean MUI-style right-hand Table of Contents rail */
   .sbdocs .toc-wrapper {
     font-size: 12.5px;
   }

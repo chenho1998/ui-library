@@ -40,6 +40,7 @@ export function DemoFrame({
 
   return (
     <div
+      className="ui-demo-frame"
       style={{
         maxWidth: maxWidth ?? 960,
         border: '1px solid var(--ui-color-border)',

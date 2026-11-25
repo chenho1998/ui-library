@@ -61,6 +61,15 @@ const theme = prefersDark ? dark : light;
 addons.setConfig({
   theme,
   showPanel: false,
+  toolbar: {
+    zoom: { hidden: true },
+    eject: { hidden: false },
+    copy: { hidden: true },
+    fullscreen: { hidden: false },
+    'storybook/background': { hidden: true },
+    'storybook/outline': { hidden: true },
+    'storybook/measure': { hidden: true },
+  },
   sidebar: {
     showRoots: true,
     // Components introduced in v0.3 carry the `new` tag and get a crisp badge in the menu.
