@@ -1,14 +1,23 @@
 # @yourorg/ui — component library
 
+[![Live Storybook](https://img.shields.io/badge/Storybook-Live%20Preview-2c5df5?logo=storybook&logoColor=white)](https://chenho1998.github.io/ui-library/)
+
 A themeable, accessible React component library: **50 components** and **40 icons** built on design tokens, with Radix UI
 handling complex overlay, focus, keyboard and ARIA behaviour.
 
+> **Live preview:** [chenho1998.github.io/ui-library](https://chenho1998.github.io/ui-library/) ·
+> [Themes gallery](https://chenho1998.github.io/ui-library/?path=/story/get-started-themes--gallery) ·
+> [Icons gallery](https://chenho1998.github.io/ui-library/?path=/story/foundations-icons--gallery) ·
+> [App shell](https://chenho1998.github.io/ui-library/?path=/story/patterns-app-shell--dashboard) ·
+> [Usage guidelines](https://chenho1998.github.io/ui-library/?path=/docs/get-started-usage-guidelines--docs) ·
+> [Migration guide](https://chenho1998.github.io/ui-library/?path=/docs/get-started-migration-guide--docs)
+
 | Package | What it is |
 | --- | --- |
-| `packages/tokens` → `@yourorg/tokens` | Token source (`src/tokens.json`), OKLCH palette generator, build to CSS variables + TS. The build **fails** if any text/background pair misses WCAG contrast. |
-| `packages/icons` → `@yourorg/icons` | Standalone, tree-shakeable 40-icon SVG set and `createIcon` helper (`sideEffects: false`), also re-exported by name from `@yourorg/ui`. |
+| `packages/tokens` → `@yourorg/tokens` | Token source (`src/tokens.json`), OKLCH palette generator, build to CSS variables + TS. The build **fails** if any text/background pair misses WCAG contrast. ([Tokens preview](https://chenho1998.github.io/ui-library/?path=/docs/foundations-tokens--docs)) |
+| `packages/icons` → `@yourorg/icons` | Standalone, tree-shakeable 40-icon SVG set and `createIcon` helper (`sideEffects: false`), also re-exported by name from `@yourorg/ui`. ([Icons preview](https://chenho1998.github.io/ui-library/?path=/story/foundations-icons--gallery)) |
 | `packages/ui` → `@yourorg/ui` | Components, `ThemeProvider`, `createTheme`, `useControllableState`, `styles.css`. |
-| `apps/storybook` | Storybook 10 docs site: branded sidebar, usage guidelines, migration guide, interactive playgrounds, scheme/theme/font switchers, and Playwright visual regression suite. |
+| `apps/storybook` → `@yourorg/storybook` | Storybook 10 docs site: branded sidebar, usage guidelines, migration guide, interactive playgrounds, scheme/theme/font switchers, and Playwright visual regression suite. ([Live site](https://chenho1998.github.io/ui-library/)) |
 
 ## Quick start
 
@@ -59,7 +68,7 @@ const acme = createTheme({
 
 ### Built-in themes
 
-One theme switch restyles every component, in light and dark; there is nothing else to import or wrap:
+One theme switch restyles every component, in light and dark; there is nothing else to import or wrap ([compare all side by side](https://chenho1998.github.io/ui-library/?path=/story/get-started-themes--gallery)):
 
 ```tsx
 import { ThemeProvider, pixelTheme } from '@yourorg/ui';
@@ -67,13 +76,13 @@ import { ThemeProvider, pixelTheme } from '@yourorg/ui';
 <ThemeProvider theme={pixelTheme}>…</ThemeProvider>
 ```
 
-| Theme | Look | Fonts (Fontsource package) |
-| --- | --- | --- |
-| `animeTheme` | Hot pink, cel-shaded buttons, 2.5 px ink outlines, squashy offset shadows, sparkles, screentone, wavy links | Mochiy Pop One, M PLUS Rounded 1c |
-| `pixelTheme` | 8-bit: square notched outlines, bevelled buttons, checker hover, dithered backdrop | Silkscreen, Pixelify Sans |
-| `brutalistTheme` | Thick black borders, flat yellow, big hard shadows, square corners, uppercase buttons | Space Grotesk |
-| `sketchTheme` | Wobbly pencil outlines, handwriting, hatched hover, notebook lines; a chalkboard in dark mode | Patrick Hand |
-| `neonTheme` | Synthwave: glowing magenta and cyan outlines, grid background; best in dark mode | Orbitron, Exo 2 |
+| Theme | Look | Fonts (Fontsource package) | Preview |
+| --- | --- | --- | --- |
+| `animeTheme` | Hot pink, cel-shaded buttons, 2.5 px ink outlines, squashy offset shadows, sparkles, screentone, wavy links | Mochiy Pop One, M PLUS Rounded 1c | [Light](https://chenho1998.github.io/ui-library/?path=/story/patterns-app-shell--dashboard&globals=theme:anime;scheme:light) · [Dark](https://chenho1998.github.io/ui-library/?path=/story/patterns-app-shell--dashboard&globals=theme:anime;scheme:dark) |
+| `pixelTheme` | 8-bit: square notched outlines, bevelled buttons, checker hover, dithered backdrop | Silkscreen, Pixelify Sans | [Light](https://chenho1998.github.io/ui-library/?path=/story/patterns-app-shell--dashboard&globals=theme:pixel;scheme:light) · [Dark](https://chenho1998.github.io/ui-library/?path=/story/patterns-app-shell--dashboard&globals=theme:pixel;scheme:dark) |
+| `brutalistTheme` | Thick black borders, flat yellow, big hard shadows, square corners, uppercase buttons | Space Grotesk | [Light](https://chenho1998.github.io/ui-library/?path=/story/patterns-app-shell--dashboard&globals=theme:brutalist;scheme:light) · [Dark](https://chenho1998.github.io/ui-library/?path=/story/patterns-app-shell--dashboard&globals=theme:brutalist;scheme:dark) |
+| `sketchTheme` | Wobbly pencil outlines, handwriting, hatched hover, notebook lines; a chalkboard in dark mode | Patrick Hand | [Light](https://chenho1998.github.io/ui-library/?path=/story/patterns-app-shell--dashboard&globals=theme:sketch;scheme:light) · [Dark](https://chenho1998.github.io/ui-library/?path=/story/patterns-app-shell--dashboard&globals=theme:sketch;scheme:dark) |
+| `neonTheme` | Synthwave: glowing magenta and cyan outlines, grid background; best in dark mode | Orbitron, Exo 2 | [Light](https://chenho1998.github.io/ui-library/?path=/story/patterns-app-shell--dashboard&globals=theme:neon;scheme:light) · [Dark](https://chenho1998.github.io/ui-library/?path=/story/patterns-app-shell--dashboard&globals=theme:neon;scheme:dark) |
 
 Every theme passes the same contrast checks as the default theme (tested). Their CSS ships inside `styles.css` and only
 applies under that theme. Without the fonts installed, each theme falls back to similar system fonts.
@@ -124,17 +133,18 @@ Overlays portal into the `ThemeProvider` root, so dialogs and menus inherit the 
 
 ## Components
 
-| Group | Components |
-| --- | --- |
-| Layout and type | Box, Stack, Grid, Container, Divider, Resizable, Text, Heading, VisuallyHidden |
-| Theme and icons | ThemeProvider, createTheme, withFont + FONT_STACKS, animeTheme, pixelTheme, brutalistTheme, sketchTheme, neonTheme, `@yourorg/icons` (40 icons + `createIcon`) |
-| Actions | Button, IconButton, ButtonGroup, Link |
-| Forms | Field, TextField, Textarea, Checkbox, RadioGroup, Switch, Select, Slider, NumberField, Combobox (single, multiple, async), DatePicker (+ Calendar), DateRangePicker, TimePicker, ColorPicker, SegmentedControl, ToggleGroup, PinInput, FileUpload, Rating |
-| Overlays | Dialog, AlertDialog, Drawer, Popover, Tooltip, DropdownMenu (with submenus), ContextMenu, CommandPalette (Cmd+K), HoverCard |
-| Feedback | Alert, Banner, Toast (`toast()` + `.info`/`.success`/`.warning`/`.error`/`.promise` + `<Toaster />`), Spinner, Progress, Skeleton |
-| Navigation | Sidebar (collapsible app menu), Tabs, Breadcrumbs, Pagination, Stepper, Menubar, Collapsible |
-| Data display | Card, Avatar, Badge, Tag, Accordion, Table, DataTable, Carousel, EmptyState, Timeline, TreeView, Stat, DescriptionList |
-| Utilities | Kbd, ScrollArea, `useControllableState` |
+| Group | Components | Preview |
+| --- | --- | --- |
+| Layout and type | Box, Stack, Grid, Container, Divider, [Resizable](https://chenho1998.github.io/ui-library/?path=/story/components-layout-resizable--playground), Text, Heading, VisuallyHidden | [Tokens](https://chenho1998.github.io/ui-library/?path=/docs/foundations-tokens--docs) · [Resizable](https://chenho1998.github.io/ui-library/?path=/story/components-layout-resizable--nested-layout) |
+| Theme and icons | ThemeProvider, createTheme, withFont + FONT_STACKS, animeTheme, pixelTheme, brutalistTheme, sketchTheme, neonTheme, `@yourorg/icons` (40 icons + `createIcon`) | [Themes](https://chenho1998.github.io/ui-library/?path=/story/get-started-themes--gallery) · [Icons](https://chenho1998.github.io/ui-library/?path=/story/foundations-icons--gallery) |
+| Actions | Button, IconButton, ButtonGroup, Link | [Button & Actions](https://chenho1998.github.io/ui-library/?path=/story/components-actions-button--playground) |
+| Forms | Field, TextField, Textarea, Checkbox, RadioGroup, Switch, Select, Slider, NumberField, Combobox (single, multiple, async), DatePicker (+ Calendar), DateRangePicker, TimePicker, [ColorPicker](https://chenho1998.github.io/ui-library/?path=/story/components-forms-colorpicker--live-theme-preview), [SegmentedControl](https://chenho1998.github.io/ui-library/?path=/story/components-forms-segmentedcontrol--segmented-control-example), ToggleGroup, [PinInput](https://chenho1998.github.io/ui-library/?path=/story/components-forms-pininput--pin-input-example), [FileUpload](https://chenho1998.github.io/ui-library/?path=/story/components-forms-fileupload--file-upload-example), [Rating](https://chenho1998.github.io/ui-library/?path=/story/components-forms-rating--rating-example) | [Forms overview](https://chenho1998.github.io/ui-library/?path=/story/components-forms-overview--text-fields) · [Pickers](https://chenho1998.github.io/ui-library/?path=/story/components-forms-pickers--pickers) |
+| Overlays | Dialog, AlertDialog, Drawer, Popover, Tooltip, DropdownMenu (with submenus), ContextMenu, [CommandPalette](https://chenho1998.github.io/ui-library/?path=/story/components-overlays-commandpalette--command) (Cmd+K), [HoverCard](https://chenho1998.github.io/ui-library/?path=/story/components-overlays-hovercard--hover-card-example) | [Overlays overview](https://chenho1998.github.io/ui-library/?path=/story/components-overlays-overview--dialog-example) |
+| Feedback | Alert, [Banner](https://chenho1998.github.io/ui-library/?path=/story/components-feedback-banner--playground), Toast (`toast()` + `.info`/`.success`/`.warning`/`.error`/`.promise` + `<Toaster />`), Spinner, Progress, Skeleton | [Feedback overview](https://chenho1998.github.io/ui-library/?path=/story/components-feedback-overview--alerts) · [Banner](https://chenho1998.github.io/ui-library/?path=/story/components-feedback-banner--tones-and-variants) |
+| Navigation | [Sidebar](https://chenho1998.github.io/ui-library/?path=/story/components-navigation-sidebar--app-shell), Tabs, Breadcrumbs, Pagination, [Stepper](https://chenho1998.github.io/ui-library/?path=/story/components-navigation-stepper--horizontal), [Menubar](https://chenho1998.github.io/ui-library/?path=/story/components-navigation-menus--menubar-example), [Collapsible](https://chenho1998.github.io/ui-library/?path=/story/components-navigation-collapsible--default) | [Navigation overview](https://chenho1998.github.io/ui-library/?path=/story/components-navigation-overview--tabs-example) |
+| Data display | Card, Avatar, Badge, Tag, Accordion, Table, [DataTable](https://chenho1998.github.io/ui-library/?path=/story/components-data-display-datatable--playground), [Carousel](https://chenho1998.github.io/ui-library/?path=/story/components-data-display-carousel--playground), EmptyState, [Timeline](https://chenho1998.github.io/ui-library/?path=/story/components-data-display-timeline--timeline-example), [TreeView](https://chenho1998.github.io/ui-library/?path=/story/components-data-display-treeview--tree-view-example), [Stat](https://chenho1998.github.io/ui-library/?path=/story/components-data-display-stat--stats), [DescriptionList](https://chenho1998.github.io/ui-library/?path=/story/components-data-display-descriptionlist--description-list-example) | [Data overview](https://chenho1998.github.io/ui-library/?path=/story/components-data-display-overview--table-example) · [DataTable](https://chenho1998.github.io/ui-library/?path=/story/components-data-display-datatable--playground) |
+| Utilities | Kbd, ScrollArea, `useControllableState` | [Kbd & ScrollArea](https://chenho1998.github.io/ui-library/?path=/story/components-utilities-kbd-and-scrollarea--utilities) |
+| Patterns | App shell (Sidebar + CommandPalette + Stats + Stepper + Timeline), Settings page | [App shell](https://chenho1998.github.io/ui-library/?path=/story/patterns-app-shell--dashboard) · [Settings](https://chenho1998.github.io/ui-library/?path=/story/patterns-settings-page--settings-page) |
 
 ## Measured today
 
