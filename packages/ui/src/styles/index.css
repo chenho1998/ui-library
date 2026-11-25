@@ -13,5 +13,6 @@
 @import '../forms/more.css' layer(ui.components);
 @import '../overlays/more.css' layer(ui.components);
 @import '../data/more.css' layer(ui.components);
+@import './extra.css' layer(ui.components);
 @import './expressive.css' layer(ui.components);
 @import './themes.css' layer(ui.components);

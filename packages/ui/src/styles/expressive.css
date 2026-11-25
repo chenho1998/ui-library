@@ -17,7 +17,7 @@
   box-shadow: var(--_ring, 0 0 transparent), var(--_lift) var(--_lift) var(--ui-style-blur, 0px) var(--_glow);
 }
 
-[data-ui-style] :is(.ui-card:not([data-variant='subtle']), .ui-dialog, .ui-popover, .ui-menu-surface, .ui-toast, .ui-alert, .ui-table-wrap, .ui-tooltip, .ui-tabs[data-variant='pill'] .ui-tabs__list) {
+[data-ui-style] :is(.ui-card:not([data-variant='subtle']), .ui-dialog, .ui-popover, .ui-menu-surface, .ui-toast, .ui-alert, .ui-banner, .ui-table-wrap, .ui-carousel__viewport, .ui-tooltip, .ui-tabs[data-variant='pill'] .ui-tabs__list) {
   --_ink: var(--ui-color-style-ink, currentcolor);
   --_glow: var(--ui-color-style-shadow, transparent);
   --_lift: calc(var(--ui-style-offset, 0px) * 1.6);

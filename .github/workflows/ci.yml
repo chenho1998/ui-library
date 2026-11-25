@@ -8,10 +8,10 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: 22, cache: pnpm }
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with: { node-version-file: .nvmrc, cache: pnpm }
       - run: pnpm install --frozen-lockfile
       - name: Lint (ESLint with React hooks and a11y rules, Stylelint)
         run: pnpm lint
@@ -25,9 +25,27 @@ jobs:
         run: pnpm --filter @yourorg/ui size
       - name: Build Storybook
         run: pnpm build-storybook
-      # Visual regression: add Chromatic here once a project token exists
-      # - uses: chromaui/action@v11
-      #   with: { projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}, storybookBuildDir: apps/storybook/storybook-static }
+      - name: Install Playwright Chromium
+        run: pnpm --filter @yourorg/storybook exec playwright install --with-deps chromium
+      - name: Visual regression tests (Playwright)
+        run: pnpm test:visual
+      - name: Upload Playwright visual diff report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-visual-report
+          path: |
+            apps/storybook/playwright-report
+            apps/storybook/test-results
+          retention-days: 14
+      - name: Visual review (Chromatic, when CHROMATIC_PROJECT_TOKEN is set)
+        if: env.CHROMATIC_PROJECT_TOKEN != ''
+        uses: chromaui/action@v18
+        env:
+          CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          storybookBuildDir: apps/storybook/storybook-static
 
   # Publishes to npm. Off until you're ready: rename the @yourorg packages, add an NPM_TOKEN
   # secret, then set the repo variable ENABLE_RELEASE to "true" (Settings → Secrets and
@@ -38,10 +56,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions: { contents: write, pull-requests: write }
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: 22, cache: pnpm, registry-url: 'https://registry.npmjs.org' }
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with: { node-version-file: .nvmrc, cache: pnpm, registry-url: 'https://registry.npmjs.org' }
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - name: Open release PR or publish

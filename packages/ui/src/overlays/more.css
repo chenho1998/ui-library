@@ -32,11 +32,11 @@
 .ui-kbd + .ui-kbd { margin-inline-start: 4px; }
 
 /* ScrollArea */
-.ui-scroll { position: relative; overflow: hidden; }
-.ui-scroll__viewport { width: 100%; height: 100%; max-height: inherit; border-radius: inherit; }
-.ui-scroll__viewport:focus-visible { outline: 2px solid var(--ui-color-focus-ring); outline-offset: -2px; }
-.ui-scroll__bar { display: flex; padding: 2px; touch-action: none; user-select: none; }
-.ui-scroll__bar[data-orientation='vertical'] { width: 10px; }
-.ui-scroll__bar[data-orientation='horizontal'] { height: 10px; flex-direction: column; }
-.ui-scroll__thumb { position: relative; flex: 1; border-radius: var(--ui-radius-full); background: var(--ui-color-border-strong); }
-.ui-scroll__thumb:hover { background: var(--ui-color-text-secondary); }
+.ui-scroll {
+  overflow: hidden auto; overscroll-behavior: contain;
+  scrollbar-width: thin; scrollbar-color: var(--ui-color-border-strong) transparent;
+}
+.ui-scroll[data-orientation='horizontal'] { overflow: auto hidden; }
+.ui-scroll[data-orientation='both'] { overflow: auto; }
+.ui-scroll:hover { scrollbar-color: var(--ui-color-text-secondary) transparent; }
+.ui-scroll:focus-visible { outline: 2px solid var(--ui-color-focus-ring); outline-offset: -2px; }

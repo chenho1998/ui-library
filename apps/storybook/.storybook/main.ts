@@ -2,6 +2,7 @@ import type { StorybookConfig } from '@storybook/react-vite';
 import { fileURLToPath } from 'node:url';
 
 const uiSrc = fileURLToPath(new URL('../../../packages/ui/src/index.ts', import.meta.url));
+const iconsSrc = fileURLToPath(new URL('../../../packages/icons/src/index.tsx', import.meta.url));
 
 const config: StorybookConfig = {
   framework: '@storybook/react-vite',
@@ -12,7 +13,11 @@ const config: StorybookConfig = {
   // Work against the component source so edits hot-reload.
   viteFinal: async (cfg) => {
     cfg.resolve ??= {};
-    cfg.resolve.alias = { ...(cfg.resolve.alias as Record<string, string>), '@yourorg/ui': uiSrc };
+    cfg.resolve.alias = {
+      ...(cfg.resolve.alias as Record<string, string>),
+      '@yourorg/ui': uiSrc,
+      '@yourorg/icons': iconsSrc,
+    };
     return cfg;
   },
 };

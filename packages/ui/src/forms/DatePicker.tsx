@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as PopoverPrimitive from '@radix-ui/react-popover';
-import { cx, type Size } from '../utils';
-import { useLocale, usePortalContainer } from '../theme/ThemeProvider';
+import { cx, useControllableState, type Size } from '../utils';
+import { useLocaleOverrides, usePortalContainer } from '../theme/ThemeProvider';
 import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from '../icons';
 import { Field, type FieldProps } from './Field';
 
@@ -31,8 +31,9 @@ function weekStart(locale?: string): number {
 }
 
 /* ---------- Calendar ---------- */
-export interface CalendarProps {
+export interface CalendarProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onSelect' | 'defaultValue'> {
   value?: Date | null;
+  defaultValue?: Date | null;
   onSelect?: (date: Date) => void;
   min?: Date;
   max?: Date;
@@ -46,17 +47,35 @@ export interface CalendarProps {
   autoFocus?: boolean;
   /** Range mode: highlights start, end and the days between (the end follows the pointer while it is unset). */
   range?: { start: Date | null; end: Date | null };
-  className?: string;
+  /** Controlled displayed month. */
+  month?: Date;
+  onMonthChange?: (month: Date) => void;
 }
 
 /** A month grid for picking a date, following the WAI-ARIA date picker dialog pattern. */
-export function Calendar({ value, onSelect, min, max, isDateDisabled, locale: lang, weekStartsOn, autoFocus, range, className }: CalendarProps) {
-  const locale = useLocale();
+export const Calendar = /* @__PURE__ */ React.forwardRef<HTMLDivElement, CalendarProps>(function Calendar(
+  { value, defaultValue = null, onSelect, min, max, isDateDisabled, locale: lang, weekStartsOn, autoFocus, range, month, onMonthChange, className, ...rest },
+  ref,
+) {
+  const locale = useLocaleOverrides();
   const titleId = React.useId();
-  const [focused, setFocused] = React.useState(() => startOfDay(value ?? range?.start ?? new Date()));
+  const [selectedValue, setSelectedValue] = useControllableState<Date | null>(value, defaultValue);
+  const [focused, setFocusedState] = React.useState(() => startOfDay(month ?? selectedValue ?? range?.start ?? new Date()));
+  const activeFocused = month && (month.getFullYear() !== focused.getFullYear() || month.getMonth() !== focused.getMonth())
+    ? startOfDay(month)
+    : focused;
+  const setFocused = React.useCallback(
+    (next: Date) => {
+      setFocusedState(next);
+      if (next.getMonth() !== activeFocused.getMonth() || next.getFullYear() !== activeFocused.getFullYear()) {
+        onMonthChange?.(new Date(next.getFullYear(), next.getMonth(), 1));
+      }
+    },
+    [activeFocused, onMonthChange],
+  );
   const [hovered, setHovered] = React.useState<Date | null>(null);
   const rangeStart = range?.start ?? null;
-  const rangeEnd = range ? (range.end ?? (rangeStart ? (hovered ?? focused) : null)) : null;
+  const rangeEnd = range ? (range.end ?? (rangeStart ? (hovered ?? activeFocused) : null)) : null;
   const [lo, hi] = rangeStart && rangeEnd && rangeEnd < rangeStart ? [rangeEnd, rangeStart] : [rangeStart, rangeEnd];
   const gridRef = React.useRef<HTMLTableElement>(null);
   const keyboardMoved = React.useRef(autoFocus ?? false);
@@ -68,16 +87,21 @@ export function Calendar({ value, onSelect, min, max, isDateDisabled, locale: la
   React.useEffect(() => {
     if (!keyboardMoved.current) return;
     gridRef.current?.querySelector<HTMLButtonElement>('button[tabindex="0"]')?.focus();
-  }, [focused]);
+  }, [activeFocused]);
 
-  const monthStart = new Date(focused.getFullYear(), focused.getMonth(), 1);
+  const monthStart = new Date(activeFocused.getFullYear(), activeFocused.getMonth(), 1);
   const offset = (monthStart.getDay() - first + 7) % 7;
   const gridStart = addDays(monthStart, -offset);
   const weeks = Array.from({ length: 6 }, (_, w) => Array.from({ length: 7 }, (_, d) => addDays(gridStart, w * 7 + d)));
-  const monthFmt = new Intl.DateTimeFormat(lang, { month: 'long', year: 'numeric' });
-  const dayFmt = new Intl.DateTimeFormat(lang, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-  const weekdayShort = new Intl.DateTimeFormat(lang, { weekday: 'short' });
-  const weekdayLong = new Intl.DateTimeFormat(lang, { weekday: 'long' });
+  const fmts = React.useMemo(
+    () => ({
+      month: new Intl.DateTimeFormat(lang, { month: 'long', year: 'numeric' }),
+      day: new Intl.DateTimeFormat(lang, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }),
+      weekdayShort: new Intl.DateTimeFormat(lang, { weekday: 'short' }),
+      weekdayLong: new Intl.DateTimeFormat(lang, { weekday: 'long' }),
+    }),
+    [lang],
+  );
   const today = startOfDay(new Date());
 
   const move = (next: Date) => {
@@ -86,16 +110,16 @@ export function Calendar({ value, onSelect, min, max, isDateDisabled, locale: la
   };
 
   const onKeyDown = (e: React.KeyboardEvent) => {
-    const dow = (focused.getDay() - first + 7) % 7;
+    const dow = (activeFocused.getDay() - first + 7) % 7;
     const map: Record<string, () => Date> = {
-      ArrowLeft: () => addDays(focused, -1),
-      ArrowRight: () => addDays(focused, 1),
-      ArrowUp: () => addDays(focused, -7),
-      ArrowDown: () => addDays(focused, 7),
-      Home: () => addDays(focused, -dow),
-      End: () => addDays(focused, 6 - dow),
-      PageUp: () => addMonths(focused, e.shiftKey ? -12 : -1),
-      PageDown: () => addMonths(focused, e.shiftKey ? 12 : 1),
+      ArrowLeft: () => addDays(activeFocused, -1),
+      ArrowRight: () => addDays(activeFocused, 1),
+      ArrowUp: () => addDays(activeFocused, -7),
+      ArrowDown: () => addDays(activeFocused, 7),
+      Home: () => addDays(activeFocused, -dow),
+      End: () => addDays(activeFocused, 6 - dow),
+      PageUp: () => addMonths(activeFocused, e.shiftKey ? -12 : -1),
+      PageDown: () => addMonths(activeFocused, e.shiftKey ? 12 : 1),
     };
     const fn = map[e.key];
     if (fn) {
@@ -105,15 +129,15 @@ export function Calendar({ value, onSelect, min, max, isDateDisabled, locale: la
   };
 
   return (
-    <div className={cx('ui-calendar', className)}>
+    <div ref={ref} className={cx('ui-calendar', className)} {...rest}>
       <div className="ui-calendar__header">
-        <button type="button" className="ui-calendar__nav" aria-label={locale.previousMonth} onClick={() => setFocused(addMonths(focused, -1))}>
+        <button type="button" className="ui-calendar__nav" aria-label={locale.previousMonth ?? 'Previous month'} onClick={() => setFocused(addMonths(activeFocused, -1))}>
           <ChevronLeftIcon size="sm" />
         </button>
         <h2 id={titleId} className="ui-calendar__title" aria-live="polite">
-          {monthFmt.format(focused)}
+          {fmts.month.format(activeFocused)}
         </h2>
-        <button type="button" className="ui-calendar__nav" aria-label={locale.nextMonth} onClick={() => setFocused(addMonths(focused, 1))}>
+        <button type="button" className="ui-calendar__nav" aria-label={locale.nextMonth ?? 'Next month'} onClick={() => setFocused(addMonths(activeFocused, 1))}>
           <ChevronRightIcon size="sm" />
         </button>
       </div>
@@ -121,8 +145,8 @@ export function Calendar({ value, onSelect, min, max, isDateDisabled, locale: la
         <thead>
           <tr>
             {weeks[0]!.map((d) => (
-              <th key={d.getDay()} scope="col" abbr={weekdayLong.format(d)}>
-                {weekdayShort.format(d).slice(0, 2)}
+              <th key={d.getDay()} scope="col" abbr={fmts.weekdayLong.format(d)}>
+                {fmts.weekdayShort.format(d).slice(0, 2)}
               </th>
             ))}
           </tr>
@@ -131,28 +155,29 @@ export function Calendar({ value, onSelect, min, max, isDateDisabled, locale: la
           {weeks.map((week, wi) => (
             <tr key={wi}>
               {week.map((d) => {
-                const outside = d.getMonth() !== focused.getMonth();
+                const outside = d.getMonth() !== activeFocused.getMonth();
                 const isEdge = !!range && (sameDay(d, lo) || sameDay(d, hi));
                 const inRange = !!lo && !!hi && d > lo && d < hi;
-                const isSelected = range ? isEdge : sameDay(d, value);
+                const isSelected = range ? isEdge : sameDay(d, selectedValue);
                 const isDisabled = disabled(d);
                 return (
                   <td key={d.toISOString()} role="gridcell" aria-selected={isSelected || inRange || undefined}>
                     <button
                       type="button"
-                      tabIndex={sameDay(d, focused) ? 0 : -1}
+                      tabIndex={sameDay(d, activeFocused) ? 0 : -1}
                       className="ui-calendar__day"
                       data-outside={outside || undefined}
                       data-today={sameDay(d, today) || undefined}
                       data-selected={isSelected || undefined}
                       data-in-range={inRange || undefined}
                       onMouseEnter={range ? () => setHovered(d) : undefined}
-                      aria-label={dayFmt.format(d)}
+                      aria-label={fmts.day.format(d)}
                       aria-current={sameDay(d, today) ? 'date' : undefined}
                       aria-disabled={isDisabled || undefined}
                       onClick={() => {
                         if (isDisabled) return;
                         setFocused(d);
+                        setSelectedValue(d);
                         onSelect?.(d);
                       }}
                     >
@@ -167,13 +192,16 @@ export function Calendar({ value, onSelect, min, max, isDateDisabled, locale: la
       </table>
     </div>
   );
-}
+});
 
 /* ---------- DatePicker ---------- */
 export interface DatePickerProps extends Pick<FieldProps, 'label' | 'hideLabel' | 'hint' | 'error'> {
   value?: Date | null;
   defaultValue?: Date | null;
   onValueChange?: (date: Date | null) => void;
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
   min?: Date;
   max?: Date;
   isDateDisabled?: (date: Date) => boolean;
@@ -196,21 +224,23 @@ export interface DatePickerProps extends Pick<FieldProps, 'label' | 'hideLabel' 
 const toIso = (d: Date) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
+const DEFAULT_DATE_FORMAT: Intl.DateTimeFormatOptions = { dateStyle: 'medium' };
+
 /** A button that opens a calendar dialog for choosing one date. */
 export const DatePicker = /* @__PURE__ */ React.forwardRef<HTMLButtonElement, DatePickerProps>(function DatePicker(
   {
-    label, hideLabel, hint, error, value, defaultValue = null, onValueChange, min, max, isDateDisabled,
-    placeholder, locale: lang, formatOptions = { dateStyle: 'medium' }, weekStartsOn, size = 'md',
+    label, hideLabel, hint, error, value, defaultValue = null, onValueChange, open: controlledOpen, defaultOpen = false, onOpenChange,
+    min, max, isDateDisabled, placeholder, locale: lang, formatOptions = DEFAULT_DATE_FORMAT, weekStartsOn, size = 'md',
     required, disabled, id, name, className, fieldClassName,
   },
   ref,
 ) {
-  const locale = useLocale();
+  const locale = useLocaleOverrides();
   const container = usePortalContainer();
-  const [inner, setInner] = React.useState<Date | null>(defaultValue);
-  const current = value !== undefined ? value : inner;
-  const [open, setOpen] = React.useState(false);
-  const fmt = new Intl.DateTimeFormat(lang, formatOptions);
+  const [current, setCurrent] = useControllableState<Date | null>(value, defaultValue, onValueChange);
+  const [open, setOpen] = useControllableState(controlledOpen, defaultOpen, onOpenChange);
+  const fmt = React.useMemo(() => new Intl.DateTimeFormat(lang, formatOptions), [lang, formatOptions]);
+  const chooseLabel = locale.chooseDate ?? 'Choose date';
 
   return (
     <Field label={label} hideLabel={hideLabel} hint={hint} error={error} required={required} disabled={disabled} id={id} className={fieldClassName}>
@@ -231,13 +261,13 @@ export const DatePicker = /* @__PURE__ */ React.forwardRef<HTMLButtonElement, Da
               // A button can't carry aria-invalid/aria-required; the label marks "required" and the error is in the description.
               aria-describedby={[ctx.hintId, ctx.errorId].filter(Boolean).join(' ') || undefined}
             >
-              <span className="ui-date-picker__value">{current ? fmt.format(current) : (placeholder ?? locale.chooseDate)}</span>
+              <span className="ui-date-picker__value">{current ? fmt.format(current) : (placeholder ?? chooseLabel)}</span>
               <CalendarIcon size="sm" className="ui-icon ui-date-picker__icon" />
             </button>
           </PopoverPrimitive.Trigger>
           {name ? <input type="hidden" name={name} value={current ? toIso(current) : ''} /> : null}
           <PopoverPrimitive.Portal container={container}>
-            <PopoverPrimitive.Content className="ui-popover ui-date-picker__content" align="start" sideOffset={4} aria-label={locale.chooseDate} role="dialog">
+            <PopoverPrimitive.Content className="ui-popover ui-date-picker__content" align="start" sideOffset={4} aria-label={chooseLabel} role="dialog">
               <Calendar
                 value={current}
                 min={min}
@@ -249,8 +279,7 @@ export const DatePicker = /* @__PURE__ */ React.forwardRef<HTMLButtonElement, Da
                 // eslint-disable-next-line jsx-a11y/no-autofocus
                 autoFocus
                 onSelect={(d) => {
-                  if (value === undefined) setInner(d);
-                  onValueChange?.(d);
+                  setCurrent(d);
                   setOpen(false);
                 }}
               />

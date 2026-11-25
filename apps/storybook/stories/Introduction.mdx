@@ -4,13 +4,18 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 # @yourorg/ui
 
-A themeable, accessible React component library. Every colour, space, radius and duration comes from
-`@yourorg/tokens`; behaviour (focus, keyboard, ARIA) comes from Radix UI primitives.
+A themeable, accessible React component library: **50 components** and **40 icons** built on `@yourorg/tokens`, with
+Radix UI handling complex overlay, focus, keyboard and ARIA behaviour.
+
+**Repository:** [github.com/chenho1998/ui-library](https://github.com/chenho1998/ui-library) ·
+**Live docs:** [chenho1998.github.io/ui-library](https://chenho1998.github.io/ui-library/)
 
 ## Install
 
 ```bash
 pnpm add @yourorg/ui
+# Optional: use icons standalone without @yourorg/ui
+pnpm add @yourorg/icons
 ```
 
 ```tsx
@@ -41,19 +46,24 @@ const acme = createTheme({
 ```
 
 Use the **Scheme**, **Theme** and **Font** toolbar buttons above to try light and dark, the built-in themes (anime,
-pixel, brutalist, sketch and neon each restyle every component) and OpenDyslexic on any story. **Get started → Themes**
-shows them side by side, and **Patterns → App shell** puts the Sidebar, command palette and data components together.
+pixel, brutalist, sketch and neon each restyle every component) and OpenDyslexic on any story.
 
-## Status
+- [Themes gallery](?path=/story/get-started-themes--gallery) — compare every built-in theme side by side.
+- [Usage guidelines](?path=/docs/get-started-usage-guidelines--docs) — component selection, accessibility, controlled state and SSR.
+- [Migration guide](?path=/docs/get-started-migration-guide--docs) — upgrading to v0.3 and `@yourorg/icons`.
+- [Icons gallery](?path=/story/foundations-icons--gallery) — search and copy all 40 icons from `@yourorg/icons`.
+- [App shell](?path=/story/patterns-app-shell--dashboard) — Sidebar, command palette, stats, stepper and timeline together.
 
-| Group | Components |
-| --- | --- |
-| Layout and type | Box, Stack, Grid, Container, Divider, Text, Heading, VisuallyHidden |
-| Theme and icons | ThemeProvider, createTheme, withFont, five built-in themes, icon set |
-| Actions | Button, IconButton, ButtonGroup, Link |
-| Forms | Field, TextField, Textarea, Checkbox, RadioGroup, Switch, Select, Slider, NumberField, Combobox, DatePicker, DateRangePicker, TimePicker, SegmentedControl, ToggleGroup, PinInput, FileUpload, Rating |
-| Overlays | Dialog, AlertDialog, Drawer, Popover, Tooltip, DropdownMenu, ContextMenu, CommandPalette, HoverCard |
-| Feedback | Alert, Toast, Spinner, Progress, Skeleton |
-| Navigation | Sidebar, Tabs, Breadcrumbs, Pagination, Stepper, Menubar, Collapsible |
-| Data display | Card, Avatar, Badge, Tag, Accordion, Table, EmptyState, Timeline, TreeView, Stat, DescriptionList |
-| Utilities | Kbd, ScrollArea |
+## Component inventory
+
+| Group | Components | Preview |
+| --- | --- | --- |
+| Layout and type | Box, Stack, Grid, Container, Divider, Resizable, Text, Heading, VisuallyHidden | [Tokens](?path=/docs/foundations-tokens--docs) · [Resizable](?path=/story/components-layout-resizable--playground) |
+| Theme and icons | ThemeProvider, createTheme, withFont, five built-in themes, `@yourorg/icons` (40 icons + `createIcon`) | [Themes](?path=/story/get-started-themes--gallery) · [Icons](?path=/story/foundations-icons--gallery) |
+| Actions | Button, IconButton, ButtonGroup, Link | [Button](?path=/story/components-actions-button--playground) |
+| Forms | Field, TextField, Textarea, Checkbox, RadioGroup, Switch, Select, Slider, NumberField, Combobox, DatePicker, DateRangePicker, TimePicker, ColorPicker, SegmentedControl, ToggleGroup, PinInput, FileUpload, Rating | [Overview](?path=/story/components-forms-overview--text-fields) · [ColorPicker](?path=/story/components-forms-colorpicker--live-theme-preview) · [Pickers](?path=/story/components-forms-pickers--pickers) |
+| Overlays | Dialog, AlertDialog, Drawer, Popover, Tooltip, DropdownMenu, ContextMenu, CommandPalette, HoverCard | [Overview](?path=/story/components-overlays-overview--dialog-example) · [CommandPalette](?path=/story/components-overlays-commandpalette--command) |
+| Feedback | Alert, Banner, Toast (`toast()` + `.info`/`.success`/`.warning`/`.error`/`.promise`), Spinner, Progress, Skeleton | [Overview](?path=/story/components-feedback-overview--alerts) · [Banner](?path=/story/components-feedback-banner--playground) |
+| Navigation | Sidebar, Tabs, Breadcrumbs, Pagination, Stepper, Menubar, Collapsible | [Overview](?path=/story/components-navigation-overview--tabs-example) · [Sidebar](?path=/story/components-navigation-sidebar--app-shell) · [Stepper](?path=/story/components-navigation-stepper--horizontal) |
+| Data display | Card, Avatar, Badge, Tag, Accordion, Table, DataTable, Carousel, EmptyState, Timeline, TreeView, Stat, DescriptionList | [Overview](?path=/story/components-data-display-overview--table-example) · [DataTable](?path=/story/components-data-display-datatable--playground) · [Carousel](?path=/story/components-data-display-carousel--playground) |
+| Utilities | Kbd, ScrollArea, `useControllableState` | [Kbd & ScrollArea](?path=/story/components-utilities-kbd-and-scrollarea--utilities) |

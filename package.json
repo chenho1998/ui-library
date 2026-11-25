@@ -3,13 +3,18 @@
   "private": true,
   "type": "module",
   "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+  },
   "scripts": {
-    "build": "pnpm --filter @yourorg/tokens build && pnpm --filter @yourorg/ui build",
+    "build": "pnpm --filter @yourorg/tokens build && pnpm --filter @yourorg/icons build && pnpm --filter @yourorg/ui build",
     "test": "pnpm --filter @yourorg/ui test",
-    "typecheck": "pnpm --filter @yourorg/ui typecheck",
+    "typecheck": "pnpm --filter @yourorg/icons typecheck && pnpm --filter @yourorg/ui typecheck",
     "lint": "eslint . && stylelint \"packages/**/*.css\"",
-    "storybook": "pnpm --filter storybook dev",
-    "build-storybook": "pnpm --filter storybook build",
+    "storybook": "pnpm --filter @yourorg/storybook dev",
+    "build-storybook": "pnpm --filter @yourorg/storybook build",
+    "test:visual": "pnpm --filter @yourorg/storybook test:visual",
+    "test:visual:update": "pnpm --filter @yourorg/storybook test:visual:update",
     "changeset": "changeset",
     "size": "pnpm --filter @yourorg/ui size"
   },
@@ -22,7 +27,7 @@
     "globals": "^17.14.0",
     "stylelint": "^18.1.0",
     "stylelint-config-standard": "^41.1.0",
-    "typescript": "^5.6.0",
-    "typescript-eslint": "^8.73.0"
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.74.0"
   }
 }

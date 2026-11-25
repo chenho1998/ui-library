@@ -1,0 +1,61 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Get started/Migration guide" />
+
+# Migration guide
+
+## Upgrading to v0.3
+
+### 1. Node.js 22+ for local development & tooling
+
+Workspace tooling (Vitest 5, Stylelint 18, ESLint 10) now requires **Node 22.22.2+**, **24.15+**, or **26+**. Run `nvm use` in the repo root to pick up `.nvmrc` (`22`). Runtime browser support for published packages is unchanged (ES2020+, React 18.2+ or React 19).
+
+### 2. Standalone `@yourorg/icons` package
+
+Icons now live in their own tree-shakeable package, `@yourorg/icons` (40 icons + `createIcon`, `sideEffects: false`) — [browse the Icons gallery](?path=/story/foundations-icons--gallery).
+
+- **No breaking change**: Every icon and `createIcon` is still re-exported by name from `@yourorg/ui`.
+- **Recommended for apps that only want icons**: install `@yourorg/icons` directly:
+
+```tsx
+// Still works:
+import { CheckIcon, PlusIcon } from '@yourorg/ui';
+
+// Lighter if you don't need full UI components:
+import { CheckIcon, PlusIcon } from '@yourorg/icons';
+```
+
+### 3. Lighter `ScrollArea`, `Avatar`, and `Progress`
+
+`ScrollArea`, `Avatar`, and `Progress` now use native browser primitives instead of Radix wrapper packages (saving ~5 KB gzipped and removing three dependencies):
+
+- [**`ScrollArea`**](?path=/story/components-utilities-kbd-and-scrollarea--utilities): Uses native scrolling with `scrollbar-width: thin` and `scrollbar-color`. If you previously passed Radix-only props (`type`, `scrollHideDelay`), remove them—`orientation` (`'vertical' | 'horizontal' | 'both'`), `aria-label`, `ref`, and standard `div` props work identically.
+- [**`Avatar`**](?path=/story/components-data-display-overview--badges-tags-avatars): Same `src`, `name`, `size`, `shape` props, with zero React 19 fallback timer warnings in tests.
+- [**`Progress`**](?path=/story/components-feedback-overview--progress-and-loading): Same `value`, `max`, `label`, `showValue`, `size`, `tone` props and `role="progressbar"` ARIA attributes.
+
+### 4. Consistent controlled/uncontrolled props and refs
+
+- [`Pagination`](?path=/story/components-navigation-overview--pagination-example) can now be used uncontrolled via `defaultPage` (`page` and `onPageChange` are optional).
+- `Combobox`, `DatePicker`, `TimePicker`, and `DateRangePicker` ([Pickers](?path=/story/components-forms-pickers--pickers)) now accept `open`, `defaultOpen`, and `onOpenChange`.
+- `Calendar` now accepts `defaultValue`, `month`, `onMonthChange`, and `ref`.
+- `PinInput`, `FileUpload`, `Rating`, [`TreeView`](?path=/story/components-data-display-treeview--tree-view-example), `Timeline.Item`, `DescriptionList.Item`, `Dialog.Body`/`Footer`, and [`Sidebar`](?path=/story/components-navigation-sidebar--app-shell)`.Group`/`.Submenu` now all forward `ref`.
+- [`DropdownMenu`](?path=/story/components-overlays-overview--menu) now supports nested submenus via `DropdownMenu.Sub`, `DropdownMenu.SubTrigger`, and `DropdownMenu.SubContent`.
+- [`toast`](?path=/story/components-feedback-overview--toasts) adds `toast.info()`, `toast.warning()`, and `toast.promise(promise, { loading, success, error })`.
+
+### 5. New components in v0.3
+
+- [**`DataTable`**](?path=/story/components-data-display-datatable--playground) — sorting, search filtering, selection, bulk actions and pagination
+- [**`Carousel`**](?path=/story/components-data-display-carousel--playground) — accessible slideshow with controls, dots, swipe and auto-play
+- [**`ColorPicker`**](?path=/story/components-forms-colorpicker--live-theme-preview) — hex picker with 2D saturation/brightness area, hue slider and swatches
+- [**`Resizable`**](?path=/story/components-layout-resizable--playground) — split-pane layout with drag and WAI-ARIA window splitter keyboard controls
+- [**`Banner`**](?path=/story/components-feedback-banner--playground) — full-width announcement strip (`subtle` and `solid` variants, optional `sticky`)
+
+## Migrating from raw HTML / custom components
+
+| HTML / custom pattern | Replace with |
+| --- | --- |
+| `<label>` + `<input>` + error `<p>` | [`<TextField label="…" hint="…" error="…" />`](?path=/story/components-forms-overview--text-fields) (or `<Field>` for custom controls) |
+| Custom modal `<div>` | [`<Dialog>`](?path=/story/components-overlays-overview--dialog-example) (handles focus trap, scroll lock, `Escape`, and `aria-labelledby`) |
+| `window.confirm()` | [`<AlertDialog>`](?path=/story/components-overlays-overview--confirm) (async `onConfirm` spinner, Cancel focused first) |
+| Hand-rolled table + search + pager | [`<DataTable searchable selectable pageSize={10} … />`](?path=/story/components-data-display-datatable--playground) |
+| Inline `<svg>` icons | [`@yourorg/icons`](?path=/story/foundations-icons--gallery) or `createIcon('MyIcon', <path … />)` |

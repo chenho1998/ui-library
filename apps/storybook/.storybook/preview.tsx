@@ -70,9 +70,9 @@ const preview: Preview = {
     options: {
       storySort: {
         order: [
-          'Get started', ['Introduction', 'Themes'],
-          'Foundations',
-          'Components', ['Actions', 'Forms', 'Navigation', 'Overlays', 'Feedback', 'Data display'],
+          'Get started', ['Introduction', 'Themes', 'Usage guidelines', 'Migration guide'],
+          'Foundations', ['Tokens', 'Icons'],
+          'Components', ['Actions', 'Layout', 'Forms', 'Navigation', 'Overlays', 'Feedback', 'Data display', 'Utilities'],
           'Patterns',
         ],
       },

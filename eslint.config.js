@@ -6,7 +6,7 @@ import jsxA11y from 'eslint-plugin-jsx-a11y';
 import globals from 'globals';
 
 export default tseslint.config(
-  { ignores: ['**/dist/**', '**/node_modules/**', '**/storybook-static/**'] },
+  { ignores: ['**/dist/**', '**/node_modules/**', '**/storybook-static/**', '**/playwright-report/**', '**/test-results/**'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {

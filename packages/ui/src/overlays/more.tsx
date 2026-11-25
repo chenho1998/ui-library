@@ -1,9 +1,8 @@
 import * as React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import * as HoverCardPrimitive from '@radix-ui/react-hover-card';
-import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
 import { cx } from '../utils';
-import { useLocale, usePortalContainer } from '../theme/ThemeProvider';
+import { useLocaleOverrides, usePortalContainer } from '../theme/ThemeProvider';
 import { SearchIcon } from '../icons';
 
 /* ---------- CommandPalette ---------- */
@@ -43,7 +42,7 @@ const matches = (item: CommandItem, query: string) => {
 export function CommandPalette({
   items, open: controlled, defaultOpen = false, onOpenChange, hotkey = 'k', placeholder, emptyMessage, label = 'Command palette',
 }: CommandPaletteProps) {
-  const locale = useLocale();
+  const locale = useLocaleOverrides();
   const container = usePortalContainer();
   const listId = React.useId();
   const [inner, setInner] = React.useState(defaultOpen);
@@ -117,6 +116,7 @@ export function CommandPalette({
                 setActive(0);
               }}
               onKeyDown={(e) => {
+                if (enabled.length === 0) return;
                 const last = enabled.length - 1;
                 const moves: Record<string, number> = { ArrowDown: active >= last ? 0 : active + 1, ArrowUp: active <= 0 ? last : active - 1, Home: 0, End: last };
                 if (e.key in moves) {
@@ -131,7 +131,7 @@ export function CommandPalette({
           </div>
           <div id={listId} role="listbox" aria-label={label} className="ui-command__list">
             {visible.length === 0 ? (
-              <div className="ui-command__empty">{emptyMessage ?? locale.noResults}</div>
+              <div className="ui-command__empty">{emptyMessage ?? locale.noResults ?? 'No results'}</div>
             ) : (
               groups.map((group) => (
                 <div key={group.name || 'ungrouped'} role="group" aria-label={group.name || undefined}>
@@ -200,36 +200,31 @@ export const Kbd = /* @__PURE__ */ React.forwardRef<HTMLElement, React.HTMLAttri
 });
 
 /* ---------- ScrollArea ---------- */
-export interface ScrollAreaProps extends Omit<React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root>, 'dir'> {
-  /** Which scrollbars to show. Default `'vertical'`. */
+export interface ScrollAreaProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Which directions scroll. Default `'vertical'`. */
   orientation?: 'vertical' | 'horizontal' | 'both';
   /** Names the scrollable region, so keyboard users know what they are scrolling. */
   'aria-label'?: string;
 }
 
-/** A scroll container with slim, themed scrollbars. Keyboard users can focus it and scroll with arrow keys. */
+/**
+ * A scroll container with slim, themed scrollbars. It uses the browser's own scrolling (no JS scrollbars), so
+ * touch, wheel, keyboard and assistive tech all behave natively. Keyboard users can focus it and scroll with arrows.
+ */
 export const ScrollArea = /* @__PURE__ */ React.forwardRef<HTMLDivElement, ScrollAreaProps>(function ScrollArea(
-  { orientation = 'vertical', className, children, 'aria-label': ariaLabel, ...rest },
+  { orientation = 'vertical', className, 'aria-label': ariaLabel, ...rest },
   ref,
 ) {
   return (
-    <ScrollAreaPrimitive.Root ref={ref} className={cx('ui-scroll', className)} {...rest}>
-      {/* Focusable so keyboard users can scroll it. */}
-      { }
-      <ScrollAreaPrimitive.Viewport className="ui-scroll__viewport" tabIndex={0} role={ariaLabel ? 'region' : undefined} aria-label={ariaLabel}>
-        {children}
-      </ScrollAreaPrimitive.Viewport>
-      {orientation !== 'horizontal' ? (
-        <ScrollAreaPrimitive.Scrollbar orientation="vertical" className="ui-scroll__bar">
-          <ScrollAreaPrimitive.Thumb className="ui-scroll__thumb" />
-        </ScrollAreaPrimitive.Scrollbar>
-      ) : null}
-      {orientation !== 'vertical' ? (
-        <ScrollAreaPrimitive.Scrollbar orientation="horizontal" className="ui-scroll__bar">
-          <ScrollAreaPrimitive.Thumb className="ui-scroll__thumb" />
-        </ScrollAreaPrimitive.Scrollbar>
-      ) : null}
-      <ScrollAreaPrimitive.Corner />
-    </ScrollAreaPrimitive.Root>
+    <div
+      ref={ref}
+      // Focusable so keyboard users can scroll it; a named region when labelled.
+      tabIndex={0}
+      role={ariaLabel ? 'region' : undefined}
+      aria-label={ariaLabel}
+      data-orientation={orientation}
+      className={cx('ui-scroll', className)}
+      {...rest}
+    />
   );
 });

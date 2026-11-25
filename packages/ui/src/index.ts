@@ -8,8 +8,18 @@ export { animeTheme, pixelTheme, brutalistTheme, sketchTheme, neonTheme } from '
 
 // Layout and type
 export * from './layout';
-// Icons
-export * from './icons';
+// Icons (from @yourorg/icons; named re-exports preserve full tree-shaking)
+export {
+  createIcon,
+  type IconProps,
+  CheckIcon, MinusIcon, PlusIcon, XIcon,
+  ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, ChevronRightIcon,
+  ArrowUpIcon, ArrowDownIcon, SearchIcon,
+  InfoIcon, SuccessIcon, WarningIcon, DangerIcon,
+  CalendarIcon, MoreIcon, InboxIcon,
+  HomeIcon, SettingsIcon, UsersIcon, FolderIcon, FileIcon, ChartIcon, BellIcon, ClockIcon, UploadIcon, StarIcon, MenuIcon, PanelLeftIcon,
+  CopyIcon, TrashIcon, EditIcon, FilterIcon, SunIcon, MoonIcon, EyeIcon, EyeOffIcon, ExternalLinkIcon, RefreshIcon,
+} from '@yourorg/icons';
 // Actions
 export * from './actions';
 // Forms
@@ -35,8 +45,13 @@ export { TimePicker, DateRangePicker, type TimePickerProps, type DateRangePicker
 export { Collapsible, type CollapsibleProps } from './data/Collapsible';
 export {
   Timeline, TreeView, Stat, DescriptionList,
-  type TimelineItemProps, type TreeNode, type TreeViewProps, type StatProps, type DescriptionListProps,
+  type TimelineItemProps, type TreeNode, type TreeViewProps, type StatProps, type DescriptionListProps, type DescriptionItemProps,
 } from './data/more';
+export { DataTable, type DataTableProps, type DataTableColumn } from './data/DataTable';
+export { Carousel, type CarouselProps, type CarouselSlideProps } from './data/Carousel';
+export { ColorPicker, type ColorPickerProps } from './forms/ColorPicker';
+export { Resizable, type ResizableProps, type ResizablePanelProps, type ResizableHandleProps } from './layout/Resizable';
+export { Banner, type BannerProps } from './feedback/Banner';
 // Utilities
-export { cx, mergeRefs } from './utils';
+export { cx, mergeRefs, useControllableState } from './utils';
 export type { Size, Tone } from './utils';

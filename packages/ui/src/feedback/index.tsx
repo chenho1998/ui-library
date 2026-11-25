@@ -1,7 +1,6 @@
 import * as React from 'react';
-import * as ProgressPrimitive from '@radix-ui/react-progress';
 import { cx, type Size } from '../utils';
-import { useLocale } from '../theme/ThemeProvider';
+import { useLocaleOverrides } from '../theme/ThemeProvider';
 import { DangerIcon, InfoIcon, SuccessIcon, WarningIcon, XIcon } from '../icons';
 
 export { Spinner, type SpinnerProps } from './Spinner';
@@ -34,7 +33,7 @@ export const Alert = /* @__PURE__ */ React.forwardRef<HTMLDivElement, AlertProps
   { tone = 'info', title, icon, actions, onDismiss, live, className, children, ...rest },
   ref,
 ) {
-  const locale = useLocale();
+  const locale = useLocaleOverrides();
   return (
     <div ref={ref} role={live ? 'alert' : undefined} className={cx('ui-alert', className)} data-tone={tone} {...rest}>
       {icon === null ? null : <span className="ui-alert__icon">{icon ?? toneIcon[tone]}</span>}
@@ -44,7 +43,7 @@ export const Alert = /* @__PURE__ */ React.forwardRef<HTMLDivElement, AlertProps
         {actions ? <div className="ui-alert__actions">{actions}</div> : null}
       </div>
       {onDismiss ? (
-        <button type="button" className="ui-alert__close" aria-label={locale.dismiss} onClick={onDismiss}>
+        <button type="button" className="ui-alert__close" aria-label={locale.dismiss ?? 'Dismiss'} onClick={onDismiss}>
           <XIcon size="sm" />
         </button>
       ) : null}
@@ -72,7 +71,10 @@ export const Progress = /* @__PURE__ */ React.forwardRef<HTMLDivElement, Progres
   ref,
 ) {
   const id = React.useId();
-  const pct = value === null ? null : Math.round((Math.min(max, Math.max(0, value)) / max) * 100);
+  const safeMax = max > 0 ? max : 100;
+  const clamped = value === null ? null : Math.min(safeMax, Math.max(0, value));
+  const pct = clamped === null ? null : Math.round((clamped / safeMax) * 100);
+  const state = pct === null ? 'indeterminate' : clamped === safeMax ? 'complete' : 'loading';
   return (
     <div ref={ref} className={cx('ui-progress', className)} data-size={size} data-tone={tone} {...rest}>
       {label || showValue ? (
@@ -81,19 +83,26 @@ export const Progress = /* @__PURE__ */ React.forwardRef<HTMLDivElement, Progres
           {showValue && pct !== null ? <span className="ui-progress__value">{pct}%</span> : null}
         </div>
       ) : null}
-      <ProgressPrimitive.Root
+      <div
+        role="progressbar"
         className="ui-progress__track"
-        value={value}
-        max={max}
+        aria-valuemin={0}
+        aria-valuemax={safeMax}
+        aria-valuenow={clamped ?? undefined}
+        aria-valuetext={pct === null ? undefined : `${pct}%`}
         aria-label={ariaLabel}
         aria-labelledby={label ? `${id}-label` : undefined}
+        data-state={state}
+        data-value={clamped ?? undefined}
+        data-max={safeMax}
       >
-        <ProgressPrimitive.Indicator
+        <div
           className="ui-progress__bar"
+          data-state={state}
           data-indeterminate={pct === null || undefined}
           style={pct === null ? undefined : { transform: `translateX(-${100 - pct}%)` }}
         />
-      </ProgressPrimitive.Root>
+      </div>
     </div>
   );
 });
@@ -178,14 +187,38 @@ function dismissToast(id?: string) {
   emit();
 }
 
+export interface ToastPromiseMessages<T> {
+  loading: React.ReactNode;
+  success: React.ReactNode | ((data: T) => React.ReactNode);
+  error: React.ReactNode | ((err: unknown) => React.ReactNode);
+}
+
+function promiseToast<T>(promise: Promise<T>, messages: ToastPromiseMessages<T>): Promise<T> {
+  const id = showToast({ title: messages.loading, tone: 'info', duration: Infinity });
+  promise.then(
+    (data) => {
+      const title = typeof messages.success === 'function' ? messages.success(data) : messages.success;
+      showToast({ id, title, tone: 'success' });
+    },
+    (err) => {
+      const title = typeof messages.error === 'function' ? messages.error(err) : messages.error;
+      showToast({ id, title, tone: 'danger' });
+    },
+  );
+  return promise;
+}
+
 /**
  * Show a toast from anywhere. Returns its id. Needs one `<Toaster />` mounted.
- * `toast.success()`, `toast.error()` and `toast.dismiss(id?)` are shortcuts.
+ * `toast.info()`, `toast.success()`, `toast.warning()`, `toast.error()`, `toast.promise()` and `toast.dismiss(id?)` are shortcuts.
  */
 export const toast = /* @__PURE__ */ Object.assign(showToast, {
   dismiss: dismissToast,
+  info: (title: React.ReactNode, opts: Omit<ToastOptions, 'title' | 'tone'> = {}) => showToast({ ...opts, title, tone: 'info' }),
   success: (title: React.ReactNode, opts: Omit<ToastOptions, 'title' | 'tone'> = {}) => showToast({ ...opts, title, tone: 'success' }),
+  warning: (title: React.ReactNode, opts: Omit<ToastOptions, 'title' | 'tone'> = {}) => showToast({ ...opts, title, tone: 'warning' }),
   error: (title: React.ReactNode, opts: Omit<ToastOptions, 'title' | 'tone'> = {}) => showToast({ ...opts, title, tone: 'danger' }),
+  promise: promiseToast,
 });
 
 const subscribe = (l: () => void) => {
@@ -206,7 +239,7 @@ export interface ToasterProps {
 /** Renders the toast queue. Mount once, inside `ThemeProvider`. */
 export function Toaster({ position = 'bottom-right', max = 3, hotkey = 'F8' }: ToasterProps) {
   const list = React.useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
-  const locale = useLocale();
+  const locale = useLocaleOverrides();
   const regionRef = React.useRef<HTMLOListElement>(null);
 
   React.useEffect(() => {
@@ -221,7 +254,7 @@ export function Toaster({ position = 'bottom-right', max = 3, hotkey = 'F8' }: T
   }, [hotkey]);
 
   return (
-    <section aria-label={`${locale.notifications} (${hotkey})`} className="ui-toaster" data-position={position}>
+    <section aria-label={`${locale.notifications ?? 'Notifications'} (${hotkey})`} className="ui-toaster" data-position={position}>
       <ol ref={regionRef} className="ui-toaster__list" aria-live="polite" aria-relevant="additions">
         {list.slice(0, max).map((t) => (
           <ToastItem key={t.id} record={t} position={position} />
@@ -237,7 +270,7 @@ const SWIPE_FLICK = 0.5; // px per ms
 const EXIT_MS = 200;
 
 function ToastItem({ record, position }: { record: ToastRecord; position: NonNullable<ToasterProps['position']> }) {
-  const locale = useLocale();
+  const locale = useLocaleOverrides();
   const [paused, setPaused] = React.useState(false);
   const [dx, setDx] = React.useState<number | null>(null); // horizontal offset while dragging
   const [leaving, setLeaving] = React.useState<-1 | 0 | 1>(0); // exit direction once dismissed by swipe
@@ -347,7 +380,7 @@ function ToastItem({ record, position }: { record: ToastRecord; position: NonNul
           </button>
         ) : null}
       </div>
-      <button type="button" className="ui-toast__close" aria-label={locale.dismiss} onClick={() => toast.dismiss(record.id)}>
+      <button type="button" className="ui-toast__close" aria-label={locale.dismiss ?? 'Dismiss'} onClick={() => toast.dismiss(record.id)}>
         <XIcon size="sm" />
       </button>
     </li>

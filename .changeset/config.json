@@ -2,9 +2,9 @@
   "$schema": "https://unpkg.com/@changesets/config@3.0.0/schema.json",
   "changelog": "@changesets/cli/changelog",
   "commit": false,
-  "fixed": [["@yourorg/ui", "@yourorg/tokens"]],
+  "fixed": [["@yourorg/ui", "@yourorg/tokens", "@yourorg/icons"]],
   "access": "restricted",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["storybook"]
+  "ignore": ["@yourorg/storybook"]
 }

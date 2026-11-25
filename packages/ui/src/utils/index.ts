@@ -1,3 +1,4 @@
+import * as React from 'react';
 export { clsx as cx } from 'clsx';
 
 export type Size = 'sm' | 'md' | 'lg';
@@ -11,6 +12,29 @@ export function mergeRefs<T>(...refs: Array<React.Ref<T> | undefined>): React.Re
       else if (ref) (ref as React.MutableRefObject<T | null>).current = value;
     }
   };
+}
+
+/** Manages a prop that can be either controlled (`value !== undefined`) or uncontrolled (`defaultValue`). */
+export function useControllableState<T>(
+  value: T | undefined,
+  defaultValue: T | (() => T),
+  onChange?: (next: T) => void,
+): readonly [T, (next: T) => void] {
+  const [inner, setInner] = React.useState<T>(defaultValue);
+  const controlled = value !== undefined;
+  const current = controlled ? value : inner;
+  const onChangeRef = React.useRef(onChange);
+  React.useLayoutEffect(() => {
+    onChangeRef.current = onChange;
+  });
+  const set = React.useCallback(
+    (next: T) => {
+      if (!controlled) setInner(next);
+      onChangeRef.current?.(next);
+    },
+    [controlled],
+  );
+  return [current, set] as const;
 }
 
 let idCounter = 0;
