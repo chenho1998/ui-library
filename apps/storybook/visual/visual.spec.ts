@@ -8,22 +8,22 @@ interface VisualCase {
 }
 
 const cases: VisualCase[] = [
-  { name: 'button-variants-light', id: 'components-actions-button--variants', scheme: 'light' },
-  { name: 'button-variants-dark', id: 'components-actions-button--variants', scheme: 'dark' },
-  { name: 'forms-textfields-light', id: 'components-forms-overview--text-fields', scheme: 'light' },
-  { name: 'feedback-alerts-light', id: 'components-feedback-overview--alerts', scheme: 'light' },
-  { name: 'banner-tones-light', id: 'components-feedback-banner--tones-and-variants', scheme: 'light' },
-  { name: 'data-table-light', id: 'components-data-display-overview--table-example', scheme: 'light' },
-  { name: 'datatable-playground-light', id: 'components-data-display-datatable--playground', scheme: 'light' },
-  { name: 'carousel-playground-light', id: 'components-data-display-carousel--playground', scheme: 'light' },
-  { name: 'color-picker-light', id: 'components-forms-colorpicker--live-theme-preview', scheme: 'light' },
-  { name: 'resizable-nested-light', id: 'components-layout-resizable--nested-layout', scheme: 'light' },
+  { name: 'button-variants-light', id: 'inputs-actions-button--variants', scheme: 'light' },
+  { name: 'button-variants-dark', id: 'inputs-actions-button--variants', scheme: 'dark' },
+  { name: 'forms-textfields-light', id: 'inputs-actions-text-forms--text-fields', scheme: 'light' },
+  { name: 'feedback-alerts-light', id: 'feedback-alerts-toasts--alerts', scheme: 'light' },
+  { name: 'banner-tones-light', id: 'feedback-banner--tones-and-variants', scheme: 'light' },
+  { name: 'data-table-light', id: 'data-display-tables-cards--table-example', scheme: 'light' },
+  { name: 'datatable-playground-light', id: 'data-display-datatable--playground', scheme: 'light' },
+  { name: 'carousel-playground-light', id: 'data-display-carousel--playground', scheme: 'light' },
+  { name: 'color-picker-light', id: 'inputs-actions-colorpicker--live-theme-preview', scheme: 'light' },
+  { name: 'resizable-nested-light', id: 'navigation-layout-resizable--nested-layout', scheme: 'light' },
   { name: 'icons-gallery-light', id: 'foundations-icons--gallery', scheme: 'light' },
-  { name: 'themes-gallery-light', id: 'get-started-themes--gallery', scheme: 'light' },
-  { name: 'themes-gallery-dark', id: 'get-started-themes--gallery', scheme: 'dark' },
-  { name: 'app-shell-default', id: 'patterns-app-shell--dashboard', scheme: 'light', theme: 'default' },
-  { name: 'app-shell-anime', id: 'patterns-app-shell--dashboard', scheme: 'light', theme: 'anime' },
-  { name: 'app-shell-neon-dark', id: 'patterns-app-shell--dashboard', scheme: 'dark', theme: 'neon' },
+  { name: 'themes-gallery-light', id: 'getting-started-themes--gallery', scheme: 'light' },
+  { name: 'themes-gallery-dark', id: 'getting-started-themes--gallery', scheme: 'dark' },
+  { name: 'app-shell-default', id: 'templates-app-shell--dashboard', scheme: 'light', theme: 'default' },
+  { name: 'app-shell-anime', id: 'templates-app-shell--dashboard', scheme: 'light', theme: 'anime' },
+  { name: 'app-shell-neon-dark', id: 'templates-app-shell--dashboard', scheme: 'dark', theme: 'neon' },
 ];
 
 for (const c of cases) {

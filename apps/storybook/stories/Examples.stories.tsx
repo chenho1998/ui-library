@@ -6,7 +6,8 @@ import {
 } from '@yourorg/ui';
 
 const meta = {
-  title: 'Patterns/Settings page',
+  title: 'Templates/Settings Page',
+  tags: ['!autodocs', 'dev'],
   parameters: { layout: 'fullscreen', controls: { disable: true } },
 } satisfies Meta;
 export default meta;
@@ -18,6 +19,7 @@ function SchemePicker() {
 }
 
 export const SettingsPage: Story = {
+  name: 'Settings Page',
   render: () => (
     <Container size="md" style={{ paddingBlock: 32 }}>
       <Stack gap={6}>

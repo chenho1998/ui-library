@@ -2,7 +2,7 @@ import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Button, ChartIcon, CommandPalette, FileIcon, HomeIcon, Kbd, PlusIcon, SettingsIcon, Stack, Text, UsersIcon, toast, type CommandItem } from '@yourorg/ui';
 
-const meta = { title: 'Components/Overlays/CommandPalette', tags: ['new'] } satisfies Meta;
+const meta = { title: 'Overlays & Utilities/CommandPalette', parameters: { controls: { disable: true } } } satisfies Meta;
 export default meta;
 type Story = StoryObj<typeof meta>;
 

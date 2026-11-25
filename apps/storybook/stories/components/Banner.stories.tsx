@@ -4,7 +4,7 @@ import { Banner, Button, Heading, Stack, Text, toast } from '@yourorg/ui';
 import { DemoFrame } from '../PreviewKit';
 
 const meta = {
-  title: 'Components/Feedback/Banner',
+  title: 'Feedback/Banner',
   component: Banner,
   tags: ['new'],
   args: {

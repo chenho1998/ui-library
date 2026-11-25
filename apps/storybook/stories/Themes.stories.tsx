@@ -6,7 +6,8 @@ import {
 } from '@yourorg/ui';
 
 const meta = {
-  title: 'Get started/Themes',
+  title: 'Getting Started/Themes',
+  tags: ['!autodocs', 'dev'],
   parameters: {
     layout: 'fullscreen',
     controls: { disable: true },
@@ -77,6 +78,7 @@ function Sample({ name, tag, code }: { name: string; tag: string; code: string }
 
 /** Every theme restyles every component; the app changes only the `theme` prop. Use the Scheme toolbar for dark mode. */
 export const Gallery: Story = {
+  name: 'Themes',
   render: (_args, { globals }) => {
     const scheme = (globals.scheme as ColorScheme) ?? 'light';
     return (

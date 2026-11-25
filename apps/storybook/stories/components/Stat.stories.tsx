@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Card, Grid, Stat, UsersIcon } from '@yourorg/ui';
 
-const meta = { title: 'Components/Data display/Stat', tags: ['new'] } satisfies Meta;
+const meta = { title: 'Data Display/Stat', parameters: { controls: { disable: true } } } satisfies Meta;
 export default meta;
 type Story = StoryObj<typeof meta>;
 

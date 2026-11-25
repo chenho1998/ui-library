@@ -7,15 +7,16 @@ import {
 import { AppNav } from './components/Sidebar.stories';
 
 const meta = {
-  title: 'Patterns/App shell',
+  title: 'Templates/App Shell',
   parameters: { layout: 'fullscreen', controls: { disable: true } },
-  tags: ['new'],
+  tags: ['!autodocs', 'dev'],
 } satisfies Meta;
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 /** Sidebar, banner, command palette, stats, a stepper and a timeline working together. Try it with every theme. */
 export const Dashboard: Story = {
+  name: 'App Shell',
   render: function Render() {
     const [open, setOpen] = React.useState(false);
     const [showBanner, setShowBanner] = React.useState(true);

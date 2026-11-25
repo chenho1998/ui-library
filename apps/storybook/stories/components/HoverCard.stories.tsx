@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Avatar, HoverCard, Link, Stack, Text } from '@yourorg/ui';
 
-const meta = { title: 'Components/Overlays/HoverCard', tags: ['new'] } satisfies Meta;
+const meta = { title: 'Overlays & Utilities/HoverCard', parameters: { controls: { disable: true } } } satisfies Meta;
 export default meta;
 type Story = StoryObj<typeof meta>;
 

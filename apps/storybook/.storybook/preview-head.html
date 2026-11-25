@@ -1,8 +1,8 @@
-<!-- Refined editorial styling for Storybook Docs (MDX) pages -->
+<!-- Refined MUI-style editorial styling for Storybook Docs & Component Detail pages -->
 <style>
   .sbdocs.sbdocs-wrapper {
     background: var(--ui-color-bg, #fff);
-    padding: 36px 28px 64px;
+    padding: 36px 28px 72px;
   }
   .sbdocs.sbdocs-content {
     max-width: 980px;
@@ -24,6 +24,58 @@
   .sbdocs h2,
   .sbdocs h3 {
     letter-spacing: -0.02em;
+  }
+  .ui-doc-section-heading {
+    margin: 28px 0 12px !important;
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.02em !important;
+    color: var(--ui-color-text-primary, #111827) !important;
+    border-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  .ui-doc-meta-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--ui-color-border, #d8dde6);
+    background: var(--ui-color-surface, #fff);
+    color: var(--ui-color-text-secondary, #4b5563) !important;
+    font-size: 12px !important;
+    font-weight: 500;
+    line-height: 1.4;
+    text-decoration: none !important;
+    cursor: pointer;
+    transition: border-color 120ms ease, background-color 120ms ease, color 120ms ease;
+  }
+  .ui-doc-meta-link:hover {
+    border-color: var(--ui-color-accent, #2c5df5);
+    background: var(--ui-color-accent-subtle, #eef3ff);
+    color: var(--ui-color-accent-text, #1c47d1) !important;
+  }
+  .ui-doc-meta-link--version {
+    border-color: color-mix(in srgb, var(--ui-color-accent, #2c5df5) 35%, transparent);
+    background: var(--ui-color-accent-subtle, #eef3ff);
+    color: var(--ui-color-accent-text, #1c47d1) !important;
+    font-weight: 600;
+  }
+  .ui-doc-meta-sub {
+    opacity: 0.78;
+    font-weight: 500;
+    font-size: 11px;
+  }
+  .sbdocs .sbdocs-preview {
+    border-radius: 14px;
+    border-color: #e2e6ee;
+    box-shadow: 0 1px 3px rgb(15 23 42 / 5%);
+    margin: 14px 0 28px;
+  }
+  .sbdocs .sbdocs-preview button[title='Zoom in'],
+  .sbdocs .sbdocs-preview button[title='Zoom out'],
+  .sbdocs .sbdocs-preview button[title='Reset zoom'] {
+    display: none;
   }
   .sbdocs table {
     width: 100%;
@@ -61,5 +113,12 @@
     border-radius: 10px;
     border: 1px solid #e2e6ee;
     box-shadow: 0 1px 2px rgb(15 23 42 / 4%);
+  }
+  /* Clean MUI-style right-hand Table of Contents rail */
+  .sbdocs .toc-wrapper {
+    font-size: 12.5px;
+  }
+  .sbdocs .toc-list-item a {
+    transition: color 120ms ease;
   }
 </style>

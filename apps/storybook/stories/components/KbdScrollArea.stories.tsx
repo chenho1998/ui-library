@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Kbd, ScrollArea, Stack, Text } from '@yourorg/ui';
 
-const meta = { title: 'Components/Utilities/Kbd and ScrollArea', tags: ['new'] } satisfies Meta;
+const meta = { title: 'Overlays & Utilities/Kbd & ScrollArea', parameters: { controls: { disable: true } } } satisfies Meta;
 export default meta;
 type Story = StoryObj<typeof meta>;
 

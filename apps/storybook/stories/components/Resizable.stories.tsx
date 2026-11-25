@@ -3,7 +3,7 @@ import { Badge, Box, FolderIcon, Heading, Resizable, Stack, Text, TreeView } fro
 import { DemoFrame } from '../PreviewKit';
 
 const meta = {
-  title: 'Components/Layout/Resizable',
+  title: 'Navigation & Layout/Resizable',
   component: Resizable,
   tags: ['new'],
   args: { orientation: 'horizontal' },

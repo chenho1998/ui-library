@@ -49,7 +49,7 @@ const columns: DataTableColumn<Member>[] = [
 ];
 
 const meta = {
-  title: 'Components/Data display/DataTable',
+  title: 'Data Display/DataTable',
   component: DataTable,
   tags: ['new'],
   args: {

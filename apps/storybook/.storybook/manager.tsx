@@ -60,17 +60,21 @@ const theme = prefersDark ? dark : light;
 
 addons.setConfig({
   theme,
+  showPanel: false,
   sidebar: {
     showRoots: true,
-    // Components whose stories carry the `new` tag get a small badge in the menu.
-    renderLabel: (item) =>
-      item.type === 'component' && (item as { tags?: string[] }).tags?.includes('new') ? (
+    // Components introduced in v0.3 carry the `new` tag and get a crisp badge in the menu.
+    renderLabel: (item) => {
+      const tags = (item as { tags?: string[] }).tags;
+      const isLeaf = item.type === 'docs' || item.type === 'story' || item.type === 'component';
+      return isLeaf && tags?.includes('new') ? (
         <span className="ui-sb-label">
           <span className="ui-sb-name">{item.name}</span>
-          <span className="ui-sb-badge">New</span>
+          <span className="ui-sb-badge">v0.3</span>
         </span>
       ) : (
         item.name
-      ),
+      );
+    },
   },
 });

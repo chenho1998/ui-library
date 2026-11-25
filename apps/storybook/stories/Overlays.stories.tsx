@@ -5,7 +5,10 @@ import {
   TextField, Tooltip, toast,
 } from '@yourorg/ui';
 
-const meta = { title: 'Components/Overlays/Overview' } satisfies Meta;
+const meta = {
+  title: 'Overlays & Utilities/Dialogs & Drawers',
+  parameters: { controls: { disable: true } },
+} satisfies Meta;
 export default meta;
 type Story = StoryObj<typeof meta>;
 

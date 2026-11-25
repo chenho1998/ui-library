@@ -5,7 +5,7 @@ import {
 import { DemoFrame } from '../PreviewKit';
 
 const meta = {
-  title: 'Components/Data display/Carousel',
+  title: 'Data Display/Carousel',
   component: Carousel,
   tags: ['new'],
   args: {

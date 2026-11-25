@@ -7,7 +7,7 @@ import {
 import { DemoFrame } from '../PreviewKit';
 
 const meta = {
-  title: 'Components/Forms/ColorPicker',
+  title: 'Inputs & Actions/ColorPicker',
   component: ColorPicker,
   tags: ['new'],
   args: {

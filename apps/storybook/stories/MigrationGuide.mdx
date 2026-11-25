@@ -1,6 +1,6 @@
 import { Meta } from '@storybook/addon-docs/blocks';
 
-<Meta title="Get started/Migration guide" />
+<Meta title="Getting Started/Migration guide" tags={['dev']} />
 
 # Migration guide
 
@@ -12,7 +12,7 @@ Workspace tooling (Vitest 5, Stylelint 18, ESLint 10) now requires **Node 22.22.
 
 ### 2. Standalone `@yourorg/icons` package
 
-Icons now live in their own tree-shakeable package, `@yourorg/icons` (40 icons + `createIcon`, `sideEffects: false`) — [browse the Icons gallery](?path=/story/foundations-icons--gallery).
+Icons now live in their own tree-shakeable package, `@yourorg/icons` (40 icons + `createIcon`, `sideEffects: false`) — <a href="?path=/docs/foundations-icons--docs" target="_top">browse the Icons gallery</a>.
 
 - **No breaking change**: Every icon and `createIcon` is still re-exported by name from `@yourorg/ui`.
 - **Recommended for apps that only want icons**: install `@yourorg/icons` directly:
@@ -29,26 +29,26 @@ import { CheckIcon, PlusIcon } from '@yourorg/icons';
 
 `ScrollArea`, `Avatar`, and `Progress` now use native browser primitives instead of Radix wrapper packages (saving ~5 KB gzipped and removing three dependencies):
 
-- [**`ScrollArea`**](?path=/story/components-utilities-kbd-and-scrollarea--utilities): Uses native scrolling with `scrollbar-width: thin` and `scrollbar-color`. If you previously passed Radix-only props (`type`, `scrollHideDelay`), remove them—`orientation` (`'vertical' | 'horizontal' | 'both'`), `aria-label`, `ref`, and standard `div` props work identically.
-- [**`Avatar`**](?path=/story/components-data-display-overview--badges-tags-avatars): Same `src`, `name`, `size`, `shape` props, with zero React 19 fallback timer warnings in tests.
-- [**`Progress`**](?path=/story/components-feedback-overview--progress-and-loading): Same `value`, `max`, `label`, `showValue`, `size`, `tone` props and `role="progressbar"` ARIA attributes.
+- <a href="?path=/docs/overlays-utilities-kbd-scrollarea--docs" target="_top"><strong><code>ScrollArea</code></strong></a>: Uses native scrolling with `scrollbar-width: thin` and `scrollbar-color`. If you previously passed Radix-only props (`type`, `scrollHideDelay`), remove them—`orientation` (`'vertical' | 'horizontal' | 'both'`), `aria-label`, `ref`, and standard `div` props work identically.
+- <a href="?path=/docs/data-display-tables-cards--docs" target="_top"><strong><code>Avatar</code></strong></a>: Same `src`, `name`, `size`, `shape` props, with zero React 19 fallback timer warnings in tests.
+- <a href="?path=/docs/feedback-alerts-toasts--docs" target="_top"><strong><code>Progress</code></strong></a>: Same `value`, `max`, `label`, `showValue`, `size`, `tone` props and `role="progressbar"` ARIA attributes.
 
 ### 4. Consistent controlled/uncontrolled props and refs
 
-- [`Pagination`](?path=/story/components-navigation-overview--pagination-example) can now be used uncontrolled via `defaultPage` (`page` and `onPageChange` are optional).
-- `Combobox`, `DatePicker`, `TimePicker`, and `DateRangePicker` ([Pickers](?path=/story/components-forms-pickers--pickers)) now accept `open`, `defaultOpen`, and `onOpenChange`.
+- <a href="?path=/docs/navigation-layout-tabs-pagination--docs" target="_top"><code>Pagination</code></a> can now be used uncontrolled via `defaultPage` (`page` and `onPageChange` are optional).
+- `Combobox`, `DatePicker`, `TimePicker`, and `DateRangePicker` (<a href="?path=/docs/inputs-actions-date-time-pickers--docs" target="_top">Date &amp; Time Pickers</a>) now accept `open`, `defaultOpen`, and `onOpenChange`.
 - `Calendar` now accepts `defaultValue`, `month`, `onMonthChange`, and `ref`.
-- `PinInput`, `FileUpload`, `Rating`, [`TreeView`](?path=/story/components-data-display-treeview--tree-view-example), `Timeline.Item`, `DescriptionList.Item`, `Dialog.Body`/`Footer`, and [`Sidebar`](?path=/story/components-navigation-sidebar--app-shell)`.Group`/`.Submenu` now all forward `ref`.
-- [`DropdownMenu`](?path=/story/components-overlays-overview--menu) now supports nested submenus via `DropdownMenu.Sub`, `DropdownMenu.SubTrigger`, and `DropdownMenu.SubContent`.
-- [`toast`](?path=/story/components-feedback-overview--toasts) adds `toast.info()`, `toast.warning()`, and `toast.promise(promise, { loading, success, error })`.
+- `PinInput`, `FileUpload`, `Rating`, <a href="?path=/docs/data-display-treeview--docs" target="_top"><code>TreeView</code></a>, `Timeline.Item`, `DescriptionList.Item`, `Dialog.Body`/`Footer`, and <a href="?path=/docs/navigation-layout-sidebar--docs" target="_top"><code>Sidebar</code></a>`.Group`/`.Submenu` now all forward `ref`.
+- <a href="?path=/docs/overlays-utilities-dialogs-drawers--docs" target="_top"><code>DropdownMenu</code></a> now supports nested submenus via `DropdownMenu.Sub`, `DropdownMenu.SubTrigger`, and `DropdownMenu.SubContent`.
+- <a href="?path=/docs/feedback-alerts-toasts--docs" target="_top"><code>toast</code></a> adds `toast.info()`, `toast.warning()`, and `toast.promise(promise, { loading, success, error })`.
 
 ### 5. New components in v0.3
 
-- [**`DataTable`**](?path=/story/components-data-display-datatable--playground) — sorting, search filtering, selection, bulk actions and pagination
-- [**`Carousel`**](?path=/story/components-data-display-carousel--playground) — accessible slideshow with controls, dots, swipe and auto-play
-- [**`ColorPicker`**](?path=/story/components-forms-colorpicker--live-theme-preview) — hex picker with 2D saturation/brightness area, hue slider and swatches
-- [**`Resizable`**](?path=/story/components-layout-resizable--playground) — split-pane layout with drag and WAI-ARIA window splitter keyboard controls
-- [**`Banner`**](?path=/story/components-feedback-banner--playground) — full-width announcement strip (`subtle` and `solid` variants, optional `sticky`)
+- <a href="?path=/docs/data-display-datatable--docs" target="_top"><strong><code>DataTable</code></strong></a> — sorting, search filtering, selection, bulk actions and pagination
+- <a href="?path=/docs/data-display-carousel--docs" target="_top"><strong><code>Carousel</code></strong></a> — accessible slideshow with controls, dots, swipe and auto-play
+- <a href="?path=/docs/inputs-actions-colorpicker--docs" target="_top"><strong><code>ColorPicker</code></strong></a> — hex picker with 2D saturation/brightness area, hue slider and swatches
+- <a href="?path=/docs/navigation-layout-resizable--docs" target="_top"><strong><code>Resizable</code></strong></a> — split-pane layout with drag and WAI-ARIA window splitter keyboard controls
+- <a href="?path=/docs/feedback-banner--docs" target="_top"><strong><code>Banner</code></strong></a> — full-width announcement strip (`subtle` and `solid` variants, optional `sticky`)
 
 ## Migrating from raw HTML / custom components
 
@@ -62,23 +62,23 @@ import { CheckIcon, PlusIcon } from '@yourorg/icons';
   <tbody>
     <tr>
       <td><code>&lt;label&gt;</code> + <code>&lt;input&gt;</code> + error <code>&lt;p&gt;</code></td>
-      <td><a href="?path=/story/components-forms-overview--text-fields" target="_top"><code>&lt;TextField label="…" hint="…" error="…" /&gt;</code></a> (or <code>&lt;Field&gt;</code> for custom controls)</td>
+      <td><a href="?path=/docs/inputs-actions-text-forms--docs" target="_top"><code>&lt;TextField label="…" hint="…" error="…" /&gt;</code></a> (or <code>&lt;Field&gt;</code> for custom controls)</td>
     </tr>
     <tr>
       <td>Custom modal <code>&lt;div&gt;</code></td>
-      <td><a href="?path=/story/components-overlays-overview--dialog-example" target="_top"><code>&lt;Dialog&gt;</code></a> (handles focus trap, scroll lock, <code>Escape</code>, and <code>aria-labelledby</code>)</td>
+      <td><a href="?path=/docs/overlays-utilities-dialogs-drawers--docs" target="_top"><code>&lt;Dialog&gt;</code></a> (handles focus trap, scroll lock, <code>Escape</code>, and <code>aria-labelledby</code>)</td>
     </tr>
     <tr>
       <td><code>window.confirm()</code></td>
-      <td><a href="?path=/story/components-overlays-overview--confirm" target="_top"><code>&lt;AlertDialog&gt;</code></a> (async <code>onConfirm</code> spinner, Cancel focused first)</td>
+      <td><a href="?path=/docs/overlays-utilities-dialogs-drawers--docs" target="_top"><code>&lt;AlertDialog&gt;</code></a> (async <code>onConfirm</code> spinner, Cancel focused first)</td>
     </tr>
     <tr>
       <td>Hand-rolled table + search + pager</td>
-      <td><a href="?path=/story/components-data-display-datatable--playground" target="_top"><code>&lt;DataTable searchable selectable pageSize=&#123;10&#125; … /&gt;</code></a></td>
+      <td><a href="?path=/docs/data-display-datatable--docs" target="_top"><code>&lt;DataTable searchable selectable pageSize=&#123;10&#125; … /&gt;</code></a></td>
     </tr>
     <tr>
       <td>Inline <code>&lt;svg&gt;</code> icons</td>
-      <td><a href="?path=/story/foundations-icons--gallery" target="_top"><code>@yourorg/icons</code></a> or <code>createIcon('MyIcon', &lt;path … /&gt;)</code></td>
+      <td><a href="?path=/docs/foundations-icons--docs" target="_top"><code>@yourorg/icons</code></a> or <code>createIcon('MyIcon', &lt;path … /&gt;)</code></td>
     </tr>
   </tbody>
 </table>

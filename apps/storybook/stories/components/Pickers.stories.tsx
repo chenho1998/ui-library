@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DatePicker, DateRangePicker, Grid, TimePicker } from '@yourorg/ui';
 
-const meta = { title: 'Components/Forms/Pickers', tags: ['new'] } satisfies Meta;
+const meta = { title: 'Inputs & Actions/Date & Time Pickers', parameters: { controls: { disable: true } } } satisfies Meta;
 export default meta;
 type Story = StoryObj<typeof meta>;
 

@@ -1,6 +1,6 @@
 import { Meta } from '@storybook/addon-docs/blocks';
 
-<Meta title="Get started/Usage guidelines" />
+<Meta title="Getting Started/Usage guidelines" tags={['dev']} />
 
 # Usage guidelines
 
@@ -21,19 +21,19 @@ Practical rules for choosing components, keeping pages accessible, and styling c
   </thead>
   <tbody>
     <tr>
-      <td><a href="?path=/story/components-feedback-banner--playground" target="_top"><code>Banner</code></a></td>
+      <td><a href="?path=/docs/feedback-banner--docs" target="_top"><code>Banner</code></a></td>
       <td>Whole page or app shell</td>
       <td>Stays until resolved or dismissed</td>
       <td>Maintenance windows, plan limits, outage status, release announcements</td>
     </tr>
     <tr>
-      <td><a href="?path=/story/components-feedback-overview--alerts" target="_top"><code>Alert</code></a></td>
+      <td><a href="?path=/docs/feedback-alerts-toasts--docs" target="_top"><code>Alert</code></a></td>
       <td>One section or form</td>
       <td>Stays while the condition holds</td>
       <td>Inline validation summaries, payment warnings, section tips</td>
     </tr>
     <tr>
-      <td><a href="?path=/story/components-feedback-overview--toasts" target="_top"><code>toast()</code></a></td>
+      <td><a href="?path=/docs/feedback-alerts-toasts--docs" target="_top"><code>toast()</code></a></td>
       <td>Result of a user action</td>
       <td>Auto-dismisses (except <code>toast.error</code>)</td>
       <td>&ldquo;Saved&rdquo;, &ldquo;Copied&rdquo;, async status via <code>toast.promise()</code></td>
@@ -45,23 +45,23 @@ Never put a critical, only-way-to-reach action inside a toast.
 
 ### Choosing from options: Select vs Combobox vs SegmentedControl vs RadioGroup
 
-- **2–4 options that switch a view or mode**: [`SegmentedControl`](?path=/story/components-forms-segmentedcontrol--segmented-control-example) (always has one active value).
-- **2–5 form options that benefit from descriptions**: [`RadioGroup`](?path=/story/components-forms-overview--choices).
-- **5–15 static options**: [`Select`](?path=/story/components-forms-overview--selection).
-- **15+ options, searchable lists, multi-select, or server-loaded options**: [`Combobox`](?path=/story/components-forms-overview--combobox-multiple).
+- **2–4 options that switch a view or mode**: <a href="?path=/docs/inputs-actions-segmentedcontrol--docs" target="_top"><code>SegmentedControl</code></a> (always has one active value).
+- **2–5 form options that benefit from descriptions**: <a href="?path=/docs/inputs-actions-text-forms--docs" target="_top"><code>RadioGroup</code></a>.
+- **5–15 static options**: <a href="?path=/docs/inputs-actions-text-forms--docs" target="_top"><code>Select</code></a>.
+- **15+ options, searchable lists, multi-select, or server-loaded options**: <a href="?path=/docs/inputs-actions-text-forms--docs" target="_top"><code>Combobox</code></a>.
 
 ### Displaying tabular data: Table vs DataTable
 
-- Use [**`Table`**](?path=/story/components-data-display-overview--table-example) when you want full control over query state, external toolbars, or server-only sorting without extra UI chrome.
-- Use [**`DataTable`**](?path=/story/components-data-display-datatable--playground) when you want built-in search filtering, client-side (or `manualSort`) sorting, row selection with `bulkActions`, and `Pagination` out of the box.
+- Use <a href="?path=/docs/data-display-tables-cards--docs" target="_top"><strong><code>Table</code></strong></a> when you want full control over query state, external toolbars, or server-only sorting without extra UI chrome.
+- Use <a href="?path=/docs/data-display-datatable--docs" target="_top"><strong><code>DataTable</code></strong></a> when you want built-in search filtering, client-side (or `manualSort`) sorting, row selection with `bulkActions`, and `Pagination` out of the box.
 
 ### Overlays: Dialog vs AlertDialog vs Drawer vs Popover vs HoverCard
 
-- [**`Dialog`**](?path=/story/components-overlays-overview--dialog-example): Focused modal task (forms, details). Closes on backdrop click and `Escape`.
-- [**`AlertDialog`**](?path=/story/components-overlays-overview--confirm): Destructive or irreversible confirmation. Ignores backdrop clicks, focuses Cancel first, and stays open while an async `onConfirm` promise settles.
-- [**`Drawer`**](?path=/story/components-overlays-overview--drawer-example): Edge-anchored panel for secondary workflows, filters, or mobile [`Sidebar`](?path=/story/components-navigation-sidebar--mobile-drawer) navigation.
-- [**`Popover`**](?path=/story/components-overlays-overview--popover-example): Non-modal floating panel anchored to a trigger (pickers, quick filters).
-- [**`HoverCard`**](?path=/story/components-overlays-hovercard--hover-card-example): Sighted pointer preview only; never put unique actions inside it.
+- <a href="?path=/docs/overlays-utilities-dialogs-drawers--docs" target="_top"><strong><code>Dialog</code></strong></a>: Focused modal task (forms, details). Closes on backdrop click and `Escape`.
+- <a href="?path=/docs/overlays-utilities-dialogs-drawers--docs" target="_top"><strong><code>AlertDialog</code></strong></a>: Destructive or irreversible confirmation. Ignores backdrop clicks, focuses Cancel first, and stays open while an async `onConfirm` promise settles.
+- <a href="?path=/docs/overlays-utilities-dialogs-drawers--docs" target="_top"><strong><code>Drawer</code></strong></a>: Edge-anchored panel for secondary workflows, filters, or mobile <a href="?path=/docs/navigation-layout-sidebar--docs" target="_top"><code>Sidebar</code></a> navigation.
+- <a href="?path=/docs/overlays-utilities-dialogs-drawers--docs" target="_top"><strong><code>Popover</code></strong></a>: Non-modal floating panel anchored to a trigger (pickers, quick filters).
+- <a href="?path=/docs/overlays-utilities-hovercard--docs" target="_top"><strong><code>HoverCard</code></strong></a>: Sighted pointer preview only; never put unique actions inside it.
 
 ## Controlled vs uncontrolled state
 
@@ -69,19 +69,19 @@ Interactive components follow one consistent convention (powered by `useControll
 
 - Pass **`defaultValue` / `defaultOpen` / `defaultPage` / `defaultIndex` / `defaultSizes`** for uncontrolled usage.
 - Pass **`value` / `open` / `page` / `index` / `sizes`** together with its **`on*Change`** callback for controlled usage.
-- Form controls (`TextField`, `Combobox`, `DatePicker`, `DateRangePicker`, `TimePicker`, `PinInput`, `FileUpload`, [`ColorPicker`](?path=/story/components-forms-colorpicker--playground)) accept `name` so they work directly with native HTML `<form>` submissions and `FormData`.
+- Form controls (`TextField`, `Combobox`, `DatePicker`, `DateRangePicker`, `TimePicker`, `PinInput`, `FileUpload`, <a href="?path=/docs/inputs-actions-colorpicker--docs" target="_top"><code>ColorPicker</code></a>) accept `name` so they work directly with native HTML `<form>` submissions and `FormData`.
 
 ## Accessibility checklist
 
 1. Always render `<ThemeProvider>` once at the root of your app (overlays portal inside it to inherit tokens and colour scheme).
-2. Give icon-only buttons (`IconButton`), `SegmentedControl`, `ToggleGroup`, [`TreeView`](?path=/story/components-data-display-treeview--tree-view-example), [`Carousel`](?path=/story/components-data-display-carousel--playground), and [`Resizable.Handle`](?path=/story/components-layout-resizable--playground) an `aria-label`.
+2. Give icon-only buttons (`IconButton`), `SegmentedControl`, `ToggleGroup`, <a href="?path=/docs/data-display-treeview--docs" target="_top"><code>TreeView</code></a>, <a href="?path=/docs/data-display-carousel--docs" target="_top"><code>Carousel</code></a>, and <a href="?path=/docs/navigation-layout-resizable--docs" target="_top"><code>Resizable.Handle</code></a> an `aria-label`.
 3. Every `Table` / `DataTable` requires a `caption` (hide it visually with `hideCaption` when a heading already introduces the table).
 4. Keep heading levels sequential (`h1` → `h2` → `h3`); pass `size` on `Heading` or `level` on `Card.Title` / `Accordion.Item` to decouple visual size from semantic level.
 5. Respect reduced motion: all library animations and `Carousel` auto-play automatically honour `prefers-reduced-motion: reduce`.
 
 ## CSS cascade layers and overrides
 
-`@yourorg/ui/styles.css` lives inside `@layer ui.reset, ui.tokens, ui.components`. Any un-layered CSS in your app overrides component rules naturally without `!important`. Prefer overriding `--ui-*` tokens via `createTheme()` ([browse tokens](?path=/docs/foundations-tokens--docs)) before writing selector overrides.
+`@yourorg/ui/styles.css` lives inside `@layer ui.reset, ui.tokens, ui.components`. Any un-layered CSS in your app overrides component rules naturally without `!important`. Prefer overriding `--ui-*` tokens via `createTheme()` (<a href="?path=/docs/foundations-design-tokens--docs" target="_top">browse Design tokens</a>) before writing selector overrides.
 
 ## SSR and React Server Components
 

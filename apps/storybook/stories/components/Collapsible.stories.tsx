@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Collapsible, Stack, Switch, TextField } from '@yourorg/ui';
 
-const meta = { title: 'Components/Navigation/Collapsible', component: Collapsible, tags: ['new'] } satisfies Meta<typeof Collapsible>;
+const meta = { title: 'Navigation & Layout/Collapsible', component: Collapsible } satisfies Meta<typeof Collapsible>;
 export default meta;
 type Story = StoryObj<typeof meta>;
 

@@ -2,7 +2,7 @@ import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Button, Stack, Stepper } from '@yourorg/ui';
 
-const meta = { title: 'Components/Navigation/Stepper', component: Stepper, tags: ['new'] } satisfies Meta<typeof Stepper>;
+const meta = { title: 'Navigation & Layout/Stepper', component: Stepper } satisfies Meta<typeof Stepper>;
 export default meta;
 type Story = StoryObj<typeof meta>;
 

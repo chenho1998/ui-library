@@ -4,7 +4,7 @@ import { Alert, Button, Progress, Skeleton, Spinner, Stack, toast } from '@youro
 import { DemoFrame } from './PreviewKit';
 
 const meta = {
-  title: 'Components/Feedback/Overview',
+  title: 'Feedback/Alerts & Toasts',
   parameters: { controls: { disable: true } },
 } satisfies Meta;
 export default meta;

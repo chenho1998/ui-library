@@ -3,7 +3,7 @@ import { Button, ButtonGroup, IconButton, Link, MoreIcon, PlusIcon, Stack, Text,
 import { DemoFrame } from './PreviewKit';
 
 const meta = {
-  title: 'Components/Actions/Button',
+  title: 'Inputs & Actions/Button',
   component: Button,
   args: { children: 'Save changes', variant: 'solid', tone: 'accent', size: 'md' },
   argTypes: {

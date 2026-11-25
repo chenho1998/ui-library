@@ -7,7 +7,7 @@ import {
 import { DemoFrame } from './PreviewKit';
 
 const meta = {
-  title: 'Components/Forms/Overview',
+  title: 'Inputs & Actions/Text & Forms',
   parameters: { layout: 'padded', controls: { disable: true } },
 } satisfies Meta;
 export default meta;

@@ -5,39 +5,59 @@
   #storybook-checklist-widget,
   .sidebar-container > div:has([aria-label*='checklist' i]),
   .sidebar-container a[href*='storybook.js.org/docs/get-started'],
-  #storybook-explorer-menu ~ div:has(button[aria-label*='checklist' i]) {
-    display: none !important;
-  }
-
-  /* Also hide the rounded green-bordered "Get started XX%" onboarding card in Storybook 10 */
+  #storybook-explorer-menu ~ div:has(button[aria-label*='checklist' i]),
   nav.sidebar-container div:has(> div > button[aria-label*='checklist' i]),
   nav.sidebar-container div:has(> button > svg + span):has(a[href*='storybook.js.org']),
   .sidebar-header + div:has([role='progressbar']) {
     display: none !important;
   }
 
+  /* Clean MUI-style section subheadings */
   #storybook-explorer-tree .sidebar-subheading {
-    margin-top: 16px;
+    margin-top: 18px;
     margin-bottom: 4px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(15, 23, 42, 0.06);
     color: #5b6270;
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
 
+  #storybook-explorer-tree .sidebar-subheading:first-of-type {
+    margin-top: 4px;
+    padding-top: 2px;
+    border-top: 0;
+  }
+
+  /* Minimalist MUI-style flat sidebar links (no loud Storybook doc/bookmark colours) */
   #storybook-explorer-tree .sidebar-item {
     position: relative;
     margin: 1px 8px;
-    padding-top: 4px;
-    padding-bottom: 4px;
+    padding-top: 5px;
+    padding-bottom: 5px;
     border-radius: 8px;
     font-size: 13px;
+    font-weight: 500;
+    color: #363c46;
     transition: background-color 120ms ease, color 120ms ease;
   }
 
+  #storybook-explorer-tree .sidebar-item svg {
+    color: #8b94a3 !important;
+    opacity: 0.78;
+    transition: color 120ms ease, opacity 120ms ease;
+  }
+
   #storybook-explorer-tree .sidebar-item:hover {
-    background: #eef1f6;
+    background: #edf1f7;
+    color: #111827;
+  }
+
+  #storybook-explorer-tree .sidebar-item:hover svg {
+    color: #4b5563 !important;
+    opacity: 1;
   }
 
   #storybook-explorer-tree .sidebar-item[data-selected='true'] {
@@ -59,6 +79,7 @@
 
   #storybook-explorer-tree .sidebar-item[data-selected='true'] svg {
     color: #2c5df5 !important;
+    opacity: 1;
   }
 
   #storybook-explorer-tree .sidebar-item[data-selected='true'] button {
@@ -69,9 +90,10 @@
   .ui-sb-label {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    justify-content: space-between;
+    gap: 8px;
     min-width: 0;
-    max-width: 100%;
+    width: 100%;
   }
 
   .ui-sb-name {
@@ -81,7 +103,7 @@
   }
 
   .ui-sb-badge {
-    padding: 1px 6px;
+    padding: 0 6px;
     border-radius: 999px;
     background: #e5edff;
     color: #1d4ed8;
@@ -89,14 +111,19 @@
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.02em;
-    line-height: 15px;
+    line-height: 16px;
     flex-shrink: 0;
     white-space: nowrap;
   }
 
   @media (prefers-color-scheme: dark) {
-    #storybook-explorer-tree .sidebar-subheading { color: #9ea5b2; }
-    #storybook-explorer-tree .sidebar-item:hover { background: #262930; }
+    #storybook-explorer-tree .sidebar-subheading {
+      color: #9ea5b2;
+      border-top-color: rgba(255, 255, 255, 0.08);
+    }
+    #storybook-explorer-tree .sidebar-item { color: #d1d5db; }
+    #storybook-explorer-tree .sidebar-item svg { color: #6b7280 !important; }
+    #storybook-explorer-tree .sidebar-item:hover { background: #262930; color: #f9fafb; }
     #storybook-explorer-tree .sidebar-item[data-selected='true'] {
       background: #162a5c !important;
       color: #c8dbff !important;

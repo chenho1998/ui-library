@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Badge, DescriptionList, Grid } from '@yourorg/ui';
 
-const meta = { title: 'Components/Data display/DescriptionList', tags: ['new'] } satisfies Meta;
+const meta = { title: 'Data Display/DescriptionList', parameters: { controls: { disable: true } } } satisfies Meta;
 export default meta;
 type Story = StoryObj<typeof meta>;
 

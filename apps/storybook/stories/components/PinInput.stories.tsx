@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { PinInput, Stack, toast } from '@yourorg/ui';
 
-const meta = { title: 'Components/Forms/PinInput', tags: ['new'] } satisfies Meta;
+const meta = { title: 'Inputs & Actions/PinInput', parameters: { controls: { disable: true } } } satisfies Meta;
 export default meta;
 type Story = StoryObj<typeof meta>;
 

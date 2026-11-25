@@ -132,42 +132,42 @@ const guideCards = [
     title: 'Themes Gallery',
     badge: '8 themes',
     desc: 'Compare Default, Violet, Teal, Anime, Pixel, Brutalist, Sketch and Neon side by side.',
-    href: '?path=/story/get-started-themes--gallery',
+    href: '?path=/story/getting-started-themes--gallery',
     icon: <SunIcon size="sm" />,
   },
   {
     title: 'Design Tokens',
     badge: 'OKLCH',
-    desc: 'Build-verified WCAG AA semantic colours, palettes, typography, radius and spacing.',
-    href: '?path=/docs/foundations-tokens--docs',
+    desc: 'Interactive explorer for WCAG AA semantic colours, palettes, typography, radius and spacing.',
+    href: '?path=/docs/foundations-design-tokens--docs',
     icon: <ChartIcon size="sm" />,
   },
   {
     title: 'Icons Library',
     badge: '40 icons',
     desc: 'Search and copy tree-shakeable SVG icons from @yourorg/icons or build your own.',
-    href: '?path=/story/foundations-icons--gallery',
+    href: '?path=/docs/foundations-icons--docs',
     icon: <FolderIcon size="sm" />,
   },
   {
-    title: 'App Shell Pattern',
+    title: 'App Shell Template',
     badge: 'Live demo',
     desc: 'Full workspace dashboard with Sidebar, Banner, CommandPalette, Stats and Timeline.',
-    href: '?path=/story/patterns-app-shell--dashboard',
+    href: '?path=/story/templates-app-shell--dashboard',
     icon: <HomeIcon size="sm" />,
   },
   {
     title: 'Usage Guidelines',
     badge: 'Guide',
     desc: 'When to pick Banner vs Alert vs Toast, DataTable vs Table, accessibility & SSR.',
-    href: '?path=/docs/get-started-usage-guidelines--docs',
+    href: '?path=/docs/getting-started-usage-guidelines--docs',
     icon: <SettingsIcon size="sm" />,
   },
   {
     title: 'Migration Guide',
     badge: 'v0.3',
     desc: 'Upgrading to v0.3, standalone @yourorg/icons, lighter primitives and new APIs.',
-    href: '?path=/docs/get-started-migration-guide--docs',
+    href: '?path=/docs/getting-started-migration-guide--docs',
     icon: <ExternalLinkIcon size="sm" />,
   },
 ];
@@ -227,14 +227,14 @@ export function IntroLanding() {
             </div>
 
             <Stack direction="row" gap={3} align="center" wrap style={{ paddingTop: 4 }}>
-              <Button onClick={() => navigate('?path=/story/patterns-app-shell--dashboard')}>
+              <Button onClick={() => navigate('?path=/story/templates-app-shell--dashboard')}>
                 Explore App Shell
               </Button>
-              <Button variant="outline" tone="neutral" onClick={() => navigate('?path=/story/get-started-themes--gallery')}>
+              <Button variant="outline" tone="neutral" onClick={() => navigate('?path=/story/getting-started-themes--gallery')}>
                 Browse Themes
               </Button>
-              <Button variant="ghost" tone="neutral" onClick={() => navigate('?path=/story/foundations-icons--gallery')}>
-                40 Icons
+              <Button variant="ghost" tone="neutral" onClick={() => navigate('?path=/docs/foundations-design-tokens--docs')}>
+                Design Tokens
               </Button>
               <Button
                 asChild

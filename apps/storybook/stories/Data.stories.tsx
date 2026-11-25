@@ -6,7 +6,7 @@ import {
 import { DemoFrame } from './PreviewKit';
 
 const meta = {
-  title: 'Components/Data display/Overview',
+  title: 'Data Display/Tables & Cards',
   parameters: { controls: { disable: true } },
 } satisfies Meta;
 export default meta;

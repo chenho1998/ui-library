@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { FileIcon, FolderIcon, TreeView, type TreeNode } from '@yourorg/ui';
 
-const meta = { title: 'Components/Data display/TreeView', tags: ['new'] } satisfies Meta;
+const meta = { title: 'Data Display/TreeView', parameters: { controls: { disable: true } } } satisfies Meta;
 export default meta;
 type Story = StoryObj<typeof meta>;
 

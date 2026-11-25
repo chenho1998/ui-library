@@ -4,6 +4,7 @@ import {
   FONT_STACKS, ThemeProvider, Toaster, animeTheme, brutalistTheme, createTheme, neonTheme, pixelTheme, sketchTheme, withFont, type Theme,
 } from '@yourorg/ui';
 import '../../../packages/ui/src/styles/index.css';
+import { ComponentDocPage } from '../stories/ComponentDocPage';
 // Fonts load from Fontsource packages (no font CDN). An app imports only the faces its themes use.
 import '@fontsource/m-plus-rounded-1c/400.css';
 import '@fontsource/m-plus-rounded-1c/500.css';
@@ -41,7 +42,8 @@ const fonts = {
 };
 
 const preview: Preview = {
-  tags: ['autodocs'],
+  // Unified MUI-style sidebar: each component renders as one clean Docs leaf (stories stay accessible in Docs and /iframe.html).
+  tags: ['autodocs', '!dev'],
   globalTypes: {
     scheme: {
       description: 'Colour scheme',
@@ -67,13 +69,24 @@ const preview: Preview = {
   initialGlobals: { scheme: 'light', theme: 'default', font: 'theme' },
   parameters: {
     layout: 'padded',
+    docs: {
+      page: ComponentDocPage,
+      toc: {
+        title: 'On this page',
+        headingSelector: 'h2',
+      },
+    },
     options: {
       storySort: {
         order: [
-          'Get started', ['Introduction', 'Themes', 'Usage guidelines', 'Migration guide'],
-          'Foundations', ['Tokens', 'Icons'],
-          'Components', ['Actions', 'Layout', 'Forms', 'Navigation', 'Overlays', 'Feedback', 'Data display', 'Utilities'],
-          'Patterns',
+          'Getting Started', ['Introduction', 'Usage guidelines', 'Themes', 'Migration guide'],
+          'Foundations', ['Design tokens', 'Icons'],
+          'Inputs & Actions', ['Button', 'Text & Forms', 'ColorPicker', 'Date & Time Pickers', 'FileUpload', 'PinInput', 'Rating', 'SegmentedControl'],
+          'Data Display', ['DataTable', 'Carousel', 'Tables & Cards', 'DescriptionList', 'Stat', 'Timeline', 'TreeView'],
+          'Feedback', ['Banner', 'Alerts & Toasts'],
+          'Navigation & Layout', ['Resizable', 'Sidebar', 'Stepper', 'Menus', 'Tabs & Pagination', 'Collapsible'],
+          'Overlays & Utilities', ['CommandPalette', 'Dialogs & Drawers', 'HoverCard', 'Kbd & ScrollArea'],
+          'Templates', ['App Shell', 'Settings Page'],
         ],
       },
     },

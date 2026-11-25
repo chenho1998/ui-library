@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { CheckIcon, PlusIcon, Timeline } from '@yourorg/ui';
 
-const meta = { title: 'Components/Data display/Timeline', tags: ['new'] } satisfies Meta;
+const meta = { title: 'Data Display/Timeline', parameters: { controls: { disable: true } } } satisfies Meta;
 export default meta;
 type Story = StoryObj<typeof meta>;
 
