@@ -28,7 +28,7 @@ jobs:
       - name: Install Playwright Chromium
         run: pnpm --filter @yourorg/storybook exec playwright install --with-deps chromium
       - name: Visual regression tests (Playwright)
-        run: pnpm test:visual -- --update-snapshots=missing
+        run: pnpm test:visual
       - name: Upload Playwright visual diff report
         if: failure()
         uses: actions/upload-artifact@v4
