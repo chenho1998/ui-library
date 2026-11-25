@@ -1,0 +1,61 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Get started/Migration guide" />
+
+# Migration guide
+
+## Upgrading to v0.3
+
+### 1. Node.js 22+ for local development & tooling
+
+Workspace tooling (Vitest 5, Stylelint 18, ESLint 10) now requires **Node 22.22.2+**, **24.15+**, or **26+**. Run `nvm use` in the repo root to pick up `.nvmrc` (`22`). Runtime browser support for published packages is unchanged (ES2020+, React 18.2+ or React 19).
+
+### 2. Standalone `@yourorg/icons` package
+
+Icons now live in their own tree-shakeable package, `@yourorg/icons` (40 icons + `createIcon`, `sideEffects: false`).
+
+- **No breaking change**: Every icon and `createIcon` is still re-exported by name from `@yourorg/ui`.
+- **Recommended for apps that only want icons**: install `@yourorg/icons` directly:
+
+```tsx
+// Still works:
+import { CheckIcon, PlusIcon } from '@yourorg/ui';
+
+// Lighter if you don't need full UI components:
+import { CheckIcon, PlusIcon } from '@yourorg/icons';
+```
+
+### 3. Lighter `ScrollArea`, `Avatar`, and `Progress`
+
+`ScrollArea`, `Avatar`, and `Progress` now use native browser primitives instead of Radix wrapper packages (saving ~5 KB gzipped and removing three dependencies):
+
+- **`ScrollArea`**: Uses native scrolling with `scrollbar-width: thin` and `scrollbar-color`. If you previously passed Radix-only props (`type`, `scrollHideDelay`), remove them—`orientation` (`'vertical' | 'horizontal' | 'both'`), `aria-label`, `ref`, and standard `div` props work identically.
+- **`Avatar`**: Same `src`, `name`, `size`, `shape` props, with zero React 19 fallback timer warnings in tests.
+- **`Progress`**: Same `value`, `max`, `label`, `showValue`, `size`, `tone` props and `role="progressbar"` ARIA attributes.
+
+### 4. Consistent controlled/uncontrolled props and refs
+
+- `Pagination` can now be used uncontrolled via `defaultPage` (`page` and `onPageChange` are optional).
+- `Combobox`, `DatePicker`, `TimePicker`, and `DateRangePicker` now accept `open`, `defaultOpen`, and `onOpenChange`.
+- `Calendar` now accepts `defaultValue`, `month`, `onMonthChange`, and `ref`.
+- `PinInput`, `FileUpload`, `Rating`, `TreeView`, `Timeline.Item`, `DescriptionList.Item`, `Dialog.Body`/`Footer`, and `Sidebar.Group`/`Submenu` now all forward `ref`.
+- `DropdownMenu` now supports nested submenus via `DropdownMenu.Sub`, `DropdownMenu.SubTrigger`, and `DropdownMenu.SubContent`.
+- `toast` adds `toast.info()`, `toast.warning()`, and `toast.promise(promise, { loading, success, error })`.
+
+### 5. New components in v0.3
+
+- `DataTable` — sorting, search filtering, selection, bulk actions and pagination
+- `Carousel` — accessible slideshow with controls, dots, swipe and auto-play
+- `ColorPicker` — hex picker with 2D saturation/brightness area, hue slider and swatches
+- `Resizable` — split-pane layout with drag and WAI-ARIA window splitter keyboard controls
+- `Banner` — full-width announcement strip (`subtle` and `solid` variants, optional `sticky`)
+
+## Migrating from raw HTML / custom components
+
+| HTML / custom pattern | Replace with |
+| --- | --- |
+| `<label>` + `<input>` + error `<p>` | `<TextField label="…" hint="…" error="…" />` (or `<Field>` for custom controls) |
+| Custom modal `<div>` | `<Dialog>` (handles focus trap, scroll lock, `Escape`, and `aria-labelledby`) |
+| `window.confirm()` | `<AlertDialog>` (async `onConfirm` spinner, Cancel focused first) |
+| Hand-rolled table + search + pager | `<DataTable searchable selectable pageSize={10} … />` |
+| Inline `<svg>` icons | `@yourorg/icons` or `createIcon('MyIcon', <path … />)` |
