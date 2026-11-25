@@ -84,8 +84,14 @@ const preview: Preview = {
     (Story, ctx) => {
       const base = themes[ctx.globals.theme as string] ?? themes.default;
       const theme = fonts[(ctx.globals.font as keyof typeof fonts) ?? 'theme'](base);
+      const isFullscreen = ctx.parameters.layout === 'fullscreen';
+      const isDocs = ctx.viewMode === 'docs';
       return (
-        <ThemeProvider colorScheme={ctx.globals.scheme} theme={theme} style={{ padding: 24, minHeight: '100vh' }}>
+        <ThemeProvider
+          colorScheme={ctx.globals.scheme}
+          theme={theme}
+          style={{ padding: isFullscreen ? 0 : 24, minHeight: isDocs ? undefined : '100vh' }}
+        >
           <Story />
           <Toaster />
         </ThemeProvider>

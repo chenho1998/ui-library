@@ -10,11 +10,36 @@ Practical rules for choosing components, keeping pages accessible, and styling c
 
 ### Messaging: Banner vs Alert vs Toast
 
-| Component | Scope | Persistence | When to use |
-| --- | --- | --- | --- |
-| [`Banner`](?path=/story/components-feedback-banner--playground) | Whole page or app shell | Stays until resolved or dismissed | Maintenance windows, plan limits, outage status, release announcements |
-| [`Alert`](?path=/story/components-feedback-overview--alerts) | One section or form | Stays while the condition holds | Inline validation summaries, payment warnings, section tips |
-| [`toast()`](?path=/story/components-feedback-overview--toasts) | Result of a user action | Auto-dismisses (except `toast.error`) | "Saved", "Copied", async status via `toast.promise()` |
+<table>
+  <thead>
+    <tr>
+      <th>Component</th>
+      <th>Scope</th>
+      <th>Persistence</th>
+      <th>When to use</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="?path=/story/components-feedback-banner--playground" target="_top"><code>Banner</code></a></td>
+      <td>Whole page or app shell</td>
+      <td>Stays until resolved or dismissed</td>
+      <td>Maintenance windows, plan limits, outage status, release announcements</td>
+    </tr>
+    <tr>
+      <td><a href="?path=/story/components-feedback-overview--alerts" target="_top"><code>Alert</code></a></td>
+      <td>One section or form</td>
+      <td>Stays while the condition holds</td>
+      <td>Inline validation summaries, payment warnings, section tips</td>
+    </tr>
+    <tr>
+      <td><a href="?path=/story/components-feedback-overview--toasts" target="_top"><code>toast()</code></a></td>
+      <td>Result of a user action</td>
+      <td>Auto-dismisses (except <code>toast.error</code>)</td>
+      <td>&ldquo;Saved&rdquo;, &ldquo;Copied&rdquo;, async status via <code>toast.promise()</code></td>
+    </tr>
+  </tbody>
+</table>
 
 Never put a critical, only-way-to-reach action inside a toast.
 
