@@ -1,6 +1,34 @@
-<!-- MUI-inspired sidebar & calm top config toolbar polish for the UI Library docs site -->
+<!-- MUI/Linear-inspired inline toolbar & synced Light/Dark Manager shell -->
 <style>
-  /* Hide Storybook's default onboarding checklist box so the sidebar stays focused on components & docs */
+  :root {
+    --sb-bar-bg: rgba(255, 255, 255, 0.94);
+    --sb-bar-border: #e5e9f2;
+    --sb-seg-bg: #eef2f7;
+    --sb-seg-border: #dde3ee;
+    --sb-seg-active-bg: #ffffff;
+    --sb-seg-active-fg: #111827;
+    --sb-seg-fg: #525c6d;
+    --sb-accent: #2c5df5;
+    --sb-accent-soft: #eaf0ff;
+    --sb-accent-fg: #1d4ed8;
+    --sb-hover-bg: #f1f5fa;
+  }
+
+  html[data-ui-manager-scheme='dark'] {
+    --sb-bar-bg: rgba(13, 16, 23, 0.94);
+    --sb-bar-border: #1e2536;
+    --sb-seg-bg: #141925;
+    --sb-seg-border: #232b3e;
+    --sb-seg-active-bg: #222b40;
+    --sb-seg-active-fg: #f8fafc;
+    --sb-seg-fg: #94a3b8;
+    --sb-accent: #4c7dfe;
+    --sb-accent-soft: #17254a;
+    --sb-accent-fg: #a6c2fe;
+    --sb-hover-bg: #181f2e;
+  }
+
+  /* Hide Storybook's default onboarding checklist box */
   [data-testid='checklist-widget'],
   #storybook-checklist-widget,
   .sidebar-container > div:has([aria-label*='checklist' i]),
@@ -12,16 +40,16 @@
     display: none !important;
   }
 
-  /* ===== Calm, uncluttered MUI/Vercel-style top config bar ===== */
+  /* ===== Clean 48px inline top bar ===== */
   .sb-bar {
     height: 48px !important;
     padding: 0 14px !important;
-    background: rgba(255, 255, 255, 0.92) !important;
-    backdrop-filter: blur(8px);
-    box-shadow: inset 0 -1px 0 #e6eaf2 !important;
+    background: var(--sb-bar-bg) !important;
+    backdrop-filter: blur(10px);
+    box-shadow: inset 0 -1px 0 var(--sb-bar-border) !important;
   }
 
-  /* Hide noisy developer-debug buttons that conflict with ThemeProvider or clutter the bar */
+  /* Hide noisy built-in developer debug icons */
   .sb-bar button[aria-label='Reload story'],
   .sb-bar button[aria-label='Grid visibility'],
   .sb-bar button[aria-label='Preview background'],
@@ -32,72 +60,149 @@
     display: none !important;
   }
 
-  /* Remove stray vertical divider hairlines left behind after hiding debug tools */
   .sb-bar > div > div > span:empty {
     display: none !important;
   }
 
-  /* Restyle Scheme / Theme / Font selector buttons into calm, cohesive bordered pill dropdowns */
-  .sb-bar button[aria-label^='Colour scheme'],
-  .sb-bar button[aria-label^='Theme:'],
-  .sb-bar button[aria-label^='Font:'] {
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 6px !important;
-    height: 30px !important;
-    margin: 0 3px !important;
-    padding: 0 10px 0 9px !important;
-    border: 1px solid #d9dfe9 !important;
-    border-radius: 8px !important;
-    background: #f8fafc !important;
-    color: #1f2937 !important;
-    font-size: 12.5px !important;
-    font-weight: 500 !important;
-    line-height: 1 !important;
-    box-shadow: 0 1px 1px rgba(15, 23, 42, 0.03) !important;
-    transition: border-color 140ms ease, background-color 140ms ease, color 140ms ease, box-shadow 140ms ease !important;
+  /* ===== Custom inline controls (zero dropdowns) ===== */
+  .ui-tb-root {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
   }
 
-  .sb-bar button[aria-label^='Colour scheme'] svg,
-  .sb-bar button[aria-label^='Theme:'] svg,
-  .sb-bar button[aria-label^='Font:'] svg {
-    width: 14px !important;
-    height: 14px !important;
-    color: #2c5df5 !important;
+  .ui-tb-sep {
+    width: 1px;
+    height: 18px;
+    background: var(--sb-bar-border);
     flex-shrink: 0;
   }
 
-  /* Subtle dropdown chevron indicator on our 3 config selectors */
-  .sb-bar button[aria-label^='Colour scheme']::after,
-  .sb-bar button[aria-label^='Theme:']::after,
-  .sb-bar button[aria-label^='Font:']::after {
-    content: '';
-    display: inline-block;
-    width: 5px;
-    height: 5px;
-    margin-left: 2px;
-    margin-top: -2px;
-    border-right: 1.5px solid #6b7280;
-    border-bottom: 1.5px solid #6b7280;
-    transform: rotate(45deg);
-    opacity: 0.75;
-    transition: border-color 140ms ease, opacity 140ms ease;
+  .ui-tb-segment {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px;
+    border-radius: 9px;
+    background: var(--sb-seg-bg);
+    border: 1px solid var(--sb-seg-border);
+    gap: 2px;
   }
 
-  .sb-bar button[aria-label^='Colour scheme']:hover,
-  .sb-bar button[aria-label^='Theme:']:hover,
-  .sb-bar button[aria-label^='Font:']:hover {
-    border-color: #93b4fb !important;
-    background: #eff4ff !important;
-    color: #1c47d1 !important;
-    box-shadow: 0 1px 2px rgba(44, 93, 245, 0.1) !important;
+  .ui-tb-seg-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 24px;
+    padding: 0 9px;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--sb-seg-fg);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 140ms ease, color 140ms ease, box-shadow 140ms ease;
   }
 
-  .sb-bar button[aria-label^='Colour scheme']:hover::after,
-  .sb-bar button[aria-label^='Theme:']:hover::after,
-  .sb-bar button[aria-label^='Font:']:hover::after {
-    border-color: #2c5df5;
-    opacity: 1;
+  .ui-tb-seg-btn:hover:not(.is-active) {
+    color: var(--sb-seg-active-fg);
+  }
+
+  .ui-tb-seg-btn.is-active {
+    background: var(--sb-seg-active-bg);
+    color: var(--sb-seg-active-fg);
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  .ui-tb-seg-btn.is-active svg {
+    color: var(--sb-accent);
+  }
+
+  .ui-tb-themes {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 2px;
+    border-radius: 9px;
+    background: var(--sb-seg-bg);
+    border: 1px solid var(--sb-seg-border);
+  }
+
+  .ui-tb-theme-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 24px;
+    padding: 0 8px;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--sb-seg-fg);
+    font: inherit;
+    font-size: 11.5px;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 130ms ease, color 130ms ease, border-color 130ms ease, box-shadow 130ms ease;
+  }
+
+  .ui-tb-theme-btn:hover:not(.is-active) {
+    color: var(--sb-seg-active-fg);
+    background: var(--sb-hover-bg);
+  }
+
+  .ui-tb-theme-btn.is-active {
+    background: var(--sb-seg-active-bg);
+    color: var(--sb-seg-active-fg);
+    border-color: var(--sb-seg-border);
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  .ui-tb-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    flex-shrink: 0;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.15);
+  }
+
+  .ui-tb-font-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 28px;
+    padding: 0 9px;
+    border: 1px solid var(--sb-seg-border);
+    border-radius: 8px;
+    background: var(--sb-seg-bg);
+    color: var(--sb-seg-fg);
+    font: inherit;
+    font-size: 11.5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 130ms ease;
+  }
+
+  .ui-tb-font-btn:hover {
+    color: var(--sb-seg-active-fg);
+    border-color: var(--sb-accent);
+  }
+
+  .ui-tb-font-btn.is-active {
+    background: var(--sb-accent-soft);
+    border-color: var(--sb-accent);
+    color: var(--sb-accent-fg);
+    font-weight: 600;
+  }
+
+  .ui-tb-aa {
+    font-weight: 700;
+    font-size: 11px;
+    opacity: 0.85;
   }
 
   /* Uniform crisp square icon buttons for right-side utilities & sidebar Settings */
@@ -117,7 +222,7 @@
     border: 1px solid transparent !important;
     border-radius: 8px !important;
     background: transparent !important;
-    color: #5b6472 !important;
+    color: var(--sb-seg-fg) !important;
     transition: border-color 140ms ease, background-color 140ms ease, color 140ms ease !important;
   }
 
@@ -127,18 +232,18 @@
   .sb-bar button[aria-label='Enter full screen']:hover,
   .sb-bar button[aria-label='Exit full screen']:hover,
   .sidebar-header button[aria-label='Settings']:hover {
-    border-color: #d9dfe9 !important;
-    background: #f3f6fb !important;
-    color: #1f2937 !important;
+    border-color: var(--sb-seg-border) !important;
+    background: var(--sb-hover-bg) !important;
+    color: var(--sb-seg-active-fg) !important;
   }
 
-  /* ===== Clean MUI-style left sidebar ===== */
+  /* ===== Clean MUI-style left sidebar (synced to Light/Dark) ===== */
   #storybook-explorer-tree .sidebar-subheading {
     margin-top: 18px;
     margin-bottom: 4px;
     padding-top: 10px;
     border-top: 1px solid rgba(15, 23, 42, 0.06);
-    color: #5b6270;
+    color: #5b6472;
     font-size: 10.5px;
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -235,66 +340,37 @@
     white-space: nowrap;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .sb-bar {
-      background: rgba(24, 26, 31, 0.92) !important;
-      box-shadow: inset 0 -1px 0 #2d3139 !important;
-    }
-    .sb-bar button[aria-label^='Colour scheme'],
-    .sb-bar button[aria-label^='Theme:'],
-    .sb-bar button[aria-label^='Font:'] {
-      border-color: #383e4a !important;
-      background: #22262e !important;
-      color: #e5e7eb !important;
-    }
-    .sb-bar button[aria-label^='Colour scheme'] svg,
-    .sb-bar button[aria-label^='Theme:'] svg,
-    .sb-bar button[aria-label^='Font:'] svg {
-      color: #769fff !important;
-    }
-    .sb-bar button[aria-label^='Colour scheme']::after,
-    .sb-bar button[aria-label^='Theme:']::after,
-    .sb-bar button[aria-label^='Font:']::after {
-      border-color: #9ca3af;
-    }
-    .sb-bar button[aria-label^='Colour scheme']:hover,
-    .sb-bar button[aria-label^='Theme:']:hover,
-    .sb-bar button[aria-label^='Font:']:hover {
-      border-color: #4f79e8 !important;
-      background: #1a2a52 !important;
-      color: #dbeafe !important;
-    }
-    .sb-bar button[aria-label='Viewport size'],
-    .sb-bar button[aria-label='Open in isolation mode'],
-    .sb-bar button[aria-label='Show addon panel'],
-    .sb-bar button[aria-label='Enter full screen'],
-    .sb-bar button[aria-label='Exit full screen'],
-    .sidebar-header button[aria-label='Settings'] {
-      color: #9ca3af !important;
-    }
-    .sb-bar button[aria-label='Viewport size']:hover,
-    .sb-bar button[aria-label='Open in isolation mode']:hover,
-    .sb-bar button[aria-label='Show addon panel']:hover,
-    .sb-bar button[aria-label='Enter full screen']:hover,
-    .sb-bar button[aria-label='Exit full screen']:hover,
-    .sidebar-header button[aria-label='Settings']:hover {
-      border-color: #383e4a !important;
-      background: #262b35 !important;
-      color: #f3f4f6 !important;
-    }
-    #storybook-explorer-tree .sidebar-subheading {
-      color: #9ea5b2;
-      border-top-color: rgba(255, 255, 255, 0.08);
-    }
-    #storybook-explorer-tree .sidebar-item { color: #d1d5db; }
-    #storybook-explorer-tree .sidebar-item svg { color: #6b7280 !important; }
-    #storybook-explorer-tree .sidebar-item:hover { background: #262930; color: #f9fafb; }
-    #storybook-explorer-tree .sidebar-item[data-selected='true'] {
-      background: #162a5c !important;
-      color: #c8dbff !important;
-    }
-    #storybook-explorer-tree .sidebar-item[data-selected='true']::before { background: #769fff; }
-    #storybook-explorer-tree .sidebar-item[data-selected='true'] :is(svg, button) { color: #9ec0ff !important; }
-    .ui-sb-badge { background: #162a5c; color: #c8dbff; border-color: #26428a; }
+  /* Synced obsidian Dark Mode for left sidebar & shell */
+  html[data-ui-manager-scheme='dark'] #storybook-explorer-tree .sidebar-subheading {
+    color: #64748b;
+    border-top-color: #1b2232;
+  }
+  html[data-ui-manager-scheme='dark'] #storybook-explorer-tree .sidebar-item {
+    color: #cbd5e1;
+  }
+  html[data-ui-manager-scheme='dark'] #storybook-explorer-tree .sidebar-item svg {
+    color: #64748b !important;
+  }
+  html[data-ui-manager-scheme='dark'] #storybook-explorer-tree .sidebar-item:hover {
+    background: #151b28;
+    color: #f8fafc;
+  }
+  html[data-ui-manager-scheme='dark'] #storybook-explorer-tree .sidebar-item:hover svg {
+    color: #94a3b8 !important;
+  }
+  html[data-ui-manager-scheme='dark'] #storybook-explorer-tree .sidebar-item[data-selected='true'] {
+    background: #162447 !important;
+    color: #a6c2fe !important;
+  }
+  html[data-ui-manager-scheme='dark'] #storybook-explorer-tree .sidebar-item[data-selected='true']::before {
+    background: #4c7dfe;
+  }
+  html[data-ui-manager-scheme='dark'] #storybook-explorer-tree .sidebar-item[data-selected='true'] :is(svg, button) {
+    color: #769fff !important;
+  }
+  html[data-ui-manager-scheme='dark'] .ui-sb-badge {
+    background: #162447;
+    color: #a6c2fe;
+    border-color: #273e78;
   }
 </style>

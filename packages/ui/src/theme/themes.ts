@@ -91,7 +91,8 @@ export const brutalistTheme = /* @__PURE__ */ createTheme({
     dark: {
       bg: '#111111', surface: '#1a1a1a', 'surface-subtle': '#222222', 'surface-muted': '#2c2c2c', border: '#3d3d3d',
       accent: '#ffd400', 'accent-hover': '#ffe14d', 'accent-active': '#ffeb85', 'accent-subtle': '#3a3000', 'accent-text': '#ffd400',
-      'text-on-accent': '#000000', 'focus-ring': '#ffd400', 'style-ink': '#f5f5f5', 'style-shadow': '#ffd400',
+      'text-on-accent': '#000000', 'focus-ring': '#ffd400', danger: '#ff6b6b', 'danger-hover': '#ff8787',
+      'style-ink': '#f5f5f5', 'style-shadow': '#ffd400',
     },
   },
 });
@@ -123,8 +124,8 @@ export const sketchTheme = /* @__PURE__ */ createTheme({
   colors: {
     light: { bg: '#fdfbf3', 'style-ink': '#33302b', 'style-shadow': 'rgb(51 48 43 / 28%)' },
     dark: {
-      bg: '#1f2b25', surface: '#26352d', 'surface-subtle': '#2d3e35', 'surface-muted': '#35483e', border: '#4b5f54',
-      'style-ink': '#efeadb', 'style-shadow': 'rgb(0 0 0 / 35%)',
+      bg: '#141e19', surface: '#1b2821', 'surface-subtle': '#213128', 'surface-muted': '#293b31', border: '#384e42',
+      'border-strong': '#6a8275', 'style-ink': '#efeadb', 'style-shadow': 'rgb(0 0 0 / 45%)',
     },
   },
 });

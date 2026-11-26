@@ -6,9 +6,108 @@ import {
 } from '@yourorg/ui';
 import { useDocsScheme } from './DocsChrome';
 
+function CodeGlyph() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <polyline points="16 18 22 12 16 6" />
+      <polyline points="8 6 2 12 8 18" />
+    </svg>
+  );
+}
+
+/** Lightweight TSX/Bash syntax highlighter (zero dependencies) for crisp dark code drawers. */
+function highlightLine(line: string, lang: 'tsx' | 'bash' = 'tsx'): React.ReactNode[] {
+  if (lang === 'bash') {
+    if (line.trimStart().startsWith('#')) {
+      return [<span key="c" style={{ color: '#64748b', fontStyle: 'italic' }}>{line}</span>];
+    }
+    const parts = line.split(/^(\s*(?:pnpm|npm|yarn)\b)/);
+    return parts.map((p, i) =>
+      i === 1 ? (
+        <span key={i} style={{ color: '#7dd3fc', fontWeight: 600 }}>{p}</span>
+      ) : (
+        <span key={i} style={{ color: '#e2e8f0' }}>{p}</span>
+      ),
+    );
+  }
+
+  const tokenRe =
+    /(\/\/.*$|'[^']*'|"[^"]*"|`[^`]*`|\b(?:import|export|from|const|let|return|function|true|false|null|undefined)\b|<\/?[A-Z][A-Za-z0-9.]*|<\/?[a-z][a-z0-9-]*|\b[a-zA-Z_][a-zA-Z0-9_-]*(?==))/g;
+  const out: React.ReactNode[] = [];
+  let last = 0;
+  let idx = 0;
+  for (const m of line.matchAll(tokenRe)) {
+    const start = m.index ?? 0;
+    if (start > last) out.push(<span key={idx++} style={{ color: '#cbd5e1' }}>{line.slice(last, start)}</span>);
+    const tok = m[0];
+    let color: string;
+    let fontStyle: React.CSSProperties['fontStyle'];
+    if (tok.startsWith('//')) {
+      color = '#64748b';
+      fontStyle = 'italic';
+    } else if (tok.startsWith("'") || tok.startsWith('"') || tok.startsWith('`')) {
+      color = '#86efac';
+    } else if (tok.startsWith('<')) {
+      color = '#7dd3fc';
+    } else if (/^(import|export|from|const|let|return|function|true|false|null|undefined)$/.test(tok)) {
+      color = '#f472b6';
+    } else {
+      color = '#c4b5fd';
+    }
+    out.push(<span key={idx++} style={{ color, fontStyle }}>{tok}</span>);
+    last = start + tok.length;
+  }
+  if (last < line.length) out.push(<span key={idx} style={{ color: '#cbd5e1' }}>{line.slice(last)}</span>);
+  return out.length ? out : [<span key="empty">&nbsp;</span>];
+}
+
+function SyntaxCodeBlock({ code, lang = 'tsx' }: { code: string; lang?: 'tsx' | 'bash' }) {
+  const lines = code.trimEnd().split('\n');
+  return (
+    <div
+      style={{
+        background: '#0b0f19',
+        borderTop: '1px solid #1d2538',
+        color: '#e2e8f0',
+      }}
+    >
+      <pre
+        style={{
+          margin: 0,
+          padding: '14px 16px',
+          fontFamily: 'var(--ui-font-mono)',
+          fontSize: 12.5,
+          lineHeight: 1.65,
+          overflowX: 'auto',
+        }}
+      >
+        <code>
+          {lines.map((line, i) => (
+            <div key={i} style={{ display: 'flex', gap: 16 }}>
+              <span
+                aria-hidden="true"
+                style={{
+                  minWidth: 18,
+                  textAlign: 'right',
+                  color: '#475569',
+                  userSelect: 'none',
+                  flexShrink: 0,
+                }}
+              >
+                {i + 1}
+              </span>
+              <span style={{ whiteSpace: 'pre' }}>{highlightLine(line, lang)}</span>
+            </div>
+          ))}
+        </code>
+      </pre>
+    </div>
+  );
+}
+
 /**
- * MUI-style framed preview card for Storybook stories:
- * header bar with title + optional badge/actions, crisp dot-grid stage, and optional collapsible code snippet.
+ * MUI/Vercel-style framed preview card for Storybook stories:
+ * clean header bar, solid stage, unified bottom Show Code / Copy Code bar, and syntax-highlighted code drawer.
  */
 export function DemoFrame({
   title,
@@ -36,12 +135,12 @@ export function DemoFrame({
     if (!code) return;
     void navigator.clipboard?.writeText(code);
     setCopied(true);
-    window.setTimeout(() => setCopied(false), 1500);
+    window.setTimeout(() => setCopied(false), 1600);
   };
 
   return (
     <div
-      className="ui-demo-frame"
+      className={code ? 'ui-demo-frame ui-demo-frame--has-code' : 'ui-demo-frame'}
       style={{
         maxWidth: maxWidth ?? 960,
         border: '1px solid var(--ui-color-border)',
@@ -70,19 +169,7 @@ export function DemoFrame({
           </div>
           {description ? <Text size="xs" tone="secondary">{description}</Text> : null}
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          {actions}
-          {code ? (
-            <>
-              <Button size="sm" variant="ghost" tone="neutral" onClick={() => setShowCode((v) => !v)}>
-                {showCode ? 'Hide code' : 'Code'}
-              </Button>
-              <Button size="sm" variant="outline" tone="neutral" startIcon={copied ? <CheckIcon size={14} /> : <CopyIcon size={14} />} onClick={copy}>
-                {copied ? 'Copied' : 'Copy'}
-              </Button>
-            </>
-          ) : null}
-        </div>
+        {actions ? <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>{actions}</div> : null}
       </div>
 
       <div
@@ -94,22 +181,63 @@ export function DemoFrame({
         {children}
       </div>
 
-      {code && showCode ? (
-        <pre
+      {code ? (
+        <div
           style={{
-            margin: 0,
-            padding: '14px 18px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 12,
+            padding: '8px 14px',
             borderTop: '1px solid var(--ui-color-border)',
             background: 'var(--ui-color-surface-subtle)',
-            fontFamily: 'var(--ui-font-mono)',
-            fontSize: 12.5,
-            lineHeight: 1.6,
-            overflowX: 'auto',
           }}
         >
-          <code>{code}</code>
-        </pre>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+            <span
+              style={{
+                padding: '2px 6px',
+                borderRadius: 5,
+                border: '1px solid var(--ui-color-border)',
+                background: 'var(--ui-color-surface)',
+                color: 'var(--ui-color-text-secondary)',
+                fontFamily: 'var(--ui-font-mono)',
+                fontSize: 10.5,
+                fontWeight: 600,
+                letterSpacing: '0.04em',
+              }}
+            >
+              TSX
+            </span>
+            <Text size="xs" tone="secondary">
+              React · TypeScript · {code.trimEnd().split('\n').length}{' '}
+              {code.trimEnd().split('\n').length === 1 ? 'line' : 'lines'}
+            </Text>
+          </div>
+
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+            <button
+              type="button"
+              onClick={() => setShowCode((v) => !v)}
+              aria-expanded={showCode}
+              className={`ui-demo-code-btn${showCode ? ' is-active' : ''}`}
+            >
+              <CodeGlyph />
+              <span>{showCode ? 'Hide code' : 'Show code'}</span>
+            </button>
+            <button
+              type="button"
+              onClick={copy}
+              className={`ui-demo-code-btn${copied ? ' is-copied' : ''}`}
+            >
+              {copied ? <CheckIcon size={13} /> : <CopyIcon size={13} />}
+              <span>{copied ? 'Copied!' : 'Copy code'}</span>
+            </button>
+          </div>
+        </div>
       ) : null}
+
+      {code && showCode ? <SyntaxCodeBlock code={code} /> : null}
     </div>
   );
 }
@@ -204,6 +332,12 @@ export function IntroLanding() {
     }
   };
 
+  const copyInstall = () => {
+    void navigator.clipboard?.writeText(installCommands[pkgMgr]);
+    setCopiedCmd(true);
+    window.setTimeout(() => setCopiedCmd(false), 1500);
+  };
+
   return (
     <ThemeProvider colorScheme={docsScheme} style={{ background: 'transparent' }}>
       <Stack gap={8} style={{ marginBottom: 32 }}>
@@ -215,7 +349,9 @@ export function IntroLanding() {
             borderRadius: 18,
             border: '1px solid var(--ui-color-border)',
             background:
-              'radial-gradient(640px 260px at 92% -10%, color-mix(in srgb, var(--ui-color-accent) 14%, transparent), transparent 65%), linear-gradient(180deg, var(--ui-color-surface) 0%, var(--ui-color-surface-subtle) 100%)',
+              docsScheme === 'dark'
+                ? 'radial-gradient(640px 260px at 90% -15%, rgba(76, 125, 254, 0.2), transparent 65%), linear-gradient(180deg, #101420 0%, #0b0e16 100%)'
+                : 'radial-gradient(640px 260px at 92% -10%, color-mix(in srgb, var(--ui-color-accent) 14%, transparent), transparent 65%), linear-gradient(180deg, var(--ui-color-surface) 0%, var(--ui-color-surface-subtle) 100%)',
             boxShadow: 'var(--ui-shadow-sm)',
           }}
         >
@@ -261,7 +397,7 @@ export function IntroLanding() {
           </Stack>
         </div>
 
-        {/* Interactive live theme showcase (MUI-style framed demo) */}
+        {/* Interactive live theme showcase */}
         <DemoFrame
           title="Interactive theme switcher"
           description="Try switching themes and light/dark mode — every control updates from one ThemeProvider prop."
@@ -335,7 +471,7 @@ export function IntroLanding() {
                     <Card.Description>Automated contrast, a11y and bundle budgets.</Card.Description>
                   </Card.Header>
                   <Stack gap={3}>
-                    <Progress label="CSS budget (13.5 / 16 KB)" value={progress} showValue />
+                    <Progress label="CSS budget (13.6 / 16 KB)" value={progress} showValue />
                     <Stack direction="row" gap={2} wrap>
                       <Badge tone="success">114 tests</Badge>
                       <Badge tone="info">16 visual checks</Badge>
@@ -351,13 +487,13 @@ export function IntroLanding() {
           </ThemeProvider>
         </DemoFrame>
 
-        {/* Quick Install bar with package-manager tabs (MUI pattern) */}
+        {/* Quick Install bar with package-manager tabs & dark terminal block */}
         <div
           style={{
             border: '1px solid var(--ui-color-border)',
             borderRadius: 12,
             overflow: 'hidden',
-            background: 'var(--ui-color-surface)',
+            background: '#0b0f19',
           }}
         >
           <div
@@ -366,43 +502,66 @@ export function IntroLanding() {
               alignItems: 'center',
               justifyContent: 'space-between',
               padding: '8px 12px',
-              borderBottom: '1px solid var(--ui-color-border)',
-              background: 'var(--ui-color-surface-subtle)',
+              borderBottom: '1px solid #1d2538',
+              background: '#0e1320',
             }}
           >
             <Stack direction="row" gap={1}>
               {(['pnpm', 'npm', 'yarn'] as const).map((m) => (
-                <Button
+                <button
                   key={m}
-                  size="sm"
-                  variant={pkgMgr === m ? 'solid' : 'ghost'}
-                  tone={pkgMgr === m ? 'accent' : 'neutral'}
+                  type="button"
                   onClick={() => setPkgMgr(m)}
+                  style={{
+                    height: 26,
+                    padding: '0 10px',
+                    borderRadius: 6,
+                    border: `1px solid ${pkgMgr === m ? '#3b5bdb' : 'transparent'}`,
+                    background: pkgMgr === m ? '#1a274c' : 'transparent',
+                    color: pkgMgr === m ? '#bfdbfe' : '#94a3b8',
+                    fontFamily: 'var(--ui-font-mono)',
+                    fontSize: 12,
+                    fontWeight: pkgMgr === m ? 600 : 500,
+                    cursor: 'pointer',
+                  }}
                 >
                   {m}
-                </Button>
+                </button>
               ))}
             </Stack>
-            <Button
-              size="sm"
-              variant="ghost"
-              tone="neutral"
-              startIcon={copiedCmd ? <CheckIcon size={14} /> : <CopyIcon size={14} />}
-              onClick={() => {
-                void navigator.clipboard?.writeText(installCommands[pkgMgr]);
-                setCopiedCmd(true);
-                window.setTimeout(() => setCopiedCmd(false), 1500);
+            <button
+              type="button"
+              onClick={copyInstall}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 5,
+                height: 26,
+                padding: '0 10px',
+                borderRadius: 6,
+                border: `1px solid ${copiedCmd ? '#166534' : '#26314a'}`,
+                background: copiedCmd ? '#0d2a1b' : '#141b2c',
+                color: copiedCmd ? '#86efac' : '#cbd5e1',
+                fontFamily: 'inherit',
+                fontSize: 12,
+                fontWeight: 500,
+                cursor: 'pointer',
               }}
             >
-              {copiedCmd ? 'Copied' : 'Copy'}
-            </Button>
+              {copiedCmd ? <CheckIcon size={13} /> : <CopyIcon size={13} />}
+              <span>{copiedCmd ? 'Copied!' : 'Copy'}</span>
+            </button>
           </div>
           <pre style={{ margin: 0, padding: '14px 18px', fontFamily: 'var(--ui-font-mono)', fontSize: 13, lineHeight: 1.65 }}>
-            <code>{installCommands[pkgMgr]}</code>
+            <code>
+              {installCommands[pkgMgr].split('\n').map((line, i) => (
+                <div key={i}>{highlightLine(line, 'bash')}</div>
+              ))}
+            </code>
           </pre>
         </div>
 
-        {/* Start here card grid (MUI-style 3-column navigation cards) */}
+        {/* Start here card grid */}
         <Stack gap={3}>
           <Heading level={2} size="xl" style={{ margin: 0 }}>Start exploring</Heading>
           <Grid minChildWidth="260px" gap={4}>
