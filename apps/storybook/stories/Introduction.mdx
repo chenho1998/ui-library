@@ -1,22 +1,12 @@
 import { Meta } from '@storybook/addon-docs/blocks';
+import { IntroLanding } from './PreviewKit';
+import { DocFooterNav } from './DocsChrome';
 
-<Meta title="Get started/Introduction" />
+<Meta title="Getting Started/Introduction" tags={['dev']} />
 
-# @yourorg/ui
+<IntroLanding />
 
-A themeable, accessible React component library: **50 components** and **40 icons** built on `@yourorg/tokens`, with
-Radix UI handling complex overlay, focus, keyboard and ARIA behaviour.
-
-**Repository:** [github.com/chenho1998/ui-library](https://github.com/chenho1998/ui-library) ·
-**Live docs:** [chenho1998.github.io/ui-library](https://chenho1998.github.io/ui-library/)
-
-## Install
-
-```bash
-pnpm add @yourorg/ui
-# Optional: use icons standalone without @yourorg/ui
-pnpm add @yourorg/icons
-```
+## Quick usage
 
 ```tsx
 import '@yourorg/ui/styles.css';
@@ -32,11 +22,11 @@ export function App() {
 }
 ```
 
-## Theming
+## Custom theming
 
 ```tsx
 const acme = createTheme({
-  brand: '#7c3aed',                         // generates the full brand palette
+  brand: '#7c3aed',                         // generates the full OKLCH brand palette
   tokens: { radius: { md: '6px' } },        // global token overrides
   colors: { dark: { bg: '#0b0b10' } },      // per-scheme semantic overrides
   components: { 'button-radius': '999px' }, // component tokens
@@ -45,25 +35,56 @@ const acme = createTheme({
 <ThemeProvider theme={acme}>…</ThemeProvider>
 ```
 
-Use the **Scheme**, **Theme** and **Font** toolbar buttons above to try light and dark, the built-in themes (anime,
-pixel, brutalist, sketch and neon each restyle every component) and OpenDyslexic on any story.
-
-- [Themes gallery](?path=/story/get-started-themes--gallery) — compare every built-in theme side by side.
-- [Usage guidelines](?path=/docs/get-started-usage-guidelines--docs) — component selection, accessibility, controlled state and SSR.
-- [Migration guide](?path=/docs/get-started-migration-guide--docs) — upgrading to v0.3 and `@yourorg/icons`.
-- [Icons gallery](?path=/story/foundations-icons--gallery) — search and copy all 40 icons from `@yourorg/icons`.
-- [App shell](?path=/story/patterns-app-shell--dashboard) — Sidebar, command palette, stats, stepper and timeline together.
+Use the **Scheme**, **Theme** and **Font** toolbar buttons above to test light/dark, built-in expressive themes and
+OpenDyslexic on any page.
 
 ## Component inventory
 
-| Group | Components | Preview |
-| --- | --- | --- |
-| Layout and type | Box, Stack, Grid, Container, Divider, Resizable, Text, Heading, VisuallyHidden | [Tokens](?path=/docs/foundations-tokens--docs) · [Resizable](?path=/story/components-layout-resizable--playground) |
-| Theme and icons | ThemeProvider, createTheme, withFont, five built-in themes, `@yourorg/icons` (40 icons + `createIcon`) | [Themes](?path=/story/get-started-themes--gallery) · [Icons](?path=/story/foundations-icons--gallery) |
-| Actions | Button, IconButton, ButtonGroup, Link | [Button](?path=/story/components-actions-button--playground) |
-| Forms | Field, TextField, Textarea, Checkbox, RadioGroup, Switch, Select, Slider, NumberField, Combobox, DatePicker, DateRangePicker, TimePicker, ColorPicker, SegmentedControl, ToggleGroup, PinInput, FileUpload, Rating | [Overview](?path=/story/components-forms-overview--text-fields) · [ColorPicker](?path=/story/components-forms-colorpicker--live-theme-preview) · [Pickers](?path=/story/components-forms-pickers--pickers) |
-| Overlays | Dialog, AlertDialog, Drawer, Popover, Tooltip, DropdownMenu, ContextMenu, CommandPalette, HoverCard | [Overview](?path=/story/components-overlays-overview--dialog-example) · [CommandPalette](?path=/story/components-overlays-commandpalette--command) |
-| Feedback | Alert, Banner, Toast (`toast()` + `.info`/`.success`/`.warning`/`.error`/`.promise`), Spinner, Progress, Skeleton | [Overview](?path=/story/components-feedback-overview--alerts) · [Banner](?path=/story/components-feedback-banner--playground) |
-| Navigation | Sidebar, Tabs, Breadcrumbs, Pagination, Stepper, Menubar, Collapsible | [Overview](?path=/story/components-navigation-overview--tabs-example) · [Sidebar](?path=/story/components-navigation-sidebar--app-shell) · [Stepper](?path=/story/components-navigation-stepper--horizontal) |
-| Data display | Card, Avatar, Badge, Tag, Accordion, Table, DataTable, Carousel, EmptyState, Timeline, TreeView, Stat, DescriptionList | [Overview](?path=/story/components-data-display-overview--table-example) · [DataTable](?path=/story/components-data-display-datatable--playground) · [Carousel](?path=/story/components-data-display-carousel--playground) |
-| Utilities | Kbd, ScrollArea, `useControllableState` | [Kbd & ScrollArea](?path=/story/components-utilities-kbd-and-scrollarea--utilities) |
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '20%' }}>Category</th>
+      <th>Components</th>
+      <th style={{ width: '28%' }}>Preview</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Foundations</strong></td>
+      <td>OKLCH palettes, semantic colours, typography, spacing, radius, shadows, <code>@yourorg/icons</code> (40 icons + <code>createIcon</code>)</td>
+      <td><a href="?path=/docs/foundations-design-tokens--docs" target="_top">Design tokens</a> · <a href="?path=/docs/foundations-icons--docs" target="_top">Icons</a> · <a href="?path=/story/getting-started-themes--gallery" target="_top">Themes</a></td>
+    </tr>
+    <tr>
+      <td><strong>Inputs &amp; Actions</strong></td>
+      <td>Button, IconButton, ButtonGroup, Link, Field, TextField, Textarea, Checkbox, RadioGroup, Switch, Select, Slider, NumberField, Combobox, DatePicker, DateRangePicker, TimePicker, ColorPicker, SegmentedControl, ToggleGroup, PinInput, FileUpload, Rating</td>
+      <td><a href="?path=/docs/inputs-actions-button--docs" target="_top">Button</a> · <a href="?path=/docs/inputs-actions-text-forms--docs" target="_top">Text &amp; Forms</a> · <a href="?path=/docs/inputs-actions-colorpicker--docs" target="_top">ColorPicker</a> · <a href="?path=/docs/inputs-actions-date-time-pickers--docs" target="_top">Pickers</a></td>
+    </tr>
+    <tr>
+      <td><strong>Data Display</strong></td>
+      <td>DataTable, Carousel, Table, Card, Avatar, Badge, Tag, Accordion, EmptyState, Timeline, TreeView, Stat, DescriptionList</td>
+      <td><a href="?path=/docs/data-display-datatable--docs" target="_top">DataTable</a> · <a href="?path=/docs/data-display-carousel--docs" target="_top">Carousel</a> · <a href="?path=/docs/data-display-tables-cards--docs" target="_top">Tables &amp; Cards</a></td>
+    </tr>
+    <tr>
+      <td><strong>Feedback</strong></td>
+      <td>Banner, Alert, Toast (<code>toast()</code> + <code>.info</code>/<code>.success</code>/<code>.warning</code>/<code>.error</code>/<code>.promise</code>), Spinner, Progress, Skeleton</td>
+      <td><a href="?path=/docs/feedback-banner--docs" target="_top">Banner</a> · <a href="?path=/docs/feedback-alerts-toasts--docs" target="_top">Alerts &amp; Toasts</a></td>
+    </tr>
+    <tr>
+      <td><strong>Navigation &amp; Layout</strong></td>
+      <td>Resizable, Sidebar, Stepper, Menubar, ContextMenu, Tabs, Breadcrumbs, Pagination, Collapsible, Box, Stack, Grid, Container, Divider</td>
+      <td><a href="?path=/docs/navigation-layout-resizable--docs" target="_top">Resizable</a> · <a href="?path=/docs/navigation-layout-sidebar--docs" target="_top">Sidebar</a> · <a href="?path=/docs/navigation-layout-stepper--docs" target="_top">Stepper</a> · <a href="?path=/docs/navigation-layout-tabs-pagination--docs" target="_top">Tabs</a></td>
+    </tr>
+    <tr>
+      <td><strong>Overlays &amp; Utilities</strong></td>
+      <td>CommandPalette, Dialog, AlertDialog, Drawer, Popover, Tooltip, DropdownMenu, HoverCard, Kbd, ScrollArea, <code>useControllableState</code></td>
+      <td><a href="?path=/docs/overlays-utilities-commandpalette--docs" target="_top">CommandPalette</a> · <a href="?path=/docs/overlays-utilities-dialogs-drawers--docs" target="_top">Dialogs &amp; Drawers</a> · <a href="?path=/docs/overlays-utilities-kbd-scrollarea--docs" target="_top">Kbd &amp; ScrollArea</a></td>
+    </tr>
+    <tr>
+      <td><strong>Templates</strong></td>
+      <td>Full App Shell Dashboard, Account Settings Page</td>
+      <td><a href="?path=/story/templates-app-shell--dashboard" target="_top">App Shell</a> · <a href="?path=/story/templates-settings-page--settings-page" target="_top">Settings Page</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<DocFooterNav currentTitle="Getting Started/Introduction" />

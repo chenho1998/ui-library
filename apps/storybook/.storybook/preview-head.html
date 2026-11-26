@@ -1,0 +1,221 @@
+<!-- Refined MUI-style editorial styling for Storybook Docs & Component Detail pages (Light + Dark) -->
+<style>
+  :root {
+    --docs-bg: #ffffff;
+    --docs-surface: #ffffff;
+    --docs-surface-subtle: #f6f8fb;
+    --docs-border: #e2e6ee;
+    --docs-border-soft: #e6eaf2;
+    --docs-text: #17191d;
+    --docs-text-muted: #545d6b;
+    --docs-row-hover: #f9fbfe;
+    --docs-accent: #2c5df5;
+    --docs-accent-subtle: #eef3ff;
+    --docs-accent-text: #1c47d1;
+  }
+
+  html[data-ui-docs-scheme='dark'] {
+    --docs-bg: #111317;
+    --docs-surface: #171a20;
+    --docs-surface-subtle: #1d2129;
+    --docs-border: #2c313c;
+    --docs-border-soft: #262b35;
+    --docs-text: #f1f4f9;
+    --docs-text-muted: #9ca3b0;
+    --docs-row-hover: #1f242d;
+    --docs-accent: #769fff;
+    --docs-accent-subtle: #162a5c;
+    --docs-accent-text: #b7d0ff;
+  }
+
+  .sbdocs.sbdocs-wrapper {
+    background: var(--docs-bg) !important;
+    color: var(--docs-text);
+    padding: 36px 28px 72px;
+    transition: background-color 150ms ease, color 150ms ease;
+  }
+  .sbdocs.sbdocs-content {
+    max-width: 980px;
+  }
+  /* Prevent Storybook Docs global typography margins from overriding @layer ui components */
+  .sbdocs .ui-theme p,
+  .sbdocs .ui-theme h1,
+  .sbdocs .ui-theme h2,
+  .sbdocs .ui-theme h3,
+  .sbdocs .ui-theme h4,
+  .sbdocs .ui-theme pre {
+    margin: 0;
+  }
+  .sbdocs .ui-theme a {
+    font-family: inherit;
+    font-size: inherit;
+  }
+  .sbdocs h1,
+  .sbdocs h2,
+  .sbdocs h3 {
+    letter-spacing: -0.02em;
+    color: var(--docs-text);
+  }
+  .sbdocs p,
+  .sbdocs li {
+    color: var(--docs-text);
+  }
+  .ui-doc-section-heading {
+    margin: 28px 0 12px !important;
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.02em !important;
+    color: var(--docs-text) !important;
+    border-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  .ui-doc-meta-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--docs-border);
+    background: var(--docs-surface);
+    color: var(--docs-text-muted) !important;
+    font-size: 12px !important;
+    font-weight: 500;
+    line-height: 1.4;
+    text-decoration: none !important;
+    cursor: pointer;
+    transition: border-color 120ms ease, background-color 120ms ease, color 120ms ease;
+  }
+  .ui-doc-meta-link:hover {
+    border-color: var(--docs-accent);
+    background: var(--docs-accent-subtle);
+    color: var(--docs-accent-text) !important;
+  }
+  .ui-doc-meta-link--version {
+    border-color: color-mix(in srgb, var(--docs-accent) 40%, transparent);
+    background: var(--docs-accent-subtle);
+    color: var(--docs-accent-text) !important;
+    font-weight: 600;
+  }
+  .ui-doc-meta-sub {
+    opacity: 0.8;
+    font-weight: 500;
+    font-size: 11px;
+  }
+  /* Previous / Next pagination cards */
+  .ui-doc-pager-card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--docs-border);
+    background: var(--docs-surface);
+    text-decoration: none !important;
+    transition: border-color 140ms ease, background-color 140ms ease, transform 140ms ease;
+  }
+  .ui-doc-pager-card--next {
+    align-items: flex-end;
+    text-align: right;
+  }
+  .ui-doc-pager-card:hover {
+    border-color: var(--docs-accent);
+    background: var(--docs-surface-subtle);
+    transform: translateY(-1px);
+  }
+  .ui-doc-pager-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--docs-text-muted);
+  }
+  .ui-doc-pager-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--docs-accent-text);
+  }
+  /* Clean MUI-style Docs preview frame (removes redundant zoom/reload strip & double borders) */
+  .sbdocs .sbdocs-preview {
+    padding-top: 0 !important;
+    border-radius: 14px;
+    border: 1px solid var(--docs-border) !important;
+    background: var(--docs-surface) !important;
+    box-shadow: 0 1px 3px rgb(15 23 42 / 5%);
+    margin: 14px 0 28px;
+    overflow: hidden;
+  }
+  /* Hide Storybook's inner Reload / Zoom in / Zoom out / Reset zoom bar inside Docs canvases */
+  .sbdocs .sbdocs-preview > div:first-child:has(button[aria-label='Zoom in']),
+  .sbdocs .sbdocs-preview > div:first-child:has(button[aria-label='Reload story']) {
+    display: none !important;
+  }
+  /* Avoid double-card framing when DemoFrame renders inside Storybook's Docs preview container */
+  .sbdocs .sbdocs-preview .docs-story:has(.ui-demo-frame),
+  .sbdocs .sbdocs-preview .ui-theme:has(.ui-demo-frame) {
+    padding: 0 !important;
+  }
+  .sbdocs .sbdocs-preview .ui-demo-frame {
+    max-width: 100% !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+  /* Crisp Show code / Copy code toggle bar */
+  .sbdocs .docblock-code-toggle {
+    border-radius: 7px !important;
+    border: 1px solid var(--docs-border) !important;
+    background: var(--docs-surface-subtle) !important;
+    color: var(--docs-text-muted) !important;
+    font-weight: 500 !important;
+  }
+  .sbdocs .docblock-code-toggle:hover {
+    border-color: var(--docs-accent) !important;
+    color: var(--docs-accent-text) !important;
+  }
+  .sbdocs table {
+    width: 100%;
+    margin: 16px 0 24px;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid var(--docs-border);
+    border-radius: 10px;
+    overflow: hidden;
+    font-size: 13.5px;
+    background: var(--docs-surface);
+  }
+  .sbdocs table th {
+    background: var(--docs-surface-subtle);
+    font-size: 11.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--docs-text-muted);
+    text-align: left;
+  }
+  .sbdocs table td,
+  .sbdocs table th {
+    border-bottom: 1px solid var(--docs-border-soft);
+    padding: 11px 14px;
+    vertical-align: top;
+    line-height: 1.55;
+    color: var(--docs-text);
+  }
+  .sbdocs table tbody tr:last-child td {
+    border-bottom: 0;
+  }
+  .sbdocs table tbody tr:hover td {
+    background: var(--docs-row-hover);
+  }
+  .sbdocs .docblock-source {
+    border-radius: 10px;
+    border: 1px solid var(--docs-border);
+    box-shadow: 0 1px 2px rgb(15 23 42 / 4%);
+  }
+  .sbdocs .toc-wrapper {
+    font-size: 12.5px;
+  }
+  .sbdocs .toc-list-item a {
+    transition: color 120ms ease;
+  }
+</style>

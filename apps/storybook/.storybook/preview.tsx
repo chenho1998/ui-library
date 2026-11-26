@@ -4,6 +4,8 @@ import {
   FONT_STACKS, ThemeProvider, Toaster, animeTheme, brutalistTheme, createTheme, neonTheme, pixelTheme, sketchTheme, withFont, type Theme,
 } from '@yourorg/ui';
 import '../../../packages/ui/src/styles/index.css';
+import { ComponentDocPage } from '../stories/ComponentDocPage';
+import { ThemedDocsContainer } from '../stories/DocsChrome';
 // Fonts load from Fontsource packages (no font CDN). An app imports only the faces its themes use.
 import '@fontsource/m-plus-rounded-1c/400.css';
 import '@fontsource/m-plus-rounded-1c/500.css';
@@ -41,15 +43,39 @@ const fonts = {
 };
 
 const preview: Preview = {
-  tags: ['autodocs'],
+  // Unified MUI-style sidebar: each component renders as one clean Docs leaf (stories stay accessible in Docs and /iframe.html).
+  tags: ['autodocs', '!dev'],
   globalTypes: {
     scheme: {
       description: 'Colour scheme',
-      toolbar: { title: 'Scheme', icon: 'mirror', items: ['light', 'dark', 'system'], dynamicTitle: true },
+      toolbar: {
+        title: 'Scheme',
+        icon: 'mirror',
+        items: [
+          { value: 'light', title: 'Light', icon: 'sun' },
+          { value: 'dark', title: 'Dark', icon: 'moon' },
+          { value: 'system', title: 'System', icon: 'browser' },
+        ],
+        dynamicTitle: true,
+      },
     },
     theme: {
       description: 'Theme: one switch restyles every component',
-      toolbar: { title: 'Theme', icon: 'paintbrush', items: Object.keys(themes), dynamicTitle: true },
+      toolbar: {
+        title: 'Theme',
+        icon: 'paintbrush',
+        items: [
+          { value: 'default', title: 'Theme: Default' },
+          { value: 'violet', title: 'Theme: Violet' },
+          { value: 'teal', title: 'Theme: Teal' },
+          { value: 'anime', title: 'Theme: Anime' },
+          { value: 'pixel', title: 'Theme: Pixel' },
+          { value: 'brutalist', title: 'Theme: Brutalist' },
+          { value: 'sketch', title: 'Theme: Sketch' },
+          { value: 'neon', title: 'Theme: Neon' },
+        ],
+        dynamicTitle: true,
+      },
     },
     font: {
       description: 'Font: the theme’s own, or OpenDyslexic everywhere via withFont()',
@@ -57,8 +83,8 @@ const preview: Preview = {
         title: 'Font',
         icon: 'eye',
         items: [
-          { value: 'theme', title: 'Theme font' },
-          { value: 'openDyslexic', title: 'OpenDyslexic' },
+          { value: 'theme', title: 'Font: Default' },
+          { value: 'openDyslexic', title: 'Font: OpenDyslexic' },
         ],
         dynamicTitle: true,
       },
@@ -67,13 +93,26 @@ const preview: Preview = {
   initialGlobals: { scheme: 'light', theme: 'default', font: 'theme' },
   parameters: {
     layout: 'padded',
+    backgrounds: { disable: true },
+    docs: {
+      container: ThemedDocsContainer,
+      page: ComponentDocPage,
+      toc: {
+        title: 'On this page',
+        headingSelector: 'h2',
+      },
+    },
     options: {
       storySort: {
         order: [
-          'Get started', ['Introduction', 'Themes', 'Usage guidelines', 'Migration guide'],
-          'Foundations', ['Tokens', 'Icons'],
-          'Components', ['Actions', 'Layout', 'Forms', 'Navigation', 'Overlays', 'Feedback', 'Data display', 'Utilities'],
-          'Patterns',
+          'Getting Started', ['Introduction', 'Usage guidelines', 'Themes', 'Migration guide'],
+          'Foundations', ['Design tokens', 'Icons'],
+          'Inputs & Actions', ['Button', 'Text & Forms', 'ColorPicker', 'Date & Time Pickers', 'FileUpload', 'PinInput', 'Rating', 'SegmentedControl'],
+          'Data Display', ['DataTable', 'Carousel', 'Tables & Cards', 'DescriptionList', 'Stat', 'Timeline', 'TreeView'],
+          'Feedback', ['Banner', 'Alerts & Toasts'],
+          'Navigation & Layout', ['Resizable', 'Sidebar', 'Stepper', 'Menus', 'Tabs & Pagination', 'Collapsible'],
+          'Overlays & Utilities', ['CommandPalette', 'Dialogs & Drawers', 'HoverCard', 'Kbd & ScrollArea'],
+          'Templates', ['App Shell', 'Settings Page'],
         ],
       },
     },
@@ -84,8 +123,14 @@ const preview: Preview = {
     (Story, ctx) => {
       const base = themes[ctx.globals.theme as string] ?? themes.default;
       const theme = fonts[(ctx.globals.font as keyof typeof fonts) ?? 'theme'](base);
+      const isFullscreen = ctx.parameters.layout === 'fullscreen';
+      const isDocs = ctx.viewMode === 'docs';
       return (
-        <ThemeProvider colorScheme={ctx.globals.scheme} theme={theme} style={{ padding: 24, minHeight: '100vh' }}>
+        <ThemeProvider
+          colorScheme={ctx.globals.scheme}
+          theme={theme}
+          style={{ padding: isFullscreen ? 0 : 24, minHeight: isDocs ? undefined : '100vh' }}
+        >
           <Story />
           <Toaster />
         </ThemeProvider>

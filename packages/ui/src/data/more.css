@@ -57,8 +57,8 @@
 .ui-stat__label { display: flex; align-items: center; gap: var(--ui-space-2); color: var(--ui-color-text-secondary); font-size: var(--ui-text-sm); font-weight: var(--ui-font-weight-medium); }
 .ui-stat__icon { display: inline-flex; }
 .ui-stat__value {
-  margin: 0; font-family: var(--ui-font-display, var(--ui-font-sans)); font-size: var(--ui-text-3xl); font-weight: var(--ui-font-display-weight, var(--ui-font-weight-semibold));
-  line-height: var(--ui-leading-3xl); font-variant-numeric: tabular-nums;
+  margin: 0; font-family: var(--ui-font-display, var(--ui-font-sans)); font-size: clamp(1.375rem, 2.2vw, 1.875rem); font-weight: var(--ui-font-display-weight, var(--ui-font-weight-semibold));
+  line-height: 1.2; font-variant-numeric: tabular-nums; white-space: nowrap;
 }
 .ui-stat__change { display: flex; flex-wrap: wrap; align-items: center; gap: var(--ui-space-1); margin: 0; font-size: var(--ui-text-sm); font-weight: var(--ui-font-weight-semibold); }
 .ui-stat__change[data-trend='good'] { color: var(--ui-color-success-text); }

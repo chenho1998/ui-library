@@ -6,9 +6,8 @@ import {
 } from '@yourorg/ui';
 
 const meta = {
-  title: 'Components/Navigation/Sidebar',
+  title: 'Navigation & Layout/Sidebar',
   component: Sidebar,
-  tags: ['new'],
   excludeStories: ['AppNav'],
   parameters: {
     layout: 'fullscreen',
