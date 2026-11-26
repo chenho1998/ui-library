@@ -191,16 +191,34 @@
   .sbdocs .sbdocs-preview > div:first-child:has(button[aria-label='Reload story']) {
     display: none !important;
   }
-  /* Avoid double-card framing when DemoFrame renders inside Storybook's Docs preview container */
+  /* Avoid double-card framing & Storybook's 8px transparent zoom border when DemoFrame renders inside Docs preview */
   .sbdocs .sbdocs-preview .docs-story:has(.ui-demo-frame),
   .sbdocs .sbdocs-preview .ui-theme:has(.ui-demo-frame) {
     padding: 0 !important;
+  }
+  .sbdocs .sbdocs-preview .innerZoomElementWrapper > div:has(.ui-demo-frame) {
+    border: 0 !important;
   }
   .sbdocs .sbdocs-preview .ui-demo-frame {
     max-width: 100% !important;
     border: 0 !important;
     border-radius: 0 !important;
     box-shadow: none !important;
+  }
+  /* Unify Storybook 10's native Prism source drawer inside Playground previews */
+  .sbdocs .sbdocs-preview > div:has(pre.prismjs),
+  .sbdocs .sbdocs-preview div:has(> div > div > pre.prismjs) {
+    background: #0b0f19 !important;
+    border-top: 1px solid #1d2538 !important;
+    box-shadow: none !important;
+  }
+  .sbdocs .sbdocs-preview pre.prismjs {
+    background: #0b0f19 !important;
+    color: #e2e8f0 !important;
+    padding: 14px 18px !important;
+    font-size: 12.5px !important;
+    line-height: 1.65 !important;
+    overflow-x: auto !important;
   }
   /* When DemoFrame provides its own Show Code / Copy Code bar, hide Storybook's duplicate sibling footer */
   .sbdocs .sbdocs-preview:has(.ui-demo-frame--has-code) + .sbdocs-preview-actions {

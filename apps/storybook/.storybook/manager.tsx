@@ -193,6 +193,7 @@ addons.setConfig({
     eject: { hidden: false },
     copy: { hidden: true },
     fullscreen: { hidden: false },
+    'storybook/viewport': { hidden: true },
     'storybook/background': { hidden: true },
     'storybook/outline': { hidden: true },
     'storybook/measure': { hidden: true },

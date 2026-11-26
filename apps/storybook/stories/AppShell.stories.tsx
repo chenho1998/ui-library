@@ -71,7 +71,7 @@ export const Dashboard: Story = {
             </Button>
           </header>
           <Stack gap={6} style={{ padding: 28 }}>
-            <Grid minChildWidth="200px" gap={4}>
+            <Grid minChildWidth="165px" gap={4}>
               <Card variant="outline">
                 <Stat label="Monthly revenue" value="RM 14,504" change={12.4} changeLabel="vs October" icon={<ChartIcon size="sm" />} />
               </Card>
