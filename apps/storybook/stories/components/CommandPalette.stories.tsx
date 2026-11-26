@@ -1,12 +1,16 @@
 import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Button, ChartIcon, CommandPalette, FileIcon, HomeIcon, Kbd, PlusIcon, SettingsIcon, Stack, Text, UsersIcon, toast, type CommandItem } from '@yourorg/ui';
+import {
+  Button, ChartIcon, CommandPalette, FileIcon, HomeIcon, Kbd, PlusIcon, SearchIcon, SettingsIcon, Stack, Text, UsersIcon,
+  toast, type CommandItem,
+} from '@yourorg/ui';
+import { DemoFrame } from '../PreviewKit';
 
 const meta = { title: 'Overlays & Utilities/CommandPalette', parameters: { controls: { disable: true } } } satisfies Meta;
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const go = (title: string) => () => toast({ title });
+const go = (title: string) => () => toast.info(`Navigated to ${title}`);
 
 const commands: CommandItem[] = [
   { id: 'home', label: 'Home', group: 'Go to', icon: <HomeIcon size="sm" />, onSelect: go('Home') },
@@ -23,13 +27,22 @@ export const Command: Story = {
   render: function Render() {
     const [open, setOpen] = React.useState(false);
     return (
-      <Stack gap={3}>
-        <Button variant="outline" tone="neutral" onClick={() => setOpen(true)}>
-          Search… <Kbd>⌘</Kbd><Kbd>K</Kbd>
-        </Button>
-        <Text size="sm" tone="secondary">Or press Cmd+K / Ctrl+K anywhere on this page.</Text>
-        <CommandPalette items={commands} open={open} onOpenChange={setOpen} />
-      </Stack>
+      <DemoFrame
+        title="Quick-action command palette"
+        description="Click the trigger or press ⌘K / Ctrl+K anywhere to search grouped commands by label or keyword."
+        badge="⌘K shortcut"
+        code={`<CommandPalette items={commands} open={open} onOpenChange={setOpen} />`}
+      >
+        <Stack gap={3} align="start">
+          <Button variant="outline" tone="neutral" startIcon={<SearchIcon size="sm" />} onClick={() => setOpen(true)}>
+            Search commands… <Kbd>⌘</Kbd><Kbd>K</Kbd>
+          </Button>
+          <Text size="sm" tone="secondary">
+            Try typing <code>analytics</code> or <code>people</code> to test keyword matching.
+          </Text>
+          <CommandPalette items={commands} open={open} onOpenChange={setOpen} />
+        </Stack>
+      </DemoFrame>
     );
   },
 };

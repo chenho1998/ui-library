@@ -1,8 +1,14 @@
 import { Meta } from '@storybook/addon-docs/blocks';
+import { DocFooterNav, GuideHeader } from './DocsChrome';
 
 <Meta title="Getting Started/Migration guide" tags={['dev']} />
 
-# Migration guide
+<GuideHeader
+  eyebrow="Getting Started"
+  title="Migration guide"
+  description="Everything you need to upgrade cleanly to v0.3 — Node 22 tooling, standalone @yourorg/icons, lighter native primitives, and five new components."
+  badge="v0.3.0"
+/>
 
 ## Upgrading to v0.3
 
@@ -82,3 +88,5 @@ import { CheckIcon, PlusIcon } from '@yourorg/icons';
     </tr>
   </tbody>
 </table>
+
+<DocFooterNav currentTitle="Getting Started/Migration guide" />

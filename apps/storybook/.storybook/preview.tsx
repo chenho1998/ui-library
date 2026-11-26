@@ -5,6 +5,7 @@ import {
 } from '@yourorg/ui';
 import '../../../packages/ui/src/styles/index.css';
 import { ComponentDocPage } from '../stories/ComponentDocPage';
+import { ThemedDocsContainer } from '../stories/DocsChrome';
 // Fonts load from Fontsource packages (no font CDN). An app imports only the faces its themes use.
 import '@fontsource/m-plus-rounded-1c/400.css';
 import '@fontsource/m-plus-rounded-1c/500.css';
@@ -94,6 +95,7 @@ const preview: Preview = {
     layout: 'padded',
     backgrounds: { disable: true },
     docs: {
+      container: ThemedDocsContainer,
       page: ComponentDocPage,
       toc: {
         title: 'On this page',

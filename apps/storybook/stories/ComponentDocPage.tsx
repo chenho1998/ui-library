@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { Controls, Description, DocsContext, Primary, Stories } from '@storybook/addon-docs/blocks';
-import { Badge, Button, CheckIcon, CopyIcon, ExternalLinkIcon, Stack, Text, ThemeProvider, type ColorScheme } from '@yourorg/ui';
+import {
+  Badge, Button, CheckIcon, CopyIcon, ExternalLinkIcon, Kbd, Stack, Text, ThemeProvider, type ColorScheme,
+} from '@yourorg/ui';
+import { DocFooterNav, navigateTop, useDocsScheme } from './DocsChrome';
 import {
   CURRENT_VERSION,
   componentRegistry,
@@ -8,13 +11,6 @@ import {
   githubHistoryUrl,
   type ComponentToken,
 } from './componentRegistry';
-
-function navigateTop(href: string) {
-  if (typeof window !== 'undefined') {
-    const target = window.top ?? window;
-    target.location.href = `${target.location.pathname}${href}`;
-  }
-}
 
 function TokenSwatch({ token }: { token: ComponentToken }) {
   if (token.kind === 'color') {
@@ -91,18 +87,19 @@ function TokenSwatch({ token }: { token: ComponentToken }) {
 
 /**
  * Unified MUI-style documentation template rendered for every component in Storybook.
- * Includes category eyebrow, title, clickable version/source/CSS URLs, copyable import bar,
- * live interactive playground, conditional API controls, extra examples, and scoped Design Tokens.
+ * Features category eyebrow, clickable version/source/CSS URLs, copyable import bar,
+ * live interactive playground, conditional API controls, examples, keyboard shortcuts,
+ * live scoped Design Tokens, and Previous/Next pagination.
  */
 export function ComponentDocPage() {
   const context = React.useContext(DocsContext);
+  const scheme = useDocsScheme();
   const [copiedImport, setCopiedImport] = React.useState(false);
+  const [copiedSnippet, setCopiedSnippet] = React.useState(false);
   const [copiedToken, setCopiedToken] = React.useState<string | null>(null);
 
   const stories = context.componentStories();
   const primary = stories[0];
-  const primaryCtx = primary ? context.getStoryContext(primary) : undefined;
-  const scheme = ((primaryCtx?.globals?.scheme as ColorScheme | undefined) ?? 'light');
   const fullTitle = primary?.title ?? '';
   const parts = fullTitle.split('/');
   const category = parts.length > 1 ? parts.slice(0, -1).join(' / ') : 'Components';
@@ -111,7 +108,7 @@ export function ComponentDocPage() {
   const meta = componentRegistry[fullTitle];
   const hasMultipleStories = stories.length > 1;
 
-  // Render Controls table only when the primary story has active interactive argTypes (and controls aren't disabled).
+  // Render Controls table only when the primary story defines active interactive argTypes.
   const controlsDisabled = primary?.parameters?.controls?.disable === true;
   const hasControls =
     !controlsDisabled &&
@@ -128,6 +125,13 @@ export function ComponentDocPage() {
     window.setTimeout(() => setCopiedImport(false), 1500);
   };
 
+  const copySnippet = () => {
+    if (!meta?.themeSnippet) return;
+    void navigator.clipboard?.writeText(meta.themeSnippet);
+    setCopiedSnippet(true);
+    window.setTimeout(() => setCopiedSnippet(false), 1500);
+  };
+
   const copyToken = (varName: string) => {
     void navigator.clipboard?.writeText(`var(${varName})`);
     setCopiedToken(varName);
@@ -136,7 +140,7 @@ export function ComponentDocPage() {
 
   return (
     <div className="ui-doc-page">
-      <ThemeProvider colorScheme={scheme} style={{ background: 'transparent' }}>
+      <ThemeProvider colorScheme={scheme as ColorScheme} style={{ background: 'transparent' }}>
         {/* MUI-style Component Header */}
         <header
           style={{
@@ -195,7 +199,7 @@ export function ComponentDocPage() {
             {/* Version & source URL links bar */}
             <Stack direction="row" gap={2} align="center" wrap style={{ paddingTop: 2 }}>
               <a
-                href={meta ? githubHistoryUrl(meta.sourcePath) : `${githubHistoryUrl('packages/ui/src/index.ts')}`}
+                href={meta ? githubHistoryUrl(meta.sourcePath) : githubHistoryUrl('packages/ui/src/index.ts')}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="ui-doc-meta-link ui-doc-meta-link--version"
@@ -306,9 +310,49 @@ export function ComponentDocPage() {
         <Stories title="Examples" includePrimary={false} />
       ) : null}
 
+      {/* Keyboard & Accessibility reference table (MUI / Radix pattern) */}
+      {meta?.keyboard && meta.keyboard.length > 0 ? (
+        <ThemeProvider colorScheme={scheme as ColorScheme} style={{ background: 'transparent', marginTop: 32 }}>
+          <section aria-labelledby="keyboard-heading">
+            <h2 id="keyboard-heading" className="ui-doc-section-heading" style={{ marginBottom: 10 }}>
+              Keyboard &amp; accessibility
+            </h2>
+            <div
+              style={{
+                border: '1px solid var(--ui-color-border)',
+                borderRadius: 12,
+                overflow: 'hidden',
+                background: 'var(--ui-color-surface)',
+              }}
+            >
+              {meta.keyboard.map((item, idx) => (
+                <div
+                  key={item.keys.join('+')}
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'minmax(150px, 210px) 1fr',
+                    alignItems: 'center',
+                    gap: 12,
+                    padding: '10px 14px',
+                    borderTop: idx === 0 ? undefined : '1px solid var(--ui-color-border)',
+                  }}
+                >
+                  <Stack direction="row" gap={1} align="center" wrap>
+                    {item.keys.map((k) => (
+                      <Kbd key={k}>{k}</Kbd>
+                    ))}
+                  </Stack>
+                  <Text size="sm" tone="secondary">{item.action}</Text>
+                </div>
+              ))}
+            </div>
+          </section>
+        </ThemeProvider>
+      ) : null}
+
       {/* Scoped Design Tokens section (omitted on the full Design Tokens explorer page itself) */}
       {meta && meta.tokens.length > 0 && fullTitle !== 'Foundations/Design tokens' ? (
-        <ThemeProvider colorScheme={scheme} style={{ background: 'transparent', marginTop: 36 }}>
+        <ThemeProvider colorScheme={scheme as ColorScheme} style={{ background: 'transparent', marginTop: 36 }}>
           <section aria-labelledby="design-tokens-heading">
             <div
               style={{
@@ -386,16 +430,27 @@ export function ComponentDocPage() {
               <div
                 style={{
                   marginTop: 12,
-                  padding: '12px 16px',
+                  padding: '10px 14px 12px',
                   borderRadius: 10,
                   border: '1px solid var(--ui-color-border)',
                   background: 'var(--ui-color-surface-subtle)',
                 }}
               >
-                <Text size="xs" weight="semibold" tone="secondary" style={{ textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>
-                  Customize with createTheme()
-                </Text>
-                <pre style={{ margin: 0, fontFamily: 'var(--ui-font-mono)', fontSize: 12.5, lineHeight: 1.55, overflowX: 'auto' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+                  <Text size="xs" weight="semibold" tone="secondary" style={{ textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    Customize with createTheme()
+                  </Text>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    tone="neutral"
+                    startIcon={copiedSnippet ? <CheckIcon size={13} /> : <CopyIcon size={13} />}
+                    onClick={copySnippet}
+                  >
+                    {copiedSnippet ? 'Copied' : 'Copy'}
+                  </Button>
+                </div>
+                <pre style={{ margin: 0, fontFamily: 'var(--ui-font-mono)', fontSize: 12.5, lineHeight: 1.55, overflowX: 'auto', color: 'var(--ui-color-text-primary)' }}>
                   <code>{meta.themeSnippet}</code>
                 </pre>
               </div>
@@ -403,6 +458,9 @@ export function ComponentDocPage() {
           </section>
         </ThemeProvider>
       ) : null}
+
+      {/* Previous / Next page navigation */}
+      <DocFooterNav currentTitle={fullTitle} />
     </div>
   );
 }

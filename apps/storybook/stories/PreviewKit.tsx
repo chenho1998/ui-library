@@ -4,6 +4,7 @@ import {
   HomeIcon, MoonIcon, Progress, SettingsIcon, Stack, SunIcon, Switch, Text, TextField, ThemeProvider, animeTheme,
   brutalistTheme, neonTheme, pixelTheme, sketchTheme, toast, type ColorScheme, type Theme,
 } from '@yourorg/ui';
+import { useDocsScheme } from './DocsChrome';
 
 /**
  * MUI-style framed preview card for Storybook stories:
@@ -178,12 +179,21 @@ const guideCards = [
  * hero header, metrics strip, interactive live theme playground, quick-install tabs and start-here grid.
  */
 export function IntroLanding() {
+  const docsScheme = useDocsScheme();
   const [selectedTheme, setSelectedTheme] = React.useState('default');
-  const [scheme, setScheme] = React.useState<ColorScheme>('light');
+  const [schemeOverride, setSchemeOverride] = React.useState<ColorScheme | null>(null);
   const [pkgMgr, setPkgMgr] = React.useState<'pnpm' | 'npm' | 'yarn'>('pnpm');
   const [copiedCmd, setCopiedCmd] = React.useState(false);
   const [progress, setProgress] = React.useState(68);
   const [notified, setNotified] = React.useState(true);
+
+  const scheme: ColorScheme = schemeOverride ?? docsScheme;
+  const setScheme = (next: ColorScheme | ((prev: ColorScheme) => ColorScheme)) => {
+    setSchemeOverride((prev) => {
+      const current = prev ?? docsScheme;
+      return typeof next === 'function' ? next(current) : next;
+    });
+  };
 
   const active = themeChoices.find((t) => t.id === selectedTheme) ?? themeChoices[0]!;
 
@@ -195,7 +205,7 @@ export function IntroLanding() {
   };
 
   return (
-    <ThemeProvider defaultColorScheme="light" style={{ background: 'transparent' }}>
+    <ThemeProvider colorScheme={docsScheme} style={{ background: 'transparent' }}>
       <Stack gap={8} style={{ marginBottom: 32 }}>
         {/* Hero section */}
         <div

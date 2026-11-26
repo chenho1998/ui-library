@@ -1,10 +1,14 @@
 import { Meta } from '@storybook/addon-docs/blocks';
+import { DocFooterNav, GuideHeader } from './DocsChrome';
 
 <Meta title="Getting Started/Usage guidelines" tags={['dev']} />
 
-# Usage guidelines
-
-Practical rules for choosing components, keeping pages accessible, and styling cleanly with `@yourorg/ui`.
+<GuideHeader
+  eyebrow="Getting Started"
+  title="Usage guidelines"
+  description="Practical rules for choosing the right component, keeping every screen WCAG AA accessible, and styling cleanly with CSS cascade layers."
+  badge="Best practices"
+/>
 
 ## Choosing the right component
 
@@ -87,3 +91,5 @@ Interactive components follow one consistent convention (powered by `useControll
 
 - `@yourorg/ui` ships with `'use client';` at the top of its entry bundle for Next.js App Router compatibility.
 - To prevent a flash of the wrong light/dark theme before hydration, place `getThemeScript('color-scheme')` inside an inline `<script>` in your document `<head>` and pass the same `storageKey` to `<ThemeProvider>`.
+
+<DocFooterNav currentTitle="Getting Started/Usage guidelines" />
