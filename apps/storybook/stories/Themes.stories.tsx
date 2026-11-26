@@ -109,7 +109,7 @@ export const Gallery: Story = {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(max(265px, 25%), 1fr))',
           }}
         >
           {themes.map(({ name, tag, theme, code }) => (

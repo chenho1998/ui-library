@@ -3,7 +3,7 @@ import { Controls, Description, DocsContext, Primary, Stories } from '@storybook
 import {
   Badge, Button, CheckIcon, CopyIcon, ExternalLinkIcon, Kbd, Stack, Text, ThemeProvider, type ColorScheme,
 } from '@yourorg/ui';
-import { DocFooterNav, navigateTop, useDocsScheme } from './DocsChrome';
+import { DocFooterNav, navigateTop, useDocsGlobals } from './DocsChrome';
 import {
   CURRENT_VERSION,
   componentRegistry,
@@ -93,7 +93,7 @@ function TokenSwatch({ token }: { token: ComponentToken }) {
  */
 export function ComponentDocPage() {
   const context = React.useContext(DocsContext);
-  const scheme = useDocsScheme();
+  const { scheme, theme: docsTheme } = useDocsGlobals();
   const [copiedImport, setCopiedImport] = React.useState(false);
   const [copiedSnippet, setCopiedSnippet] = React.useState(false);
   const [copiedToken, setCopiedToken] = React.useState<string | null>(null);
@@ -352,7 +352,7 @@ export function ComponentDocPage() {
 
       {/* Scoped Design Tokens section (omitted on the full Design Tokens explorer page itself) */}
       {meta && meta.tokens.length > 0 && fullTitle !== 'Foundations/Design tokens' ? (
-        <ThemeProvider colorScheme={scheme as ColorScheme} style={{ background: 'transparent', marginTop: 36 }}>
+        <ThemeProvider colorScheme={scheme as ColorScheme} theme={docsTheme} style={{ background: 'transparent', marginTop: 36 }}>
           <section aria-labelledby="design-tokens-heading">
             <div
               style={{

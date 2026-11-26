@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { DocsContainer, type DocsContainerProps } from '@storybook/addon-docs/blocks';
 import { create } from 'storybook/theming';
-import { Badge, ChevronLeftIcon, ChevronRightIcon, Stack, Text, ThemeProvider, type ColorScheme } from '@yourorg/ui';
+import { Badge, ChevronLeftIcon, ChevronRightIcon, Stack, Text, ThemeProvider, type ColorScheme, type Theme } from '@yourorg/ui';
 import { CURRENT_VERSION, getAdjacentPages } from './componentRegistry';
+import { resolveStorybookTheme } from './themeConfig';
 
 const docsLightTheme = create({
   base: 'light',
@@ -37,10 +38,26 @@ const docsDarkTheme = create({
   fontCode: "'JetBrains Mono', ui-monospace, Menlo, monospace",
 });
 
-export const DocsSchemeContext = React.createContext<'light' | 'dark'>('light');
+export interface DocsGlobalsState {
+  scheme: 'light' | 'dark';
+  themeId: string;
+  font: string;
+  theme: Theme | undefined;
+}
+
+export const DocsGlobalsContext = React.createContext<DocsGlobalsState>({
+  scheme: 'light',
+  themeId: 'default',
+  font: 'theme',
+  theme: undefined,
+});
+
+export function useDocsGlobals(): DocsGlobalsState {
+  return React.useContext(DocsGlobalsContext);
+}
 
 export function useDocsScheme(): 'light' | 'dark' {
-  return React.useContext(DocsSchemeContext);
+  return React.useContext(DocsGlobalsContext).scheme;
 }
 
 function resolveColorScheme(raw: unknown): 'light' | 'dark' {
@@ -59,23 +76,27 @@ export function navigateTop(href: string) {
 }
 
 /**
- * Custom Storybook DocsContainer that listens to the top Scheme toolbar (`light` | `dark` | `system`)
- * and seamlessly switches the ENTIRE Docs page — wrapper, headings, tables, code blocks, Controls, TOC,
- * and custom React blocks — between Light and Dark modes without reload.
+ * Custom Storybook DocsContainer that listens to the top Scheme / Theme / Font toolbar
+ * and seamlessly syncs the ENTIRE Docs page — wrapper, headings, tables, code blocks,
+ * Controls, TOC, Design Token swatches, and custom React blocks — without reload.
  */
 export function ThemedDocsContainer({ children, context, ...props }: React.PropsWithChildren<DocsContainerProps>) {
-  const initialRaw =
+  const initialGlobals =
     (context as unknown as { store?: { userGlobals?: { globals?: Record<string, unknown> } } }).store?.userGlobals
-      ?.globals?.scheme ?? 'light';
+      ?.globals ?? {};
 
-  const [scheme, setScheme] = React.useState<'light' | 'dark'>(() => resolveColorScheme(initialRaw));
+  const [scheme, setScheme] = React.useState<'light' | 'dark'>(() => resolveColorScheme(initialGlobals.scheme));
+  const [themeId, setThemeId] = React.useState<string>(() => String(initialGlobals.theme ?? 'default'));
+  const [font, setFont] = React.useState<string>(() => String(initialGlobals.font ?? 'theme'));
 
   React.useEffect(() => {
     const channel = context.channel;
     const onGlobals = (payload: { globals?: Record<string, unknown> }) => {
-      if (payload?.globals && 'scheme' in payload.globals) {
-        setScheme(resolveColorScheme(payload.globals.scheme));
-      }
+      const g = payload?.globals;
+      if (!g) return;
+      if ('scheme' in g) setScheme(resolveColorScheme(g.scheme));
+      if ('theme' in g) setThemeId(String(g.theme ?? 'default'));
+      if ('font' in g) setFont(String(g.font ?? 'theme'));
     };
     channel?.on('globalsUpdated', onGlobals);
     channel?.on('setGlobals', onGlobals);
@@ -91,12 +112,17 @@ export function ThemedDocsContainer({ children, context, ...props }: React.Props
     }
   }, [scheme]);
 
+  const docsGlobals = React.useMemo<DocsGlobalsState>(
+    () => ({ scheme, themeId, font, theme: resolveStorybookTheme(themeId, font) }),
+    [scheme, themeId, font],
+  );
+
   return (
-    <DocsSchemeContext.Provider value={scheme}>
+    <DocsGlobalsContext.Provider value={docsGlobals}>
       <DocsContainer {...props} context={context} theme={scheme === 'dark' ? docsDarkTheme : docsLightTheme}>
         {children}
       </DocsContainer>
-    </DocsSchemeContext.Provider>
+    </DocsGlobalsContext.Provider>
   );
 }
 
