@@ -71,7 +71,7 @@ export const Dashboard: Story = {
             </Button>
           </header>
           <Stack gap={6} style={{ padding: 28 }}>
-            <Grid minChildWidth="165px" gap={4}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16 }}>
               <Card variant="outline">
                 <Stat label="Monthly revenue" value="RM 14,504" change={12.4} changeLabel="vs October" icon={<ChartIcon size="sm" />} />
               </Card>
@@ -84,7 +84,7 @@ export const Dashboard: Story = {
               <Card variant="outline">
                 <Stat label="Uptime SLA" value="99.98%" change={0.1} changeLabel="30-day avg" icon={<CheckIcon size="sm" />} />
               </Card>
-            </Grid>
+            </div>
             <Grid minChildWidth="320px" gap={4}>
               <Card variant="outline">
                 <Card.Header>
